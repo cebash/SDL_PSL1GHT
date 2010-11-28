@@ -21,7 +21,12 @@ EOF
 
 fi
 
+if [ -f Makefile ]
+then
+	make clean
+fi
 
+./autogen.sh
 
 ## Configure the build.
 AR="ppu-ar" CC="ppu-gcc" CFLAGS="-O2 -Wall" RANLIB="ppu-ranlib" ./configure \
