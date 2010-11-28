@@ -1,0 +1,11 @@
+
+HowTo Build:
+
+You need to build SDL:
+- ooPo's ps3toolchain : https://github.com/ooPo/ps3toolchain
+- the PSL1GHT SDK : https://github.com/HACKERCHANNEL/PSL1GHT.git
+- possibly ooPo's ps3libraries : https://github.com/ooPo/ps3libraries
+
+Run autogen.sh the script.sh to configure SDL
+
+Run make & make install afterthat

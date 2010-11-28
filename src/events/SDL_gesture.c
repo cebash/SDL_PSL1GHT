@@ -27,7 +27,9 @@
 #include "SDL_events_c.h"
 #include "SDL_gesture_c.h"
 
+#ifndef __PSL1GHT__
 #include <memory.h>
+#endif
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
