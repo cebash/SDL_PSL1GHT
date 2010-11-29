@@ -26,6 +26,7 @@
 #include "../SDL_yuv_sw_c.h"
 #include "../SDL_renderer_sw.h"
 
+#include <rsx/reality.h>
 
 /* SDL surface based renderer implementation */
 
@@ -59,8 +60,8 @@ SDL_RenderDriver SDL_PSL1GHT_RenderDriver = {
     SDL_PSL1GHT_CreateRenderer,
     {
      "psl1ght",
-     (SDL_RENDERER_SINGLEBUFFER | SDL_RENDERER_PRESENTCOPY |
-      SDL_RENDERER_PRESENTFLIP2 | SDL_RENDERER_PRESENTFLIP3 |
+     ( //SDL_RENDERER_SINGLEBUFFER | SDL_RENDERER_PRESENTCOPY |
+      SDL_RENDERER_PRESENTFLIP2 | //SDL_RENDERER_PRESENTFLIP3 |
       SDL_RENDERER_PRESENTDISCARD),
      }
 };
@@ -135,10 +136,33 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
             SDL_PSL1GHT_DestroyRenderer(renderer);
             return NULL;
         }
+		/* Allocate RSX memory for pixels */
+		SDL_free(data->screens[i]->pixels);
+		u32 offset;
+		data->screens[i]->pixels = rsxMemAlign(16, data->screens[i]->h * data->screens[i]->pitch);
+		if (!data->screens[i]->pixels) {
+			SDL_FreeSurface(data->screens[i]);
+			SDL_OutOfMemory();
+			return NULL;
+		}
+		if ( realityAddressToOffset(data->screens[i]->pixels, &offset) == 0) {
+			SDL_FreeSurface(data->screens[i]);
+			SDL_OutOfMemory();
+			return NULL;
+		}
+		// Setup the display buffers
+		if ( gcmSetDisplayBuffer(i, offset, data->screens[i]->pitch, data->screens[i]->w,data->screens[i]->h) == 0) {
+			SDL_FreeSurface(data->screens[i]);
+			SDL_OutOfMemory();
+			return NULL;
+		}
+		assert(
+			);
         SDL_SetSurfacePalette(data->screens[i], display->palette);
     }
     data->current_screen = 0;
 
+    gcmResetFlipStatus();
     return renderer;
 }
 

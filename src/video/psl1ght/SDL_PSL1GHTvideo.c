@@ -21,19 +21,11 @@
 */
 #include "SDL_config.h"
 
-/* Dummy SDL video driver implementation; this is just enough to make an
- *  SDL-based application THINK it's got a working video driver, for
- *  applications that call SDL_Init(SDL_INIT_VIDEO) when they don't need it,
- *  and also for use as a collection of stubs when porting SDL to a new
- *  platform for which you haven't yet written a valid video driver.
- *
- * This is also a great way to determine bottlenecks: if you think that SDL
- *  is a performance problem for a given platform, enable this driver, and
- *  then see if your application runs faster without video overhead.
+/* PSL1GHT SDL video driver implementation (for PS3). Based on Dummy driver.
  *
  * Initial work by Ryan C. Gordon (icculus@icculus.org). A good portion
  *  of this was cut-and-pasted from Stephane Peter's work in the AAlib
- *  SDL video driver.  Renamed to "PSL1GHT" by Sam Lantinga.
+ *  SDL video driver.  Renamed to "DUMMY" by Sam Lantinga.
  */
 
 #include "SDL_video.h"
@@ -191,25 +183,5 @@ void setupScreenMode(_THIS)
     gcmSetFlipMode(GCM_FLIP_VSYNC); // Wait for VSYNC to flip
 }
 
-void initializeDoubleBuffer(_THIS)
-{
-	VideoResolution _resolution = _this->gl_data->_resolution;
-    s32 buffer_size = 4 * _resolution.width * _resolution.height; // each pixel is 4 bytes
-    //printf("buffers will be 0x%x bytes\n", buffer_size);
-
-    // Allocate two buffers for the RSX to draw to the screen (double buffering)
-    _this->gl_data->buffer[0] = (s32 *) rsxMemAlign(16, buffer_size);
-    _this->gl_data->buffer[1] = (s32 *) rsxMemAlign(16, buffer_size);
-    assert(_this->gl_data->buffer[0] != NULL && _this->gl_data->buffer[1] != NULL);
-
-    u32 offset[2];
-    assert(realityAddressToOffset(_this->gl_data->buffer[0], &offset[0]) == 0);
-    assert(realityAddressToOffset(_this->gl_data->buffer[1], &offset[1]) == 0);
-    // Setup the display buffers
-    assert(gcmSetDisplayBuffer(0, offset[0], _resolution.width * 4, _resolution.width, _resolution.height) == 0);
-    assert(gcmSetDisplayBuffer(1, offset[1], _resolution.width * 4, _resolution.width, _resolution.height) == 0);
-
-    gcmResetFlipStatus();
-}
 
 /* vi: set ts=4 sw=4 expandtab: */

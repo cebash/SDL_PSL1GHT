@@ -35,9 +35,6 @@ struct SDL_GLDriverData
 {
 	gcmContextData *_CommandBuffer; // Context to keep track of the RSX buffer.	
 	VideoResolution _resolution; // Screen Resolution
-
-	int _currentBuffer;
-	s32 *buffer[2]; // The buffer we will be drawing into.
 } ;
 typedef struct SDL_GLDriverData SDL_GLDriverData;
 
