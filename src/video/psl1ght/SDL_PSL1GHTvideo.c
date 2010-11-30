@@ -52,9 +52,8 @@ static int PSL1GHT_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_Display
 static void PSL1GHT_VideoQuit(_THIS);
 
 /* PS3GUI init functions : */
-static void initializeDoubleBuffer(_THIS);
-static void setupScreenMode(_THIS);
-static void initializeGPU(_THIS);
+static void initializeGPU(SDL_DeviceData * devdata);
+static void setupScreenMode(SDL_DisplayData * dispdata);
 
 /* PSL1GHT driver bootstrap functions */
 
@@ -84,17 +83,12 @@ PSL1GHT_CreateDevice(int devindex)
     device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
     if (device) {
         SDL_memset(device, 0, (sizeof *device));
-        device->gl_data = (struct SDL_GLDriverData*)
-            SDL_malloc(sizeof *device->gl_data );
     }
-    if ((device == NULL) || (device->gl_data == NULL)) {
+	else {
         SDL_OutOfMemory();
-        if (device) {
-            SDL_free(device);
-        }
+		SDL_free(device);
         return (0);
     }
-	SDL_memset(device->gl_data, 0, (sizeof *device->gl_data));
 
     /* Set the function pointers */
     device->VideoInit = PSL1GHT_VideoInit;
@@ -115,28 +109,46 @@ VideoBootStrap PSL1GHT_bootstrap = {
 int
 PSL1GHT_VideoInit(_THIS)
 {
-    SDL_DisplayMode mode;
+	SDL_DisplayMode mode;
+	SDL_DeviceData *devdata = NULL;
+	SDL_DisplayData *didata = NULL;
 
-	initializeDoubleBuffer(_this);
-	setupScreenMode(_this);
-	initializeGPU(_this);
+	devdata = (SDL_DeviceData*) SDL_calloc(1, sizeof(SDL_DeviceData));
+	if (devdata == NULL) { 
+		/* memory allocation problem */  
+		SDL_OutOfMemory();
+		return -1;
+	} 
 
-    /* Use a fake 32-bpp desktop mode */
-    mode.format = SDL_PIXELFORMAT_RGB888;
-    mode.w = _this->gl_data->_resolution.width;
-    mode.h = _this->gl_data->_resolution.height;
-    mode.refresh_rate = 0;
-    mode.driverdata = NULL;
-    if (SDL_AddBasicVideoDisplay(&mode) < 0) {
-        return -1;
-    }
-    SDL_AddRenderDriver(&_this->displays[0], &SDL_PSL1GHT_RenderDriver);
+	_this->driverdata = devdata;
 
-    SDL_zero(mode);
-    SDL_AddDisplayMode(&_this->displays[0], &mode);
+	didata = (SDL_DisplayData *) SDL_calloc(1, sizeof(SDL_DisplayData));
+	if (didata == NULL) { 
+		/* memory allocation problem */  
+		SDL_OutOfMemory();
+		return -1;
+	} 
 
-    /* We're done! */
-    return 0;
+	initializeGPU(devdata);
+	setupScreenMode(didata);
+
+	/* Replace by setScreenMode data  */
+	mode.format = SDL_PIXELFORMAT_RGB888;
+	mode.w = didata->_resolution.width;
+	mode.h = didata->_resolution.height;
+	mode.refresh_rate = 0;
+	mode.driverdata = NULL;
+	if (SDL_AddBasicVideoDisplay(&mode) < 0) {
+		return -1;
+	}
+	SDL_AddRenderDriver(&_this->displays[0], &SDL_PSL1GHT_RenderDriver);
+
+	SDL_zero(mode);
+	SDL_AddDisplayMode(&_this->displays[0], &mode);
+	_this->displays[0].driverdata = didata;
+
+	/* We're done! */
+	return 0;
 }
 
 static int
@@ -150,32 +162,32 @@ PSL1GHT_VideoQuit(_THIS)
 {
 }
 
-void initializeGPU(_THIS)
+void initializeGPU( SDL_DeviceData * devdata)
 {
    // Allocate a 1Mb buffer, alligned to a 1Mb boundary to be our shared IO memory with the RSX.
     void *host_addr = memalign(1024*1024, 1024*1024);
     assert(host_addr != NULL);
 
     // Initilise Reality, which sets up the command buffer and shared IO memory
-    _this->gl_data->_CommandBuffer = realityInit(0x10000, 1024*1024, host_addr);
-    assert(_this->gl_data->_CommandBuffer != NULL);
+    devdata->_CommandBuffer = realityInit(0x10000, 1024*1024, host_addr);
+    assert(devdata->_CommandBuffer != NULL);
 }
 
-void setupScreenMode(_THIS)
+void setupScreenMode( SDL_DisplayData * dispdata)
 {
     VideoState state;
     assert(videoGetState(0, 0, &state) == 0); // Get the state of the display
     assert(state.state == 0); // Make sure display is enabled
 
     // Get the current resolution
-    assert(videoGetResolution(state.displayMode.resolution, &_this->gl_data->_resolution) == 0);
+    assert(videoGetResolution(state.displayMode.resolution, &dispdata->_resolution) == 0);
 
     // Configure the buffer format to xRGB
     VideoConfiguration vconfig;
     memset(&vconfig, 0, sizeof(VideoConfiguration));
     vconfig.resolution = state.displayMode.resolution;
     vconfig.format = VIDEO_BUFFER_FORMAT_XRGB;
-    vconfig.pitch = _this->gl_data->_resolution.width * 4;
+    vconfig.pitch = dispdata->_resolution.width * 4;
 
     assert(videoConfigure(0, &vconfig, NULL, 0) == 0);
     assert(videoGetState(0, 0, &state) == 0);

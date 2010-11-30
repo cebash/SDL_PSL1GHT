@@ -30,13 +30,17 @@
 #include <sysutil/video.h>
 
 
-/* Private display data */
-struct SDL_GLDriverData
+/* Private RSX data */
+typedef struct SDL_DeviceData
 {
 	gcmContextData *_CommandBuffer; // Context to keep track of the RSX buffer.	
+} SDL_DeviceData;
+
+/* Private display data */
+typedef struct SDL_DisplayData
+{
 	VideoResolution _resolution; // Screen Resolution
-} ;
-typedef struct SDL_GLDriverData SDL_GLDriverData;
+} SDL_DisplayData;
 
 #endif /* _SDL_PSL1GHTvideo_h */
 

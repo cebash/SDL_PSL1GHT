@@ -26,7 +26,12 @@
 #include "../SDL_yuv_sw_c.h"
 #include "../SDL_renderer_sw.h"
 
+#include "SDL_PSL1GHTvideo.h"
+
 #include <rsx/reality.h>
+#include <unistd.h>
+#include <assert.h>
+
 
 /* SDL surface based renderer implementation */
 
@@ -60,8 +65,8 @@ SDL_RenderDriver SDL_PSL1GHT_RenderDriver = {
     SDL_PSL1GHT_CreateRenderer,
     {
      "psl1ght",
-     ( //SDL_RENDERER_SINGLEBUFFER | SDL_RENDERER_PRESENTCOPY |
-      SDL_RENDERER_PRESENTFLIP2 | //SDL_RENDERER_PRESENTFLIP3 |
+     ( SDL_RENDERER_SINGLEBUFFER | SDL_RENDERER_PRESENTVSYNC |SDL_RENDERER_PRESENTCOPY |
+      SDL_RENDERER_PRESENTFLIP2 | SDL_RENDERER_PRESENTFLIP3 |
       SDL_RENDERER_PRESENTDISCARD),
      }
 };
@@ -70,6 +75,7 @@ typedef struct
 {
     int current_screen;
     SDL_Surface *screens[3];
+	gcmContextData *context; // Context to keep track of the RSX buffer.	
 } SDL_PSL1GHT_RenderData;
 
 SDL_Renderer *
@@ -102,6 +108,9 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         return NULL;
     }
     SDL_zerop(data);
+	
+	// Get a copy of the command buffer
+	data->context = ((SDL_DeviceData*) window->display->device->driverdata)->_CommandBuffer;
 
     renderer->RenderDrawPoints = SDL_PSL1GHT_RenderDrawPoints;
     renderer->RenderDrawLines = SDL_PSL1GHT_RenderDrawLines;
@@ -156,8 +165,6 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
 			SDL_OutOfMemory();
 			return NULL;
 		}
-		assert(
-			);
         SDL_SetSurfacePalette(data->screens[i], display->palette);
     }
     data->current_screen = 0;
@@ -338,6 +345,18 @@ SDL_PSL1GHT_RenderPresent(SDL_Renderer * renderer)
                      renderer->window->id, ++frame_number);
         SDL_SaveBMP(data->screens[data->current_screen], file);
     }
+
+    /* Wait for vsync */
+    if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
+		while(gcmGetFlipStatus() != 0)
+			usleep(200);
+		gcmResetFlipStatus();
+    }
+
+    /* Page flip */
+    assert(gcmSetFlip(data->context, data->current_screen) == 0);
+    realityFlushBuffer(data->context);
+    gcmSetWaitFlip(data->context); // Prevent the RSX from continuing until the flip has finished.
 
     /* Update the flipping chain, if any */
     if (renderer->info.flags & SDL_RENDERER_PRESENTFLIP2) {
