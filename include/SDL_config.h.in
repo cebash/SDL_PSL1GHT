@@ -153,7 +153,9 @@
 #undef HAVE_SIGACTION
 #undef HAVE_SETJMP
 #undef HAVE_NANOSLEEP
+#ifndef __PSL1GHT__ // Yeah PSL1GHT hasn't sysconf
 #undef HAVE_SYSCONF
+#endif
 #undef HAVE_SYSCTLBYNAME
 #undef HAVE_CLOCK_GETTIME
 #undef HAVE_GETPAGESIZE
