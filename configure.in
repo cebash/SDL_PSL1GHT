@@ -2781,6 +2781,12 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         #EXTRA_CFLAGS="$EXTRA_CFLAGS -DLACKS_SYS_MMAN_H"
         CheckPSL1GHTVideo
         CheckDummyAudio
+        # Set up files for the atomic operations library
+        if test x$enable_atomic = xyes; then
+			AC_DEFINE(SDL_ATOMIC_LINUX)
+			SOURCES="$SOURCES $srcdir/src/atomic/linux/*.c"
+			have_atomic=yes
+        fi
 		;;
     *-riscos)
         ARCH=riscos

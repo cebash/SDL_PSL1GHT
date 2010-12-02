@@ -9,3 +9,6 @@ You need to build SDL:
 Run autogen.sh the script.sh to configure SDL
 
 Run make & make install afterthat
+
+
+To built up your source use the -lm switch
