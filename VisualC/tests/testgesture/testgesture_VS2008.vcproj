@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
-	Name="testpower"
-	ProjectGUID="{C4E04D18-EF76-4B42-B4C2-16A1BACDC0A3}"
-	RootNamespace="testpower"
+	Version="9.00"
+	Name="testgesture"
+	ProjectGUID="{79CEE57E-1BC3-4FF6-90B3-9E39763CDAFF}"
+	RootNamespace="testgesture"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -41,7 +42,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/testpower.tlb"
+				TypeLibraryName=".\Debug/testgesture.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -50,7 +51,7 @@
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/testpower.pch"
+				PrecompiledHeaderFile=".\Debug/testgesture.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -73,12 +74,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				OutputFile=".\Debug/testpower.exe"
+				OutputFile=".\Debug/testgesture.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/testpower.pdb"
+				ProgramDatabaseFile=".\Debug/testgesture.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -97,9 +100,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -132,7 +132,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Release/testpower.tlb"
+				TypeLibraryName=".\Release/testgesture.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -143,7 +143,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/testpower.pch"
+				PrecompiledHeaderFile=".\Release/testgesture.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -165,11 +165,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				OutputFile=".\Release/testpower.exe"
+				OutputFile=".\Release/testgesture.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\Release/testpower.pdb"
+				ProgramDatabaseFile=".\Release/testgesture.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -190,9 +192,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -201,24 +200,8 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\Sdl\Debug\SDL.lib"
+			RelativePath="..\..\..\test\testgesture.c"
 			>
-		</File>
-		<File
-			RelativePath="..\..\SDLmain\Debug\SDLmain.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\test\testpower.c"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					PrecompiledHeaderFile=".\Debug/testpower.pch"
-				/>
-			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
