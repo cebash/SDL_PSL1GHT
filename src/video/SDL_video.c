@@ -21,6 +21,7 @@
 */
 #include "SDL_config.h"
 
+
 /* The high-level video driver subsystem */
 
 #include "SDL.h"
@@ -193,6 +194,8 @@ SDL_VideoInit(const char *driver_name, Uint32 flags)
     int index;
     int i;
 
+	printf( "SDL_VideoInit");
+
     /* Check to make sure we don't overwrite '_this' */
     if (_this != NULL) {
         SDL_VideoQuit();
@@ -240,7 +243,7 @@ SDL_VideoInit(const char *driver_name, Uint32 flags)
         if (driver_name) {
             SDL_SetError("%s not available", driver_name);
         } else {
-            SDL_SetError("No available video device");
+            SDL_SetError("No available video device (on %d drivers)", SDL_GetNumVideoDrivers());
         }
         return -1;
     }

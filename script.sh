@@ -31,7 +31,8 @@ fi
 ## Configure the build.
 AR="ppu-ar" CC="ppu-gcc" CFLAGS="-O2 -Wall" RANLIB="ppu-ranlib" ./configure \
 	--prefix="$PS3DEV/ppu" --host=ppu-psl1ght \
-	--includedir=$PSL1GHT/include --libdir=$PSL1GHT/lib --enable-atomic=yes \
+	--includedir=$PSL1GHT/include --libdir=$PSL1GHT/lib \
+	--enable-atomic=yes --enable-video-psl1ght=yes \
 	|| { exit 1; }
 
 ## Compile and install.

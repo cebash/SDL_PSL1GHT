@@ -61,6 +61,7 @@ static int
 PSL1GHT_Available(void)
 {
     const char *envr = SDL_getenv("SDL_VIDEODRIVER");
+	printf( "PSL1GHT_Available(void)\n");
     if ((envr) && (SDL_strcmp(envr, PSL1GHTVID_DRIVER_NAME) == 0)) {
         return (1);
     }
@@ -71,6 +72,7 @@ PSL1GHT_Available(void)
 static void
 PSL1GHT_DeleteDevice(SDL_VideoDevice * device)
 {
+	printf( "PSL1GHT_DeleteDevice( %16X)\n", device);
     SDL_free(device);
 }
 
@@ -78,6 +80,7 @@ static SDL_VideoDevice *
 PSL1GHT_CreateDevice(int devindex)
 {
     SDL_VideoDevice *device;
+	printf( "PSL1GHT_CreateDevice( %16X)\n", devindex);
 
     /* Initialize all variables that we clean on shutdown */
     device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
@@ -154,16 +157,19 @@ PSL1GHT_VideoInit(_THIS)
 static int
 PSL1GHT_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
 {
+	printf( "PSL1GHT_SetDisplayMode( )\n");
     return 0;
 }
 
 void
 PSL1GHT_VideoQuit(_THIS)
 {
+	printf("PSL1GHT_VideoQuit()\n");
 }
 
 void initializeGPU( SDL_DeviceData * devdata)
 {
+	printf("initializeGPU()\n");
    // Allocate a 1Mb buffer, alligned to a 1Mb boundary to be our shared IO memory with the RSX.
     void *host_addr = memalign(1024*1024, 1024*1024);
     assert(host_addr != NULL);
@@ -175,6 +181,7 @@ void initializeGPU( SDL_DeviceData * devdata)
 
 void setupScreenMode( SDL_DisplayData * dispdata)
 {
+	printf("setupScreenMode\n");
     VideoState state;
     assert(videoGetState(0, 0, &state) == 0); // Get the state of the display
     assert(state.state == 0); // Make sure display is enabled
