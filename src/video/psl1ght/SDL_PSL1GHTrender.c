@@ -64,11 +64,16 @@ static void SDL_PSL1GHT_DestroyRenderer(SDL_Renderer * renderer);
 SDL_RenderDriver SDL_PSL1GHT_RenderDriver = {
     SDL_PSL1GHT_CreateRenderer,
     {
-     "psl1ght",
-     ( SDL_RENDERER_SINGLEBUFFER | SDL_RENDERER_PRESENTVSYNC |SDL_RENDERER_PRESENTCOPY |
-      SDL_RENDERER_PRESENTFLIP2 | SDL_RENDERER_PRESENTFLIP3 |
-      SDL_RENDERER_PRESENTDISCARD),
-     }
+        "psl1ght",
+        ( 
+//         SDL_RENDERER_SINGLEBUFFER | 
+         SDL_RENDERER_PRESENTVSYNC |
+         SDL_RENDERER_PRESENTCOPY |
+         SDL_RENDERER_PRESENTFLIP2 | 
+//         SDL_RENDERER_PRESENTFLIP3 |
+         SDL_RENDERER_PRESENTDISCARD
+        ),
+    }
 };
 
 typedef struct
@@ -89,28 +94,32 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     int bpp;
     Uint32 Rmask, Gmask, Bmask, Amask;
 
-	printf( "SDL_PSL1GHT_CreateRenderer( %16X, %08X)\n", window, flags);
+	printf( "SDL_PSL1GHT_CreateRenderer( %016X, %08X)\n", (unsigned int) window, flags);
 
     if (!SDL_PixelFormatEnumToMasks
         (displayMode->format, &bpp, &Rmask, &Gmask, &Bmask, &Amask)) {
+		printf("ERROR\n");
         SDL_SetError("Unknown display format");
         return NULL;
     }
 
     renderer = (SDL_Renderer *) SDL_calloc(1, sizeof(*renderer));
     if (!renderer) {
-        SDL_OutOfMemory();
+		printf("ERROR\n");
+		SDL_OutOfMemory();
         return NULL;
     }
 
     data = (SDL_PSL1GHT_RenderData *) SDL_malloc(sizeof(*data));
     if (!data) {
+		printf("ERROR\n");
         SDL_PSL1GHT_DestroyRenderer(renderer);
         SDL_OutOfMemory();
         return NULL;
     }
     SDL_zerop(data);
 	
+	printf("\t mem allocated\n");
 	// Get a copy of the command buffer
 	data->context = ((SDL_DeviceData*) window->display->device->driverdata)->_CommandBuffer;
 
@@ -127,8 +136,10 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->info.flags = 0;
     renderer->window = window;
     renderer->driverdata = data;
+	printf( "\tSetup_SoftwareRenderer()\n");
     Setup_SoftwareRenderer(renderer);
 
+/*
     if (flags & SDL_RENDERER_PRESENTFLIP2) {
         renderer->info.flags |= SDL_RENDERER_PRESENTFLIP2;
         n = 2;
@@ -139,39 +150,55 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         renderer->info.flags |= SDL_RENDERER_PRESENTCOPY;
         n = 1;
     }
+*/
+	n = 2;
+	printf("\tCreate the %d screen(s):\n", n);
     for (i = 0; i < n; ++i) {
+		printf( "\t\tSDL_CreateRGBSurface()\n");
         data->screens[i] =
             SDL_CreateRGBSurface(0, window->w, window->h, bpp, Rmask, Gmask,
                                  Bmask, Amask);
         if (!data->screens[i]) {
+			printf("ERROR\n");
             SDL_PSL1GHT_DestroyRenderer(renderer);
             return NULL;
         }
+
+		printf( "\t\tAllocate RSX memory for pixels\n");
 		/* Allocate RSX memory for pixels */
 		SDL_free(data->screens[i]->pixels);
-		u32 offset;
 		data->screens[i]->pixels = rsxMemAlign(16, data->screens[i]->h * data->screens[i]->pitch);
 		if (!data->screens[i]->pixels) {
+			printf("ERROR\n");
 			SDL_FreeSurface(data->screens[i]);
 			SDL_OutOfMemory();
 			return NULL;
 		}
-		if ( realityAddressToOffset(data->screens[i]->pixels, &offset) == 0) {
-			SDL_FreeSurface(data->screens[i]);
+
+		u32 offset = 0;
+		printf( "\t\tPrepare RSX offsets (%16X, %08X) \n", data->screens[i]->pixels, &offset);
+		if ( realityAddressToOffset(data->screens[i]->pixels, &offset) != 0) {
+			printf("ERROR\n");
+//			SDL_FreeSurface(data->screens[i]);
 			SDL_OutOfMemory();
 			return NULL;
 		}
+		printf( "\t\tSetup the display buffers\n");
 		// Setup the display buffers
-		if ( gcmSetDisplayBuffer(i, offset, data->screens[i]->pitch, data->screens[i]->w,data->screens[i]->h) == 0) {
-			SDL_FreeSurface(data->screens[i]);
+		if ( gcmSetDisplayBuffer(i, offset, data->screens[i]->pitch, data->screens[i]->w,data->screens[i]->h) != 0) {
+			printf("ERROR\n");
+//			SDL_FreeSurface(data->screens[i]);
 			SDL_OutOfMemory();
 			return NULL;
 		}
+		printf( "\t\tSDL_SetSurfacePalette()\n");
         SDL_SetSurfacePalette(data->screens[i], display->palette);
     }
     data->current_screen = 0;
 
+	printf( "\tReset Flip Status\n");
     gcmResetFlipStatus();
+	printf( "\tFinished\n");
     return renderer;
 }
 
@@ -362,17 +389,17 @@ SDL_PSL1GHT_RenderPresent(SDL_Renderer * renderer)
     }
 
     /* Wait for vsync */
-/*    if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
+    if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
 		while(gcmGetFlipStatus() != 0)
 			usleep(200);
 		gcmResetFlipStatus();
     }
-*/
+
     /* Page flip */
-  /*  assert(gcmSetFlip(data->context, data->current_screen) == 0);
+    assert(gcmSetFlip(data->context, data->current_screen) == 0);
     realityFlushBuffer(data->context);
     gcmSetWaitFlip(data->context); // Prevent the RSX from continuing until the flip has finished.
-*/
+
     /* Update the flipping chain, if any */
     if (renderer->info.flags & SDL_RENDERER_PRESENTFLIP2) {
         data->current_screen = (data->current_screen + 1) % 2;
@@ -393,7 +420,7 @@ SDL_PSL1GHT_DestroyRenderer(SDL_Renderer * renderer)
     if (data) {
         for (i = 0; i < SDL_arraysize(data->screens); ++i) {
             if (data->screens[i]) {
-                SDL_FreeSurface(data->screens[i]);
+             //   SDL_FreeSurface(data->screens[i]);
             }
         }
         SDL_free(data);
