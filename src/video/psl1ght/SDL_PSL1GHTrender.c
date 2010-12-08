@@ -24,7 +24,7 @@
 #include "SDL_video.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_yuv_sw_c.h"
-#include "../SDL_renderer_sw.h"
+//#include "../SDL_renderer_sw.h"
 
 #include "SDL_PSL1GHTvideo.h"
 
@@ -83,6 +83,13 @@ typedef struct
     gcmContextData *context; // Context to keep track of the RSX buffer.    
 } SDL_PSL1GHT_RenderData;
 
+static flip( gcmContextData *context, int current_screen)
+{
+    assert(gcmSetFlip(context, current_screen) == 0);
+    realityFlushBuffer(context);
+    gcmSetWaitFlip(context); // Prevent the RSX from continuing until the flip has finished.
+}
+
 SDL_Renderer *
 SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
 {
@@ -119,7 +126,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     }
     SDL_zerop(data);
     
-    printf("\t mem allocated\n");
+    printf("\tMem allocated\n");
     // Get a copy of the command buffer
     data->context = ((SDL_DeviceData*) window->display->device->driverdata)->_CommandBuffer;
 
@@ -199,6 +206,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     printf( "\tReset Flip Status\n");
     gcmResetFlipStatus();
     printf( "\tFinished\n");
+    flip(data->context, data->current_screen);
     return renderer;
 }
 
@@ -264,8 +272,10 @@ SDL_PSL1GHT_RenderDrawRects(SDL_Renderer * renderer, const SDL_Rect ** rects,
                                    renderer->r, renderer->g, renderer->b,
                                    renderer->a);
 
+        printf("\tSDL_DrawRects()\n");
         return SDL_DrawRects(target, rects, count, color);
     } else {
+        printf("\tSDL_BlendRects()\n");
         return SDL_BlendRects(target, rects, count,
                               renderer->blendMode,
                               renderer->r, renderer->g, renderer->b,
@@ -288,9 +298,11 @@ SDL_PSL1GHT_RenderFillRects(SDL_Renderer * renderer, const SDL_Rect ** rects,
         Uint32 color = SDL_MapRGBA(target->format,
                                    renderer->r, renderer->g, renderer->b,
                                    renderer->a);
+        printf("\tSDL_FillRects()\n");
 
         return SDL_FillRects(target, rects, count, color);
     } else {
+        printf("\tSDL_BlendFillRects()\n");
         return SDL_BlendFillRects(target, rects, count,
                                   renderer->blendMode,
                                   renderer->r, renderer->g, renderer->b,
@@ -314,6 +326,7 @@ SDL_PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
         void *pixels =
             (Uint8 *) target->pixels + dstrect->y * target->pitch +
             dstrect->x * target->format->BytesPerPixel;
+        printf("\tSDL_SW_CopyYUVToRGB()\n");
         return SDL_SW_CopyYUVToRGB((SDL_SW_YUVTexture *) texture->driverdata,
                                    srcrect, display->current_mode.format,
                                    dstrect->w, dstrect->h, pixels,
@@ -323,7 +336,10 @@ SDL_PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
         SDL_Surface *target = data->screens[data->current_screen];
         SDL_Rect real_srcrect = *srcrect;
         SDL_Rect real_dstrect = *dstrect;
+        printf("\tSDL_LowerBlit( (%d, %d) -> (%d, %d) (pitch %d))\n", srcrect->h, srcrect->w, dstrect->h, dstrect->w, surface->pitch);
+        printf("\t\tmemcpy( %08X, %08X, %d)\n", target->pixels, surface->pixels, srcrect->h * srcrect->w * 4);
 
+//        memcpy( target->pixels, surface->pixels, srcrect->h * srcrect->w * 4);
         return SDL_LowerBlit(surface, &real_srcrect, target, &real_dstrect);
     }
 }
@@ -365,7 +381,7 @@ SDL_PSL1GHT_RenderWritePixels(SDL_Renderer * renderer, const SDL_Rect * rect,
                             rect->x * screen->format->BytesPerPixel;
     int screen_pitch = screen->pitch;
 
-    printf( "SDL_PSL1GHT_RenderReadPixels()\n");
+    printf( "SDL_PSL1GHT_RenderWritePixels()\n");
     return SDL_ConvertPixels(rect->w, rect->h,
                              format, pixels, pitch,
                              screen_format, screen_pixels, screen_pitch);
@@ -378,34 +394,30 @@ SDL_PSL1GHT_RenderPresent(SDL_Renderer * renderer)
     SDL_PSL1GHT_RenderData *data =
         (SDL_PSL1GHT_RenderData *) renderer->driverdata;
 
-    printf( "SDL_PSL1GHT_RenderReadPixels()\n");
+    printf( "SDL_PSL1GHT_RenderPresent()\n");
 
-    /* Send the data to the display */
-    if (SDL_getenv("SDL_VIDEO_PSL1GHT_SAVE_FRAMES")) {
-        char file[128];
-        SDL_snprintf(file, sizeof(file), "SDL_window%d-%8.8d.bmp",
-                     renderer->window->id, ++frame_number);
-        SDL_SaveBMP(data->screens[data->current_screen], file);
-    }
+    printf( "\tRendering to screen %d\n", data->current_screen);
 
+    printf( "\tWait for vsync\n");
     /* Wait for vsync */
-    if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
+    //if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
         while(gcmGetFlipStatus() != 0)
             usleep(200);
         gcmResetFlipStatus();
-    }
+    //}
 
+    printf( "\tPage flip\n");
     /* Page flip */
-    assert(gcmSetFlip(data->context, data->current_screen) == 0);
-    realityFlushBuffer(data->context);
-    gcmSetWaitFlip(data->context); // Prevent the RSX from continuing until the flip has finished.
+    flip(data->context, data->current_screen);
 
+    printf( "\tUpdate the flipping chain, if any\n");
     /* Update the flipping chain, if any */
-    if (renderer->info.flags & SDL_RENDERER_PRESENTFLIP2) {
+    //if (renderer->info.flags & SDL_RENDERER_PRESENTFLIP2) {
         data->current_screen = (data->current_screen + 1) % 2;
-    } else if (renderer->info.flags & SDL_RENDERER_PRESENTFLIP3) {
+    /*} else if (renderer->info.flags & SDL_RENDERER_PRESENTFLIP3) {
         data->current_screen = (data->current_screen + 1) % 3;
-    }
+    }*/
+    printf( "\tUpdated the screen to %d\n", data->current_screen);
 }
 
 static void
@@ -415,7 +427,7 @@ SDL_PSL1GHT_DestroyRenderer(SDL_Renderer * renderer)
         (SDL_PSL1GHT_RenderData *) renderer->driverdata;
     int i;
 
-    printf( "SDL_PSL1GHT_RenderReadPixels()\n");
+    printf( "SDL_PSL1GHT_DestroyRenderer()\n");
 
     if (data) {
         for (i = 0; i < SDL_arraysize(data->screens); ++i) {
