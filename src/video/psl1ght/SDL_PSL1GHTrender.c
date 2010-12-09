@@ -83,7 +83,7 @@ typedef struct
     gcmContextData *context; // Context to keep track of the RSX buffer.    
 } SDL_PSL1GHT_RenderData;
 
-static flip( gcmContextData *context, int current_screen)
+static void flip( gcmContextData *context, int current_screen)
 {
     assert(gcmSetFlip(context, current_screen) == 0);
     realityFlushBuffer(context);
@@ -101,7 +101,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     int bpp;
     Uint32 Rmask, Gmask, Bmask, Amask;
 
-    printf( "SDL_PSL1GHT_CreateRenderer( %016X, %08X)\n", (unsigned int) window, flags);
+    printf( "SDL_PSL1GHT_CreateRenderer( %016X, %08X)\n", (unsigned long long) window, flags);
 
     if (!SDL_PixelFormatEnumToMasks
         (displayMode->format, &bpp, &Rmask, &Gmask, &Bmask, &Amask)) {
@@ -183,7 +183,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         }
 
         u32 offset = 0;
-        printf( "\t\tPrepare RSX offsets (%16X, %08X) \n", data->screens[i]->pixels, &offset);
+        printf( "\t\tPrepare RSX offsets (%16X, %08X) \n", (unsigned int) data->screens[i]->pixels, (unsigned int) &offset);
         if ( realityAddressToOffset(data->screens[i]->pixels, &offset) != 0) {
             printf("ERROR\n");
 //            SDL_FreeSurface(data->screens[i]);
@@ -332,16 +332,31 @@ SDL_PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
                                    dstrect->w, dstrect->h, pixels,
                                    target->pitch);
     } else {
-        SDL_Surface *surface = (SDL_Surface *) texture->driverdata;
+        Uint8 *src, *dst;
+        int row;
+        size_t length;
+        Uint8 *dstpixels;
+
+        src = (Uint8 *)((SDL_Surface *)texture->driverdata)->pixels;
+        dst = (Uint8 *) data->screens[data->current_screen]->pixels + dstrect->y * data->screens[data->current_screen]->pitch + dstrect->x
+                        * SDL_BYTESPERPIXEL(texture->format);
+        length = dstrect->w * SDL_BYTESPERPIXEL(texture->format);
+        for (row = 0; row < dstrect->h; ++row) {
+            SDL_memcpy(dst, src, length);
+            src += texture->w * SDL_BYTESPERPIXEL(texture->format);
+            dst += data->screens[data->current_screen]->pitch;
+        }
+		return 0;
+/*        SDL_Surface *surface = (SDL_Surface *) texture->driverdata;
         SDL_Surface *target = data->screens[data->current_screen];
         SDL_Rect real_srcrect = *srcrect;
         SDL_Rect real_dstrect = *dstrect;
         printf("\tSDL_LowerBlit( (%d, %d) -> (%d, %d) (pitch %d))\n", srcrect->h, srcrect->w, dstrect->h, dstrect->w, surface->pitch);
         printf("\t\tmemcpy( %08X, %08X, %d)\n", target->pixels, surface->pixels, srcrect->h * srcrect->w * 4);
 
-//        memcpy( target->pixels, surface->pixels, srcrect->h * srcrect->w * 4);
+        memcpy( target->pixels, surface->pixels, srcrect->h * srcrect->w * 4);
         return SDL_LowerBlit(surface, &real_srcrect, target, &real_dstrect);
-    }
+*/    }
 }
 
 static int
