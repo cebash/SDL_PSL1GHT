@@ -2778,7 +2778,6 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         ARCH=psl1ght
         EXTRA_CFLAGS="$EXTRA_CFLAGS -D__PSL1GHT__ -DHAVE_MMAP=0"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -I\"$PSL1GHT/include\""
-        #EXTRA_CFLAGS="$EXTRA_CFLAGS -DLACKS_SYS_MMAN_H"
         CheckPSL1GHTVideo
         CheckDummyAudio
         # Set up files for the atomic operations library
@@ -2786,6 +2785,12 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
 			AC_DEFINE(SDL_ATOMIC_LINUX)
 			SOURCES="$SOURCES $srcdir/src/atomic/linux/*.c"
 			have_atomic=yes
+        fi
+        # Set up files for the joystick library
+        if test x$enable_joystick = xyes; then
+            AC_DEFINE(SDL_JOYSTICK_PSL1GHT)
+            SOURCES="$SOURCES $srcdir/src/joystick/psl1ght/*.c"
+            have_joystick=yes
         fi
 		;;
     *-riscos)
