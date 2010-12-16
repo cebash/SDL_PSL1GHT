@@ -32,6 +32,8 @@
 
 #include <io/pad.h>
 
+#define pdprintf(x) printf(x)
+
 #define NAMESIZE 10
 
 typedef struct SDL_PSL1GHT_JoyData
@@ -60,14 +62,17 @@ SDL_SYS_JoystickInit(void)
     SDL_numjoysticks = MAX_PADS;
 	PadInfo padinfo;
 
+	pdprintf("SDL_SYS_JoystickInit\n");
+
 	SDL_zero( joy_data);
 
 	if( iReturn == 0)
 	{
 		iReturn =  ioPadInit( MAX_PADS) ;
+		pdprintf("\tPad initialized\n");
 		if( iReturn != 0)
 		{
-			SDL_SetError("Couldn't initialize PS3 pads");
+			SDL_SetError("SDL_SYS_JoystickInit() : Couldn't initialize PS3 pads");
 		}
 	}
 
@@ -75,9 +80,10 @@ SDL_SYS_JoystickInit(void)
 	if( iReturn == 0)
 	{
 		iReturn = ioPadGetInfo(&padinfo);
+		pdprintf("\tGot info\n");
 		if( iReturn != 0)
 		{
-			SDL_SetError("Couldn't get PS3 pads information ");
+			SDL_SetError("SDL_SYS_JoystickInit() : Couldn't get PS3 pads information ");
 		}
 	}
 
@@ -94,7 +100,7 @@ SDL_SYS_JoystickInit(void)
 			}
 		} 
 	}
-	return iReturn;	
+	return SDL_numjoysticks;	
 }
 
 /* Function to get the device-dependent name of a joystick */
