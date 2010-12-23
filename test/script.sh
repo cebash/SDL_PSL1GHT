@@ -1,18 +1,39 @@
 #!/bin/sh
 
+resources="icon.bmp picture.xbm sail.bmp sample.bmp sample.wav"
 
 prepare() {
-	for source in test*.c
+	#patches 
+	for source in *.c
 	do
-		project=`echo $source | sed -e 's/.c$//'` 
-		echo "preparing $project"
-		mkdir -p $project/source $project/include
-		cp Makefile.psl1ght $project/Makefile
-		cp common.h $project/include
-		cp common.c $project/source
-		cp $source $project/source
+		#patch the source if needed 
+		perl dir_patch.pl $source $resources
+
+		# build a project if it's executable (and not testnative cause it isn't ported)
+		if grep -q main $source && ! echo $source | grep testnative
+		then
+			project=`echo $source | sed -e 's/.c$//'` 
+			echo "Creating project $project"
+			mkdir -p $project/source $project/include $project/data_bin
+			cp Makefile.psl1ght $project/Makefile
+
+			if grep -q common.h $source
+			then
+				echo "\tneeds common.c and icon.bmp"
+				cp common.h $project/include
+				cp common.c $project/source
+				cp icon.bmp $project/data_bin
+			fi
+
+			cp $source $project/source
+
+			#copy resources if needed
+			for res in $resources 
+			do
+				grep -q $res $source && cp -v $res $project/data_bin
+			done
+		fi
 	done 
-	cp picture.xbm testbitmap/include/
 }
 
 build() {
