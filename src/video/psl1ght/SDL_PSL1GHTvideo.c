@@ -60,19 +60,13 @@ static void setupScreenMode(SDL_DisplayData * dispdata);
 static int
 PSL1GHT_Available(void)
 {
-    const char *envr = SDL_getenv("SDL_VIDEODRIVER");
-	printf( "PSL1GHT_Available(void)\n");
-    if ((envr) && (SDL_strcmp(envr, PSL1GHTVID_DRIVER_NAME) == 0)) {
-        return (1);
-    }
-
-    return (0);
+    return (1);
 }
 
 static void
 PSL1GHT_DeleteDevice(SDL_VideoDevice * device)
 {
-	printf( "PSL1GHT_DeleteDevice( %16X)\n", device);
+    printf( "PSL1GHT_DeleteDevice( %16X)\n", device);
     SDL_free(device);
 }
 
@@ -80,16 +74,16 @@ static SDL_VideoDevice *
 PSL1GHT_CreateDevice(int devindex)
 {
     SDL_VideoDevice *device;
-	printf( "PSL1GHT_CreateDevice( %16X)\n", devindex);
+    printf( "PSL1GHT_CreateDevice( %16X)\n", devindex);
 
     /* Initialize all variables that we clean on shutdown */
     device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
     if (device) {
         SDL_memset(device, 0, (sizeof *device));
     }
-	else {
+    else {
         SDL_OutOfMemory();
-		SDL_free(device);
+        SDL_free(device);
         return (0);
     }
 
@@ -112,64 +106,64 @@ VideoBootStrap PSL1GHT_bootstrap = {
 int
 PSL1GHT_VideoInit(_THIS)
 {
-	SDL_DisplayMode mode;
-	SDL_DeviceData *devdata = NULL;
-	SDL_DisplayData *didata = NULL;
+    SDL_DisplayMode mode;
+    SDL_DeviceData *devdata = NULL;
+    SDL_DisplayData *didata = NULL;
 
-	devdata = (SDL_DeviceData*) SDL_calloc(1, sizeof(SDL_DeviceData));
-	if (devdata == NULL) { 
-		/* memory allocation problem */  
-		SDL_OutOfMemory();
-		return -1;
-	} 
+    devdata = (SDL_DeviceData*) SDL_calloc(1, sizeof(SDL_DeviceData));
+    if (devdata == NULL) { 
+        /* memory allocation problem */  
+        SDL_OutOfMemory();
+        return -1;
+    } 
 
-	_this->driverdata = devdata;
+    _this->driverdata = devdata;
 
-	didata = (SDL_DisplayData *) SDL_calloc(1, sizeof(SDL_DisplayData));
-	if (didata == NULL) { 
-		/* memory allocation problem */  
-		SDL_OutOfMemory();
-		return -1;
-	} 
+    didata = (SDL_DisplayData *) SDL_calloc(1, sizeof(SDL_DisplayData));
+    if (didata == NULL) { 
+        /* memory allocation problem */  
+        SDL_OutOfMemory();
+        return -1;
+    } 
 
-	initializeGPU(devdata);
-	setupScreenMode(didata);
+    initializeGPU(devdata);
+    setupScreenMode(didata);
 
-	/* Replace by setScreenMode data  */
-	mode.format = SDL_PIXELFORMAT_RGB888;
-	mode.w = didata->_resolution.width;
-	mode.h = didata->_resolution.height;
-	mode.refresh_rate = 0;
-	mode.driverdata = NULL;
-	if (SDL_AddBasicVideoDisplay(&mode) < 0) {
-		return -1;
-	}
-	SDL_AddRenderDriver(&_this->displays[0], &SDL_PSL1GHT_RenderDriver);
+    /* Replace by setScreenMode data  */
+    mode.format = SDL_PIXELFORMAT_RGB888;
+    mode.w = didata->_resolution.width;
+    mode.h = didata->_resolution.height;
+    mode.refresh_rate = 0;
+    mode.driverdata = NULL;
+    if (SDL_AddBasicVideoDisplay(&mode) < 0) {
+        return -1;
+    }
+    SDL_AddRenderDriver(&_this->displays[0], &SDL_PSL1GHT_RenderDriver);
 
-	SDL_zero(mode);
-	SDL_AddDisplayMode(&_this->displays[0], &mode);
-	_this->displays[0].driverdata = didata;
+    SDL_zero(mode);
+    SDL_AddDisplayMode(&_this->displays[0], &mode);
+    _this->displays[0].driverdata = didata;
 
-	/* We're done! */
-	return 0;
+    /* We're done! */
+    return 0;
 }
 
 static int
 PSL1GHT_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
 {
-	printf( "PSL1GHT_SetDisplayMode( )\n");
+    printf( "PSL1GHT_SetDisplayMode( )\n");
     return 0;
 }
 
 void
 PSL1GHT_VideoQuit(_THIS)
 {
-	printf("PSL1GHT_VideoQuit()\n");
+    printf("PSL1GHT_VideoQuit()\n");
 }
 
 void initializeGPU( SDL_DeviceData * devdata)
 {
-	printf("initializeGPU()\n");
+    printf("initializeGPU()\n");
    // Allocate a 1Mb buffer, alligned to a 1Mb boundary to be our shared IO memory with the RSX.
     void *host_addr = memalign(1024*1024, 1024*1024);
     assert(host_addr != NULL);
@@ -181,7 +175,7 @@ void initializeGPU( SDL_DeviceData * devdata)
 
 void setupScreenMode( SDL_DisplayData * dispdata)
 {
-	printf("setupScreenMode\n");
+    printf("setupScreenMode\n");
     VideoState state;
     assert(videoGetState(0, 0, &state) == 0); // Get the state of the display
     assert(state.state == 0); // Make sure display is enabled
