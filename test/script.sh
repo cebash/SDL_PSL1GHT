@@ -1,6 +1,6 @@
 #!/bin/sh
 
-resources="icon.bmp picture.xbm sail.bmp sample.bmp sample.wav"
+resources="icon.bmp picture.xbm sail.bmp sample.bmp sample.wav utf8.txt"
 
 prepare() {
 	#patches 
