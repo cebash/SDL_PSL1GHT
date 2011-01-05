@@ -25,10 +25,14 @@
 
 /* Output audio to PSL1GHT */
 
+#include "SDL.h"
+
 
 #include "SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "SDL_psl1ghtaudio.h"
+
+#define SHW64(X) (u32)(((u64)X)>>32), (u32)(((u64)X)&0xFFFFFFFF)
 
 #define AUDIO_DEBUG
 
@@ -41,7 +45,7 @@
 static int
 PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 {
-	deprintf( "PSL1GHT_AUD_OpenDevice(%08X, %s, %d)\n", (u32)this, devname, iscapture);
+	deprintf( "PSL1GHT_AUD_OpenDevice(%08X.%08X, %s, %d)\n", SHW64(this), devname, iscapture);
     SDL_AudioFormat test_format = SDL_FirstAudioFormat(this->spec.format);
     int valid_datatype = 0;
 
@@ -57,7 +61,8 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
     while ((!valid_datatype) && (test_format)) {
         this->spec.format = test_format;
         switch (test_format) {
-        case AUDIO_F32LSB: // FIXME maybe the float is MSB ?
+        //case AUDIO_F32LSB: // FIXME maybe the float is MSB ?
+        case AUDIO_F32SYS: // FIXME maybe the float is MSB ?
             valid_datatype = 1;
             break;
         default:
@@ -91,6 +96,18 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 	deprintf("  portSize: %d\n",_config.portSize);
 	deprintf("  audioDataStart: 0x%8X\n",_config.audioDataStart);
 
+	// create an event queue that will tell when a block is read
+	ret=audioCreateNotifyEventQueue( &_snd_queue, &_snd_queue_key);
+	printf("audioCreateNotifyEventQueue: %d\n",ret);
+
+	// Set it to the sprx
+	ret = audioSetNotifyEventQueue(_snd_queue_key);
+	printf("audioSetNotifyEventQueue: %d\n",ret);
+
+	// clears the event queue
+	ret = sys_event_queue_drain(_snd_queue);
+	printf("sys_event_queue_drain: %d\n",ret);
+
 	ret=audioPortStart(_portNum);
 	deprintf("audioPortStart: %d\n",ret);
 
@@ -98,6 +115,7 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 
 	this->spec.format = test_format;
 	this->spec.size = sizeof(float) * AUDIO_BLOCK_SAMPLES * _config.channelCount;
+	this->spec.freq = 48000;
 	this->spec.samples = AUDIO_BLOCK_SAMPLES;
 	this->spec.channels = _config.channelCount;
 
@@ -107,13 +125,14 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 static void
 PSL1GHT_AUD_PlayDevice(_THIS)
 {
-	deprintf( "PSL1GHT_AUD_PlayDevice(%08X)\n", (u32)this);
+	deprintf( "PSL1GHT_AUD_PlayDevice(%08X.%08X)\n", SHW64(this));
 	
+	/*
 	while( _config.readIndex == _last_filled_buf) // FIXME this is a mess to remove when queued event will me integrated
 	{
 		deprintf( "\tplaying too fast... waiting a ms\n");
-		sleep(1);
-	}
+		//sleep(1);
+	}*/
     /*TransferSoundData *sound = SDL_malloc(sizeof(TransferSoundData));
     if (!sound) {
         SDL_OutOfMemory();
@@ -126,13 +145,19 @@ PSL1GHT_AUD_PlayDevice(_THIS)
 static void
 PSL1GHT_AUD_CloseDevice(_THIS)
 {
-	deprintf( "PSL1GHT_AUD_CloseDevice(%08X)\n", (u32)this);
+	deprintf( "PSL1GHT_AUD_CloseDevice(%08X.%08X)\n", SHW64(this));
 	int ret = 0;
-	ret=audioPortStop(this->hidden->portNum);
-
-	ret=audioPortClose(this->hidden->portNum);
-
+	ret=audioPortStop(_portNum);
+	deprintf("audioPortStop: %d\n",ret);
+	ret=audioRemoveNotifyEventQueue(_snd_queue_key);
+	deprintf("audioRemoveNotifyEventQueue: %d\n",ret);
+	ret=audioPortClose(_portNum);
+	deprintf("audioPortClose: %d\n",ret);
+	ret=sys_event_queue_destroy(_snd_queue, 0);
+	deprintf("sys_event_queue_destroy: %d\n",ret);
 	ret=audioQuit();
+	deprintf("audioQuit: %d\n",ret);
+
     SDL_free(this->hidden);
 }
 
@@ -140,13 +165,14 @@ static Uint8 *
 PSL1GHT_AUD_GetDeviceBuf(_THIS)
 {
 	
-	deprintf( "PSL1GHT_AUD_GetDeviceBuf(%08X) at %d ms\n", (u32)this, SDL_GetTicks());
+	//deprintf( "PSL1GHT_AUD_GetDeviceBuf(%08X.%08X) at %d ms\n", SHW64(this), SDL_GetTicks());
 
     //int playing = _config.readIndex;
-    int playing = _config.readIndex;
+    int playing = *((u64*)(u64)_config.readIndex);
     int filling = (playing + 1) % _config.numBlocks;
-	deprintf( "\tWriting to buffer %d\n", filling);
-	Uint8 * dma_buf = (Uint8 *)(void *)_config.audioDataStart;
+	Uint8 * dma_buf = (Uint8 *)(u64)_config.audioDataStart;
+	//deprintf( "\tWriting to buffer %d \n", filling);
+	// deprintf( "\tbuffer address (%08X.%08X => %08X.%08X)\n", SHW64(_config.audioDataStart), SHW64(dma_buf));
 
 	_last_filled_buf = filling;
     return (dma_buf + (filling * this->spec.size));
@@ -157,25 +183,21 @@ static void
 ALSA_WaitDevice(_THIS)
 {
     /* We're in blocking mode, so there's nothing to do here */
-	deprintf( "ALSA_WaitDevice(%08X)\n", (u32)this);
+	//deprintf( "ALSA_WaitDevice(%08X.%08X)\n", SHW64(this));
 	
-	int i = 5; // Wait 5ms max
-	while( _config.readIndex == _last_filled_buf && i != 0)  // FIXME this is a mess to remove when queued event will me integrated
-	{
-		deprintf( "\tplaying too fast... waiting a ms\n");
-		sleep(1);
-		i--;
-	}
+	sys_event_t event;
+	s32 ret = sys_event_queue_receive( _snd_queue, &event, 20 * 1000);
+	//deprintf( "sys_event_queue_receive: %08X\n", ret);
 }
 
 
 	static int
 PSL1GHT_AUD_Init(SDL_AudioDriverImpl * impl)
 {
-	deprintf( "PSL1GHT_AUD_Init(%08X)\n", (u32)impl);
+	deprintf( "PSL1GHT_AUD_Init(%08X.%08X)\n", SHW64(impl));
 	/* Set the function pointers */
 	impl->OpenDevice = PSL1GHT_AUD_OpenDevice;
-	impl->PlayDevice = PSL1GHT_AUD_PlayDevice;
+	//impl->PlayDevice = PSL1GHT_AUD_PlayDevice;
     impl->WaitDevice = ALSA_WaitDevice;
 	impl->CloseDevice = PSL1GHT_AUD_CloseDevice;
 	impl->GetDeviceBuf = PSL1GHT_AUD_GetDeviceBuf;
