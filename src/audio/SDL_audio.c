@@ -70,6 +70,7 @@ extern AudioBootStrap DART_bootstrap;
 extern AudioBootStrap NDSAUD_bootstrap;
 extern AudioBootStrap FUSIONSOUND_bootstrap;
 extern AudioBootStrap ANDROIDAUD_bootstrap;
+extern AudioBootStrap PSL1GHT_AUD_bootstrap;
 
 
 /* Available audio drivers */
@@ -140,6 +141,9 @@ static const AudioBootStrap *const bootstrap[] = {
 #endif
 #if SDL_AUDIO_DRIVER_ANDROID
     &ANDROIDAUD_bootstrap,
+#endif
+#if SDL_AUDIO_DRIVER_PSL1GHT
+    &PSL1GHT_AUD_bootstrap,
 #endif
     NULL
 };
