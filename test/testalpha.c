@@ -1,4 +1,3 @@
-
 /* Simple program:  Fill a colormap with gray and stripe it down the screen,
 		    Then move an alpha valued sprite around the screen.
  */
@@ -344,11 +343,24 @@ main(int argc, char *argv[])
 
 
     /* Initialize SDL */
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
         fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
         return (1);
     }
 
+
+     int nbjoysticks = SDL_NumJoysticks();
+	 printf("Nombres de joysticks attachés: %d\n\n", nbjoysticks);
+
+	 for (i = 0; i < nbjoysticks; i++)
+	 {
+		 SDL_Joystick * joy = SDL_JoystickOpen(i);
+		 printf("Joystick s\n", i, SDL_JoystickName(i));
+		 printf("Axes: %d\n", SDL_JoystickNumAxes(joy));
+		 printf("Boutons: %d\n", SDL_JoystickNumButtons(joy));
+		 printf("Trackballs: %d\n", SDL_JoystickNumBalls(joy));
+		 printf("Chapeaux: %d\n\n", SDL_JoystickNumHats(joy));
+	 }
     /* Alpha blending doesn't work well at 8-bit color */
 #ifdef _WIN32_WCE
     /* Pocket PC */
@@ -361,6 +373,7 @@ main(int argc, char *argv[])
     info = SDL_GetVideoInfo();
     if (info->vfmt->BitsPerPixel > 8) {
         video_bpp = info->vfmt->BitsPerPixel;
+        fprintf(stderr, "forced %d bpp mode\n", video_bpp);
     } else {
         video_bpp = 16;
         fprintf(stderr, "forced 16 bpp mode\n");
@@ -508,6 +521,11 @@ main(int argc, char *argv[])
                     SDL_FillRect(screen, &area,
                                  SDL_MapRGB(screen->format, 0, 0, 0));
                     SDL_UpdateRects(screen, 1, &area);
+                }
+                break;
+            case SDL_JOYBUTTONDOWN:
+                if (event.jbutton.button == 9) { //Cross button
+                    done = 1;
                 }
                 break;
             case SDL_KEYDOWN:

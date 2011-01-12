@@ -161,9 +161,9 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     n = 2;
     printf("\tCreate the %d screen(s):\n", n);
     for (i = 0; i < n; ++i) {
-        printf( "\t\tSDL_CreateRGBSurface()\n");
+        printf( "\t\tSDL_CreateRGBSurface( w: %d, h: %d)\n", displayMode->w, displayMode->h);
         data->screens[i] =
-            SDL_CreateRGBSurface(0, window->w, window->h, bpp, Rmask, Gmask,
+            SDL_CreateRGBSurface(0, displayMode->w, displayMode->h, bpp, Rmask, Gmask,
                                  Bmask, Amask);
         if (!data->screens[i]) {
             printf("ERROR\n");

@@ -37,23 +37,23 @@
 #include "SDL_PSL1GHTvideo.h"
 #include "SDL_PSL1GHTevents_c.h"
 #include "SDL_PSL1GHTrender_c.h"
+#include "SDL_PSL1GHTmodes_c.h"
 
 
 #include <malloc.h>
 #include <assert.h>
 
 #include <rsx/reality.h>
+#include <rsx/gcm.h>
 
 #define PSL1GHTVID_DRIVER_NAME "psl1ght"
 
 /* Initialization/Query functions */
 static int PSL1GHT_VideoInit(_THIS);
-static int PSL1GHT_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
 static void PSL1GHT_VideoQuit(_THIS);
 
 /* PS3GUI init functions : */
 static void initializeGPU(SDL_DeviceData * devdata);
-static void setupScreenMode(SDL_DisplayData * dispdata);
 
 /* PSL1GHT driver bootstrap functions */
 
@@ -91,6 +91,7 @@ PSL1GHT_CreateDevice(int devindex)
     device->VideoInit = PSL1GHT_VideoInit;
     device->VideoQuit = PSL1GHT_VideoQuit;
     device->SetDisplayMode = PSL1GHT_SetDisplayMode;
+    device->GetDisplayModes = PSL1GHT_GetDisplayModes;
     device->PumpEvents = PSL1GHT_PumpEvents;
 
     device->free = PSL1GHT_DeleteDevice;
@@ -108,7 +109,6 @@ PSL1GHT_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
     SDL_DeviceData *devdata = NULL;
-    SDL_DisplayData *didata = NULL;
 
     devdata = (SDL_DeviceData*) SDL_calloc(1, sizeof(SDL_DeviceData));
     if (devdata == NULL) { 
@@ -119,39 +119,15 @@ PSL1GHT_VideoInit(_THIS)
 
     _this->driverdata = devdata;
 
-    didata = (SDL_DisplayData *) SDL_calloc(1, sizeof(SDL_DisplayData));
-    if (didata == NULL) { 
-        /* memory allocation problem */  
-        SDL_OutOfMemory();
-        return -1;
-    } 
-
     initializeGPU(devdata);
-    setupScreenMode(didata);
+    PSL1GHT_InitModes(_this);
 
-    /* Replace by setScreenMode data  */
-    mode.format = SDL_PIXELFORMAT_RGB888;
-    mode.w = didata->_resolution.width;
-    mode.h = didata->_resolution.height;
-    mode.refresh_rate = 0;
-    mode.driverdata = NULL;
-    if (SDL_AddBasicVideoDisplay(&mode) < 0) {
-        return -1;
-    }
     SDL_AddRenderDriver(&_this->displays[0], &SDL_PSL1GHT_RenderDriver);
 
-    SDL_zero(mode);
-    SDL_AddDisplayMode(&_this->displays[0], &mode);
-    _this->displays[0].driverdata = didata;
+
+    gcmSetFlipMode(GCM_FLIP_VSYNC); // Wait for VSYNC to flip
 
     /* We're done! */
-    return 0;
-}
-
-static int
-PSL1GHT_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
-{
-    printf( "PSL1GHT_SetDisplayMode( )\n");
     return 0;
 }
 
@@ -159,6 +135,9 @@ void
 PSL1GHT_VideoQuit(_THIS)
 {
     printf("PSL1GHT_VideoQuit()\n");
+    PSL1GHT_QuitModes(_this);
+    SDL_free( _this->driverdata);
+
 }
 
 void initializeGPU( SDL_DeviceData * devdata)
@@ -172,29 +151,5 @@ void initializeGPU( SDL_DeviceData * devdata)
     devdata->_CommandBuffer = realityInit(0x10000, 1024*1024, host_addr);
     assert(devdata->_CommandBuffer != NULL);
 }
-
-void setupScreenMode( SDL_DisplayData * dispdata)
-{
-    printf("setupScreenMode\n");
-    VideoState state;
-    assert(videoGetState(0, 0, &state) == 0); // Get the state of the display
-    assert(state.state == 0); // Make sure display is enabled
-
-    // Get the current resolution
-    assert(videoGetResolution(state.displayMode.resolution, &dispdata->_resolution) == 0);
-
-    // Configure the buffer format to xRGB
-    VideoConfiguration vconfig;
-    memset(&vconfig, 0, sizeof(VideoConfiguration));
-    vconfig.resolution = state.displayMode.resolution;
-    vconfig.format = VIDEO_BUFFER_FORMAT_XRGB;
-    vconfig.pitch = dispdata->_resolution.width * 4;
-
-    assert(videoConfigure(0, &vconfig, NULL, 0) == 0);
-    assert(videoGetState(0, 0, &state) == 0);
-
-    gcmSetFlipMode(GCM_FLIP_VSYNC); // Wait for VSYNC to flip
-}
-
 
 /* vi: set ts=4 sw=4 expandtab: */
