@@ -29,16 +29,17 @@
 #include "../SDL_sysvideo.h"
 #include "../SDL_pixels_c.h"
 #include "../../events/SDL_events_c.h"
+#include "../../events/SDL_windowevents_c.h"
 
 #include "SDL_androidvideo.h"
 #include "SDL_androidevents.h"
-#include "SDL_androidrender.h"
+#include "SDL_androidkeyboard.h"
+#include "SDL_androidwindow.h"
 
 #define ANDROID_VID_DRIVER_NAME "Android"
 
 /* Initialization/Query functions */
 static int Android_VideoInit(_THIS);
-static int Android_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
 static void Android_VideoQuit(_THIS);
 
 /* GL functions (SDL_androidgl.c) */
@@ -57,11 +58,14 @@ extern void Android_GL_DeleteContext(_THIS, SDL_GLContext context);
 /* Android driver bootstrap functions */
 
 
-//These are filled in with real values in Android_SetScreenResolution on 
-//init (before SDL_Main())
-static int iScreenWidth = 320;
-static int iScreenHeight = 240;
+// These are filled in with real values in Android_SetScreenResolution on 
+// init (before SDL_main())
+int Android_ScreenWidth = 0;
+int Android_ScreenHeight = 0;
+Uint32 Android_ScreenFormat = SDL_PIXELFORMAT_UNKNOWN;
 
+/* Currently only one window */
+SDL_Window *Android_Window = NULL;
 
 static int
 Android_Available(void)
@@ -94,9 +98,12 @@ Android_CreateDevice(int devindex)
     /* Set the function pointers */
     device->VideoInit = Android_VideoInit;
     device->VideoQuit = Android_VideoQuit;
-    device->SetDisplayMode = Android_SetDisplayMode;
     device->PumpEvents = Android_PumpEvents;
-   
+
+    device->CreateWindow = Android_CreateWindow;
+    device->SetWindowTitle = Android_SetWindowTitle;
+    device->DestroyWindow = Android_DestroyWindow;
+
     device->free = Android_DeleteDevice;
 
     /* GL pointers */
@@ -124,29 +131,21 @@ Android_VideoInit(_THIS)
 {
     SDL_DisplayMode mode;
 
-    /* Use a fake 32-bpp desktop mode */
-    mode.format = SDL_PIXELFORMAT_RGB888;
-    mode.w = iScreenWidth;
-    mode.h = iScreenHeight;
+    mode.format = Android_ScreenFormat;
+    mode.w = Android_ScreenWidth;
+    mode.h = Android_ScreenHeight;
     mode.refresh_rate = 0;
     mode.driverdata = NULL;
     if (SDL_AddBasicVideoDisplay(&mode) < 0) {
         return -1;
     }
-    SDL_AddRenderDriver(&_this->displays[0], &Android_RenderDriver);
 
     SDL_zero(mode);
     SDL_AddDisplayMode(&_this->displays[0], &mode);
 
-    Android_InitEvents();
+    Android_InitKeyboard();
 
     /* We're done! */
-    return 0;
-}
-
-static int
-Android_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
-{
     return 0;
 }
 
@@ -155,12 +154,17 @@ Android_VideoQuit(_THIS)
 {
 }
 
+/* This function gets called before VideoInit() */
+void
+Android_SetScreenResolution(int width, int height, Uint32 format)
+{
+    Android_ScreenWidth = width;
+    Android_ScreenHeight = height;   
+    Android_ScreenFormat = format;
 
-void Android_SetScreenResolution(int width, int height){
-    iScreenWidth = width;
-    iScreenHeight = height;   
+    if (Android_Window) {
+        SDL_SendWindowEvent(Android_Window, SDL_WINDOWEVENT_RESIZED, width, height);
+    }
 }
-
-
 
 /* vi: set ts=4 sw=4 expandtab: */

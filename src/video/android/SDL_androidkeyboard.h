@@ -21,8 +21,10 @@
 */
 #include "SDL_config.h"
 
-/* SDL surface based renderer implementation */
+#include "SDL_androidvideo.h"
 
-extern SDL_RenderDriver Android_RenderDriver;
+extern void Android_InitKeyboard();
+extern int Android_OnKeyDown(int keycode);
+extern int Android_OnKeyUp(int keycode);
 
 /* vi: set ts=4 sw=4 expandtab: */

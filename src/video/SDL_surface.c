@@ -595,7 +595,7 @@ SDL_SetClipRect(SDL_Surface * surface, const SDL_Rect * rect)
     /* Set the clipping rectangle */
     if (!rect) {
         surface->clip_rect = full_rect;
-        return 1;
+        return SDL_TRUE;
     }
     return SDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
 }
@@ -640,7 +640,7 @@ SDL_LowerBlit(SDL_Surface * src, SDL_Rect * srcrect,
 
 
 int
-SDL_UpperBlit(SDL_Surface * src, SDL_Rect * srcrect,
+SDL_UpperBlit(SDL_Surface * src, const SDL_Rect * srcrect,
               SDL_Surface * dst, SDL_Rect * dstrect)
 {
     SDL_Rect fulldst;

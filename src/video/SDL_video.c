@@ -700,6 +700,10 @@ SDL_SetDisplayModeForDisplay(SDL_VideoDisplay * display, const SDL_DisplayMode *
     }
 
     /* Actually change the display mode */
+    if (!_this->SetDisplayMode) {
+        SDL_SetError("Video driver doesn't support changing display mode");
+        return -1;
+    }
     if (_this->SetDisplayMode(_this, display, &display_mode) < 0) {
         return -1;
     }
@@ -1052,11 +1056,19 @@ SDL_GetCurrentRenderer(SDL_bool create)
         return NULL;
     }
     if (!SDL_CurrentRenderer) {
+        SDL_Window *window = NULL;
+
         if (!create) {
             SDL_SetError("Use SDL_CreateRenderer() to create a renderer");
             return NULL;
         }
-        if (SDL_CreateRenderer(0, -1, 0) < 0) {
+
+        /* Get the first window on the first display */
+        if (_this->num_displays > 0) {
+            window = _this->displays[0].windows;
+        }
+
+        if (SDL_CreateRenderer(window, -1, 0) < 0) {
             return NULL;
         }
     }
@@ -1733,11 +1745,15 @@ SDL_CreateTextureFromSurface(Uint32 format, SDL_Surface * surface)
                 SDL_PIXELFORMAT_RGB565,
                 SDL_PIXELFORMAT_BGR565,
                 SDL_PIXELFORMAT_ARGB1555,
+                SDL_PIXELFORMAT_RGBA5551,
                 SDL_PIXELFORMAT_ABGR1555,
+                SDL_PIXELFORMAT_BGRA5551,
                 SDL_PIXELFORMAT_RGB555,
                 SDL_PIXELFORMAT_BGR555,
                 SDL_PIXELFORMAT_ARGB4444,
+                SDL_PIXELFORMAT_RGBA4444,
                 SDL_PIXELFORMAT_ABGR4444,
+                SDL_PIXELFORMAT_BGRA4444,
                 SDL_PIXELFORMAT_RGB444,
                 SDL_PIXELFORMAT_ARGB2101010,
                 SDL_PIXELFORMAT_INDEX8,
@@ -1821,9 +1837,13 @@ SDL_CreateTextureFromSurface(Uint32 format, SDL_Surface * surface)
                 SDL_PIXELFORMAT_ABGR8888,
                 SDL_PIXELFORMAT_BGRA8888,
                 SDL_PIXELFORMAT_ARGB1555,
+                SDL_PIXELFORMAT_RGBA5551,
                 SDL_PIXELFORMAT_ABGR1555,
+                SDL_PIXELFORMAT_BGRA5551,
                 SDL_PIXELFORMAT_ARGB4444,
+                SDL_PIXELFORMAT_RGBA4444,
                 SDL_PIXELFORMAT_ABGR4444,
+                SDL_PIXELFORMAT_BGRA4444,
                 SDL_PIXELFORMAT_ARGB2101010,
                 SDL_PIXELFORMAT_UNKNOWN
             };
@@ -1974,8 +1994,13 @@ SDL_CreateTextureFromSurface(Uint32 format, SDL_Surface * surface)
         SDL_GetSurfaceAlphaMod(surface, &a);
         SDL_SetTextureAlphaMod(texture, a);
 
-        SDL_GetSurfaceBlendMode(surface, &blendMode);
-        SDL_SetTextureBlendMode(texture, blendMode);
+        if (surface->map->info.flags & SDL_COPY_COLORKEY) {
+            /* We converted to a texture with alpha format */
+            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        } else {
+            SDL_GetSurfaceBlendMode(surface, &blendMode);
+            SDL_SetTextureBlendMode(texture, blendMode);
+        }
 
         SDL_GetSurfaceScaleMode(surface, &scaleMode);
         SDL_SetTextureScaleMode(texture, scaleMode);

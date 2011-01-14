@@ -112,13 +112,14 @@ SDL_RenderDriver GL_ES_RenderDriver = {
       SDL_TEXTUREMODULATE_ALPHA),
      (SDL_BLENDMODE_NONE | SDL_BLENDMODE_MASK |
       SDL_BLENDMODE_BLEND | SDL_BLENDMODE_ADD | SDL_BLENDMODE_MOD),
-     (SDL_SCALEMODE_NONE | SDL_SCALEMODE_FAST | SDL_SCALEMODE_SLOW), 5,
+     (SDL_SCALEMODE_NONE | SDL_SCALEMODE_FAST | SDL_SCALEMODE_SLOW), 6,
      {
       /* OpenGL ES 1.x supported formats list */
-      SDL_PIXELFORMAT_ABGR4444,
-      SDL_PIXELFORMAT_ABGR1555,
-      SDL_PIXELFORMAT_BGR565,
-      SDL_PIXELFORMAT_BGR24,
+      SDL_PIXELFORMAT_RGBA4444,
+      SDL_PIXELFORMAT_RGBA5551,
+      SDL_PIXELFORMAT_RGB565,
+      SDL_PIXELFORMAT_RGB24,
+      SDL_PIXELFORMAT_BGR888,
       SDL_PIXELFORMAT_ABGR8888},
      0,
      0}
@@ -380,33 +381,35 @@ GLES_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
     GLenum result;
 
     switch (texture->format) {
-    case SDL_PIXELFORMAT_BGR24:
+    case SDL_PIXELFORMAT_RGB24:
         internalFormat = GL_RGB;
         format = GL_RGB;
         type = GL_UNSIGNED_BYTE;
         break;
+    case SDL_PIXELFORMAT_BGR888:
     case SDL_PIXELFORMAT_ABGR8888:
         internalFormat = GL_RGBA;
         format = GL_RGBA;
         type = GL_UNSIGNED_BYTE;
         break;
-    case SDL_PIXELFORMAT_BGR565:
+    case SDL_PIXELFORMAT_RGB565:
         internalFormat = GL_RGB;
         format = GL_RGB;
         type = GL_UNSIGNED_SHORT_5_6_5;
         break;
-    case SDL_PIXELFORMAT_ABGR1555:
+    case SDL_PIXELFORMAT_RGBA5551:
         internalFormat = GL_RGBA;
         format = GL_RGBA;
         type = GL_UNSIGNED_SHORT_5_5_5_1;
         break;
-    case SDL_PIXELFORMAT_ABGR4444:
+    case SDL_PIXELFORMAT_RGBA4444:
         internalFormat = GL_RGBA;
         format = GL_RGBA;
         type = GL_UNSIGNED_SHORT_4_4_4_4;
         break;
     default:
-        SDL_SetError("Unsupported by OpenGL ES texture format");
+        SDL_SetError("Texture format %s not supported by OpenGL ES",
+                     SDL_GetPixelFormatName(texture->format));
         return -1;
     }
 
