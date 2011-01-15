@@ -3,9 +3,9 @@
 
 #newlib doesn't define endian.h that is needed by SDL
 
-if [ ! -f $PS3DEV/ppu/ppu/include/endian.h ]
+if [ ! -f $PS3DEV/host/ppu/ppu/include/endian.h ]
 then
-	cat > $PS3DEV/ppu/ppu/include/endian.h << EOF
+	cat > $PS3DEV/host/ppu/ppu/include/endian.h << EOF
 #ifndef	_ENDIAN_H
 #define	_ENDIAN_H
 
@@ -30,8 +30,8 @@ fi
 
 ## Configure the build.
 AR="ppu-ar" CC="ppu-gcc" CFLAGS="-O2 -Wall" RANLIB="ppu-ranlib" ./configure \
-	--prefix="$PS3DEV/ppu" --host=ppu-psl1ght \
-	--includedir=$PSL1GHT/include --libdir=$PSL1GHT/lib \
+	--prefix="$PS3DEV/host/ppu" --host=ppu-psl1ght \
+	--includedir="$PSL1GHT/targer/include" --libdir="$PSL1GHT/lib" \
 	--enable-atomic=yes --enable-video-psl1ght=yes --enable-joystick=yes --enable-audio=yes\
 	|| { exit 1; }
 

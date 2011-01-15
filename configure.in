@@ -2777,7 +2777,7 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
     *-psl1ght)
         ARCH=psl1ght
         EXTRA_CFLAGS="$EXTRA_CFLAGS -D__PSL1GHT__ -DHAVE_POW -DHAVE_MMAP=0 -DDEBUG_ERROR"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -I\"$PSL1GHT/include\" -g -O0 "
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -I\"$PSL1GHT/target/include\" -g -O0 "
 		EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lreality -lgcm_sys -lsysutil -lc -llv2 -lc-glue-ppu -lpsl1ght"
         CheckPSL1GHTVideo
         #CheckDummyAudio
