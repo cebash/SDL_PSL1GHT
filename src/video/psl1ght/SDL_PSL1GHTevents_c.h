@@ -24,5 +24,7 @@
 #include "SDL_PSL1GHTvideo.h"
 
 extern void PSL1GHT_PumpEvents(_THIS);
+extern void PSL1GHT_InitSysEvent(_THIS);
+extern void PSL1GHT_QuitSysEvent(_THIS);
 
 /* vi: set ts=4 sw=4 expandtab: */
