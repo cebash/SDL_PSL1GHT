@@ -1560,6 +1560,20 @@ AC_HELP_STRING([--enable-fusionsound-shared], [dynamically load fusionsound audi
     fi
 }
 
+
+dnl Set up the Null video driver.
+CheckPSL1GHTVideo()
+{
+    AC_ARG_ENABLE(video-psl1ght,
+AC_HELP_STRING([--enable-video-psl1ght], [use PSL1GHT video driver [[default=yes]]]),
+                  , enable_video_psl1ght=yes)
+    if test x$enable_video_psl1ght = xyes; then
+        AC_DEFINE(SDL_VIDEO_DRIVER_PSL1GHT)
+        SOURCES="$SOURCES $srcdir/src/video/psl1ght/*.c"
+        have_video=yes
+    fi
+}
+
 dnl rcg04172001 Set up the Null video driver.
 CheckDummyVideo()
 {
@@ -2684,11 +2698,11 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
             have_threads=yes
         fi
         # Set up files for the atomic operations library
-        if test x$enable_atomic = xyes; then
-			AC_DEFINE(SDL_ATOMIC_LINUX)
-			SOURCES="$SOURCES $srcdir/src/atomic/linux/*.c"
-			have_atomic=yes
-        fi
+        #if test x$enable_atomic = xyes; then
+		#	AC_DEFINE(SDL_ATOMIC_LINUX)
+		#	SOURCES="$SOURCES $srcdir/src/atomic/linux/*.c"
+		#	have_atomic=yes
+        #fi
         # Set up files for the joystick library
         if test x$enable_joystick = xyes; then
             AC_DEFINE(SDL_JOYSTICK_PSL1GHT)
@@ -2698,8 +2712,8 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         fi
         # Set up files for the timer library
         if test x$enable_timers = xyes; then
-            AC_DEFINE(SDL_TIMER_PSL1GHT)
-            SOURCES="$SOURCES $srcdir/src/timer/psl1ght/*.c"
+            #AC_DEFINE(SDL_TIMER_PSL1GHT)
+            #SOURCES="$SOURCES $srcdir/src/timer/psl1ght/*.c"
             have_timers=yes
         fi
         # Set up files for the audio library
