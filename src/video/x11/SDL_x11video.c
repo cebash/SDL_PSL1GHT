@@ -29,7 +29,6 @@
 #include "../SDL_pixels_c.h"
 
 #include "SDL_x11video.h"
-#include "SDL_x11render.h"
 #include "SDL_x11shape.h"
 #include "SDL_x11touch.h" 
 
@@ -349,10 +348,6 @@ X11_VideoInit(_THIS)
     if (X11_InitModes(_this) < 0) {
         return -1;
     }
-
-#if SDL_VIDEO_RENDER_X11
-    X11_AddRenderDriver(_this);
-#endif
 
     if (X11_InitKeyboard(_this) != 0) {
         return -1;

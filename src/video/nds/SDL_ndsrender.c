@@ -43,21 +43,6 @@ static int NDS_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture);
 static int NDS_QueryTexturePixels(SDL_Renderer * renderer,
                                   SDL_Texture * texture, void **pixels,
                                   int *pitch);
-static int NDS_SetTexturePalette(SDL_Renderer * renderer,
-                                 SDL_Texture * texture,
-                                 const SDL_Color * colors, int firstcolor,
-                                 int ncolors);
-static int NDS_GetTexturePalette(SDL_Renderer * renderer,
-                                 SDL_Texture * texture, SDL_Color * colors,
-                                 int firstcolor, int ncolors);
-static int NDS_SetTextureColorMod(SDL_Renderer * renderer,
-                                  SDL_Texture * texture);
-static int NDS_SetTextureAlphaMod(SDL_Renderer * renderer,
-                                  SDL_Texture * texture);
-static int NDS_SetTextureBlendMode(SDL_Renderer * renderer,
-                                   SDL_Texture * texture);
-static int NDS_SetTextureScaleMode(SDL_Renderer * renderer,
-                                   SDL_Texture * texture);
 static int NDS_UpdateTexture(SDL_Renderer * renderer, SDL_Texture * texture,
                              const SDL_Rect * rect, const void *pixels,
                              int pitch);
@@ -79,13 +64,9 @@ static void NDS_DestroyRenderer(SDL_Renderer * renderer);
 SDL_RenderDriver NDS_RenderDriver = {
     NDS_CreateRenderer,
     {"nds",                     /* char* name */
-     (SDL_RENDERER_SINGLEBUFFER | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTDISCARD | SDL_RENDERER_PRESENTVSYNC),  /* u32 flags */
-     (SDL_TEXTUREMODULATE_NONE),        /* u32 mod_modes */
-     (SDL_BLENDMODE_MASK),      /* u32 blend_modes */
-     (SDL_SCALEMODE_FAST),       /* u32 scale_modes */
-     3,                         /* u32 num_texture_formats */
+     (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC),  /* u32 flags */
+     2,                         /* u32 num_texture_formats */
      {
-      SDL_PIXELFORMAT_INDEX8,
       SDL_PIXELFORMAT_ABGR1555,
       SDL_PIXELFORMAT_BGR555,
       },                        /* u32 texture_formats[20] */
@@ -140,7 +121,6 @@ NDS_CreateRenderer(SDL_Window * window, Uint32 flags)
         return NULL;
     }
     switch (displayMode->format) {
-    case SDL_PIXELFORMAT_INDEX8:
     case SDL_PIXELFORMAT_ABGR1555:
     case SDL_PIXELFORMAT_BGR555:
         /* okay */
@@ -179,20 +159,11 @@ NDS_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->driverdata = data;
     renderer->CreateTexture = NDS_CreateTexture;
     renderer->QueryTexturePixels = NDS_QueryTexturePixels;
-    renderer->SetTexturePalette = NDS_SetTexturePalette;
-    renderer->GetTexturePalette = NDS_GetTexturePalette;
-    renderer->SetTextureColorMod = NDS_SetTextureColorMod;
-    renderer->SetTextureAlphaMod = NDS_SetTextureAlphaMod;
-    renderer->SetTextureBlendMode = NDS_SetTextureBlendMode;
-    renderer->SetTextureScaleMode = NDS_SetTextureScaleMode;
     renderer->UpdateTexture = NDS_UpdateTexture;
     renderer->LockTexture = NDS_LockTexture;
     renderer->UnlockTexture = NDS_UnlockTexture;
     renderer->DestroyTexture = NDS_DestroyTexture;
 
-    renderer->info.mod_modes = NDS_RenderDriver.info.mod_modes;
-    renderer->info.blend_modes = NDS_RenderDriver.info.blend_modes;
-    renderer->info.scale_modes = NDS_RenderDriver.info.scale_modes;
     renderer->info.num_texture_formats =
         NDS_RenderDriver.info.num_texture_formats;
     SDL_memcpy(renderer->info.texture_formats,
@@ -545,54 +516,6 @@ NDS_DestroyRenderer(SDL_Renderer * renderer)
         SDL_free(data);
     }
     SDL_free(renderer);
-}
-
-static int
-NDS_SetTexturePalette(SDL_Renderer * renderer, SDL_Texture * texture,
-                      const SDL_Color * colors, int firstcolor, int ncolors)
-{
-    NDS_TextureData *txdat = (NDS_TextureData *) texture->driverdata;
-    /* set 8-bit modes in the background control registers
-       for backgrounds, BGn_CR |= BG_256_COLOR */
-
-    return 0;
-}
-
-static int
-NDS_GetTexturePalette(SDL_Renderer * renderer, SDL_Texture * texture,
-                      SDL_Color * colors, int firstcolor, int ncolors)
-{
-    NDS_TextureData *txdat = (NDS_TextureData *) texture->driverdata;
-    /* stub! */
-    return 0;
-}
-
-static int
-NDS_SetTextureColorMod(SDL_Renderer * renderer, SDL_Texture * texture)
-{
-    /* stub! */
-    return 0;
-}
-
-static int
-NDS_SetTextureAlphaMod(SDL_Renderer * renderer, SDL_Texture * texture)
-{
-    /* stub! */
-    return 0;
-}
-
-static int
-NDS_SetTextureBlendMode(SDL_Renderer * renderer, SDL_Texture * texture)
-{
-    /* stub! */
-    return 0;
-}
-
-static int
-NDS_SetTextureScaleMode(SDL_Renderer * renderer, SDL_Texture * texture)
-{
-    /* stub! (note: NDS hardware scaling is nearest neighbor.) */
-    return 0;
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

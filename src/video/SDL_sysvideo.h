@@ -24,116 +24,14 @@
 #ifndef _SDL_sysvideo_h
 #define _SDL_sysvideo_h
 
-#include "SDL_mouse.h"
-#include "SDL_keysym.h"
 #include "SDL_shape.h"
 
 /* The SDL video driver */
 
-typedef struct SDL_Renderer SDL_Renderer;
-typedef struct SDL_RenderDriver SDL_RenderDriver;
 typedef struct SDL_WindowShaper SDL_WindowShaper;
 typedef struct SDL_ShapeDriver SDL_ShapeDriver;
 typedef struct SDL_VideoDisplay SDL_VideoDisplay;
 typedef struct SDL_VideoDevice SDL_VideoDevice;
-
-/* Define the SDL texture structure */
-struct SDL_Texture
-{
-    const void *magic;
-    Uint32 format;              /**< The pixel format of the texture */
-    int access;                 /**< SDL_TextureAccess */
-    int w;                      /**< The width of the texture */
-    int h;                      /**< The height of the texture */
-    int modMode;                /**< The texture modulation mode */
-    SDL_BlendMode blendMode;    /**< The texture blend mode */
-    SDL_ScaleMode scaleMode;    /**< The texture scale mode */
-    Uint8 r, g, b, a;           /**< Texture modulation values */
-
-    SDL_Renderer *renderer;
-
-    void *driverdata;           /**< Driver specific texture representation */
-
-    SDL_Texture *prev;
-    SDL_Texture *next;
-};
-
-/* Define the SDL renderer structure */
-struct SDL_Renderer
-{
-    int (*ActivateRenderer) (SDL_Renderer * renderer);
-    int (*DisplayModeChanged) (SDL_Renderer * renderer);
-    int (*CreateTexture) (SDL_Renderer * renderer, SDL_Texture * texture);
-    int (*QueryTexturePixels) (SDL_Renderer * renderer, SDL_Texture * texture,
-                               void **pixels, int *pitch);
-    int (*SetTexturePalette) (SDL_Renderer * renderer, SDL_Texture * texture,
-                              const SDL_Color * colors, int firstcolor,
-                              int ncolors);
-    int (*GetTexturePalette) (SDL_Renderer * renderer, SDL_Texture * texture,
-                              SDL_Color * colors, int firstcolor,
-                              int ncolors);
-    int (*SetTextureColorMod) (SDL_Renderer * renderer,
-                               SDL_Texture * texture);
-    int (*SetTextureAlphaMod) (SDL_Renderer * renderer,
-                               SDL_Texture * texture);
-    int (*SetTextureBlendMode) (SDL_Renderer * renderer,
-                                SDL_Texture * texture);
-    int (*SetTextureScaleMode) (SDL_Renderer * renderer,
-                                SDL_Texture * texture);
-    int (*UpdateTexture) (SDL_Renderer * renderer, SDL_Texture * texture,
-                          const SDL_Rect * rect, const void *pixels,
-                          int pitch);
-    int (*LockTexture) (SDL_Renderer * renderer, SDL_Texture * texture,
-                        const SDL_Rect * rect, int markDirty, void **pixels,
-                        int *pitch);
-    void (*UnlockTexture) (SDL_Renderer * renderer, SDL_Texture * texture);
-    void (*DirtyTexture) (SDL_Renderer * renderer, SDL_Texture * texture,
-                          int numrects, const SDL_Rect * rects);
-    int (*SetDrawColor) (SDL_Renderer * renderer);
-    int (*SetDrawBlendMode) (SDL_Renderer * renderer);
-    int (*RenderClear) (SDL_Renderer * renderer);
-    int (*RenderDrawPoints) (SDL_Renderer * renderer, const SDL_Point * points,
-                             int count);
-    int (*RenderDrawLines) (SDL_Renderer * renderer, const SDL_Point * points,
-                            int count);
-    int (*RenderDrawRects) (SDL_Renderer * renderer, const SDL_Rect ** rects,
-                            int count);
-    int (*RenderFillRects) (SDL_Renderer * renderer, const SDL_Rect ** rects,
-                            int count);
-    int (*RenderCopy) (SDL_Renderer * renderer, SDL_Texture * texture,
-                       const SDL_Rect * srcrect, const SDL_Rect * dstrect);
-    int (*RenderReadPixels) (SDL_Renderer * renderer, const SDL_Rect * rect,
-                             Uint32 format, void * pixels, int pitch);
-    int (*RenderWritePixels) (SDL_Renderer * renderer, const SDL_Rect * rect,
-                              Uint32 format, const void * pixels, int pitch);
-    void (*RenderPresent) (SDL_Renderer * renderer);
-    void (*DestroyTexture) (SDL_Renderer * renderer, SDL_Texture * texture);
-
-    void (*DestroyRenderer) (SDL_Renderer * renderer);
-
-    /* The current renderer info */
-    SDL_RendererInfo info;
-
-    /* The window associated with the renderer */
-    SDL_Window *window;
-
-    /* The list of textures */
-    SDL_Texture *textures;
-
-    Uint8 r, g, b, a;                   /**< Color for drawing operations values */
-    SDL_BlendMode blendMode;            /**< The drawing blend mode */
-
-    void *driverdata;
-};
-
-/* Define the SDL render driver structure */
-struct SDL_RenderDriver
-{
-    SDL_Renderer *(*CreateRenderer) (SDL_Window * window, Uint32 flags);
-
-    /* Info about the renderer capabilities */
-    SDL_RendererInfo info;
-};
 
 /* Define the SDL window-shaper structure */
 struct SDL_WindowShaper
@@ -161,6 +59,13 @@ struct SDL_ShapeDriver
     int (*ResizeWindowShape)(SDL_Window *window);
 };
 
+typedef struct SDL_WindowUserData
+{
+    char *name;
+    void *data;
+    struct SDL_WindowUserData *next;
+} SDL_WindowUserData;
+
 /* Define the SDL window structure, corresponding to toplevel windows */
 struct SDL_Window
 {
@@ -172,13 +77,16 @@ struct SDL_Window
     Uint32 flags;
 
     SDL_VideoDisplay *display;
-    SDL_Renderer *renderer;
 
     SDL_DisplayMode fullscreen_mode;
     
+    SDL_Surface *surface;
+    SDL_bool surface_valid;
+
     SDL_WindowShaper *shaper;
 
-    void *userdata;
+    SDL_WindowUserData *data;
+
     void *driverdata;
 
     SDL_Window *prev;
@@ -201,18 +109,12 @@ struct SDL_VideoDisplay
     SDL_DisplayMode desktop_mode;
     SDL_DisplayMode current_mode;
     SDL_bool updating_fullscreen;
-    SDL_Palette *palette;
 
     Uint16 *gamma;
     Uint16 *saved_gamma;        /* (just offset into gamma) */
 
-    int num_render_drivers;
-    SDL_RenderDriver *render_drivers;
-
     SDL_Window *windows;
     SDL_Window *fullscreen_window;
-
-    SDL_Renderer *current_renderer;
 
     SDL_VideoDevice *device;
 
@@ -267,12 +169,6 @@ struct SDL_VideoDevice
      */
     int (*SetDisplayMode) (_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
 
-    /* Set the color entries of the display palette */
-    int (*SetDisplayPalette) (_THIS, SDL_VideoDisplay * display, SDL_Palette * palette);
-
-    /* Get the color entries of the display palette */
-    int (*GetDisplayPalette) (_THIS, SDL_VideoDisplay * display, SDL_Palette * palette);
-
     /* Set the gamma ramp */
     int (*SetDisplayGammaRamp) (_THIS, SDL_VideoDisplay * display, Uint16 * ramp);
 
@@ -297,7 +193,10 @@ struct SDL_VideoDevice
     void (*RestoreWindow) (_THIS, SDL_Window * window);
     void (*SetWindowGrab) (_THIS, SDL_Window * window);
     void (*DestroyWindow) (_THIS, SDL_Window * window);
-    
+    int (*CreateWindowFramebuffer) (_THIS, SDL_Window * window, Uint32 * format, void ** pixels, int *pitch);
+    int (*UpdateWindowFramebuffer) (_THIS, SDL_Window * window, int numrects, SDL_Rect * rects);
+    void (*DestroyWindowFramebuffer) (_THIS, SDL_Window * window);
+
     /* * * */
     /*
      * Shaped-window functions
@@ -348,7 +247,6 @@ struct SDL_VideoDevice
     SDL_VideoDisplay *displays;
     int current_display;
     Uint8 window_magic;
-    Uint8 texture_magic;
     Uint32 next_object_id;
     char * clipboard_text;
 
@@ -417,36 +315,26 @@ extern VideoBootStrap WINDOWS_bootstrap;
 #if SDL_VIDEO_DRIVER_BWINDOW
 extern VideoBootStrap BWINDOW_bootstrap;
 #endif
-#if SDL_VIDEO_DRIVER_PHOTON
-extern VideoBootStrap photon_bootstrap;
-#endif
-#if SDL_VIDEO_DRIVER_QNXGF
-extern VideoBootStrap qnxgf_bootstrap;
-#endif
-#if SDL_VIDEO_DRIVER_EPOC
-extern VideoBootStrap EPOC_bootstrap;
-#endif
-#if SDL_VIDEO_DRIVER_UIKIT
-extern VideoBootStrap UIKIT_bootstrap;
-#endif
-#if SDL_VIDEO_DRIVER_DUMMY
-extern VideoBootStrap DUMMY_bootstrap;
+#if SDL_VIDEO_DRIVER_PANDORA
+extern VideoBootStrap PND_bootstrap;
 #endif
 #if SDL_VIDEO_DRIVER_NDS
 extern VideoBootStrap NDS_bootstrap;
 #endif
-#if SDL_VIDEO_DRIVER_PANDORA
-extern VideoBootStrap PND_bootstrap;
+#if SDL_VIDEO_DRIVER_UIKIT
+extern VideoBootStrap UIKIT_bootstrap;
 #endif
 #if SDL_VIDEO_DRIVER_ANDROID
 extern VideoBootStrap Android_bootstrap;
+#endif
+#if SDL_VIDEO_DRIVER_DUMMY
+extern VideoBootStrap DUMMY_bootstrap;
 #endif
 #if SDL_VIDEO_DRIVER_PSL1GHT
 extern VideoBootStrap PSL1GHT_bootstrap;
 #endif
 
 #define SDL_CurrentDisplay	(&_this->displays[_this->current_display])
-#define SDL_CurrentRenderer	(SDL_CurrentDisplay->current_renderer)
 
 extern SDL_VideoDevice *SDL_GetVideoDevice(void);
 extern int SDL_AddBasicVideoDisplay(const SDL_DisplayMode * desktop_mode);
@@ -458,11 +346,8 @@ extern int SDL_GetDesktopDisplayModeForDisplay(SDL_VideoDisplay * display, SDL_D
 extern int SDL_GetCurrentDisplayModeForDisplay(SDL_VideoDisplay * display, SDL_DisplayMode * mode);
 extern SDL_DisplayMode * SDL_GetClosestDisplayModeForDisplay(SDL_VideoDisplay * display, const SDL_DisplayMode * mode, SDL_DisplayMode * closest);
 extern int SDL_SetDisplayModeForDisplay(SDL_VideoDisplay * display, const SDL_DisplayMode * mode);
-extern int SDL_SetPaletteForDisplay(SDL_VideoDisplay * display, const SDL_Color * colors, int firstcolor, int ncolors);
-extern int SDL_GetPaletteForDisplay(SDL_VideoDisplay * display, SDL_Color * colors, int firstcolor, int ncolors);
 extern int SDL_SetGammaRampForDisplay(SDL_VideoDisplay * display, const Uint16 * red, const Uint16 * green, const Uint16 * blue);
 extern int SDL_GetGammaRampForDisplay(SDL_VideoDisplay * display, Uint16 * red, Uint16 * green, Uint16 * blue);
-extern void SDL_AddRenderDriver(SDL_VideoDisplay *display, const SDL_RenderDriver * driver);
 
 extern int SDL_RecreateWindow(SDL_Window * window, Uint32 flags);
 

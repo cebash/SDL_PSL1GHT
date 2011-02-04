@@ -30,7 +30,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Making sure basic SDL headers are in place..."
-				CommandLine="echo Copying SDL_config_windows.h to SDL_config.h...&#x0D;&#x0A;copy /Y &quot;$(ProjectDir)\..\..\include\SDL_config_windows.h&quot; &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot; goto SDLREVISIONOKAY&#x0D;&#x0A;echo Creating stub SDL_revision.h file...&#x0D;&#x0A;echo #define SDL_REVISION &quot;hg-0:baadfood&quot; &gt;&quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot;&#x0D;&#x0A;:SDLREVISIONOKAY&#x0D;&#x0A;"
+				CommandLine="echo Copying SDL_config_windows.h to SDL_config.h...&#x0D;&#x0A;xcopy /d /q /y &quot;$(ProjectDir)\..\..\include\SDL_config_windows.h&quot; &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot; goto SDLREVISIONOKAY&#x0D;&#x0A;echo Creating stub SDL_revision.h file...&#x0D;&#x0A;echo #define SDL_REVISION &quot;hg-0:baadf00d&quot; &gt;&quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot;&#x0D;&#x0A;:SDLREVISIONOKAY&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -201,7 +201,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Making sure basic SDL headers are in place..."
-				CommandLine="echo Copying SDL_config_windows.h to SDL_config.h...&#x0D;&#x0A;copy /Y &quot;$(ProjectDir)\..\..\include\SDL_config_windows.h&quot; &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot; goto SDLREVISIONOKAY&#x0D;&#x0A;echo Creating stub SDL_revision.h file...&#x0D;&#x0A;echo #define SDL_REVISION &quot;hg-0:baadfood&quot; &gt;&quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot;&#x0D;&#x0A;:SDLREVISIONOKAY&#x0D;&#x0A;"
+				CommandLine="echo Copying SDL_config_windows.h to SDL_config.h...&#x0D;&#x0A;xcopy /d /q /y &quot;$(ProjectDir)\..\..\include\SDL_config_windows.h&quot; &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot; goto SDLREVISIONOKAY&#x0D;&#x0A;echo Creating stub SDL_revision.h file...&#x0D;&#x0A;echo #define SDL_REVISION &quot;hg-0:baadf00d&quot; &gt;&quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot;&#x0D;&#x0A;:SDLREVISIONOKAY&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -386,6 +386,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\SDL_blendmode.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\SDL_clipboard.h"
 				>
 			</File>
@@ -422,7 +426,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\SDL_gesture.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\SDL_haptic.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SDL_input.h"
 				>
 			</File>
 			<File
@@ -486,6 +498,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\SDL_render.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\SDL_revision.h"
 				>
 			</File>
@@ -495,6 +511,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\SDL_scancode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SDL_shape.h"
 				>
 			</File>
 			<File
@@ -515,6 +535,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\SDL_timer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\SDL_touch.h"
 				>
 			</File>
 			<File
@@ -583,7 +607,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\mmx.h"
+			RelativePath="..\..\src\render\mmx.h"
 			>
 		</File>
 		<File
@@ -616,14 +640,6 @@
 		</File>
 		<File
 			RelativePath="..\..\src\SDL.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\video\SDL_alphamult.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\video\SDL_alphamult.h"
 			>
 		</File>
 		<File
@@ -663,19 +679,27 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_blendfillrect.c"
+			RelativePath="..\..\src\render\software\SDL_blendfillrect.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_blendline.c"
+			RelativePath="..\..\src\render\software\SDL_blendfillrect.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_blendpoint.c"
+			RelativePath="..\..\src\render\software\SDL_blendline.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_blendrect.c"
+			RelativePath="..\..\src\render\software\SDL_blendline.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\render\software\SDL_blendpoint.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\render\software\SDL_blendpoint.h"
 			>
 		</File>
 		<File
@@ -751,11 +775,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\windows\SDL_d3drender.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\video\windows\SDL_d3drender.h"
+			RelativePath="..\..\src\render\direct3d\SDL_d3drender.c"
 			>
 		</File>
 		<File
@@ -775,19 +795,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\render\software\SDL_draw.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\video\SDL_draw.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_drawline.c"
+			RelativePath="..\..\src\render\software\SDL_drawline.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_drawpoint.c"
+			RelativePath="..\..\src\render\software\SDL_drawline.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_drawrect.c"
+			RelativePath="..\..\src\render\software\SDL_drawpoint.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\render\software\SDL_drawpoint.h"
 			>
 		</File>
 		<File
@@ -840,14 +868,6 @@
 		</File>
 		<File
 			RelativePath="..\..\src\video\SDL_gamma.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\video\windows\SDL_gdirender.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\video\windows\SDL_gdirender.h"
 			>
 		</File>
 		<File
@@ -951,11 +971,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\dummy\SDL_nullrender.c"
+			RelativePath="..\..\src\video\dummy\SDL_nullframebuffer.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\dummy\SDL_nullrender_c.h"
+			RelativePath="..\..\src\video\dummy\SDL_nullframebuffer_c.h"
 			>
 		</File>
 		<File
@@ -995,19 +1015,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_renderer_gl.c"
+			RelativePath="..\..\src\render\SDL_render.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_renderer_gl.h"
+			RelativePath="..\..\src\render\opengl\SDL_renderer_gl.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_renderer_sw.c"
+			RelativePath="..\..\src\render\software\SDL_renderer_sw.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_renderer_sw.h"
+			RelativePath="..\..\src\render\software\SDL_renderer_sw_c.h"
 			>
 		</File>
 		<File
@@ -1080,6 +1100,10 @@
 		</File>
 		<File
 			RelativePath="..\..\src\power\windows\SDL_syspower.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\render\SDL_sysrender.h"
 			>
 		</File>
 		<File
@@ -1247,15 +1271,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_yuv_mmx.c"
+			RelativePath="..\..\src\render\SDL_yuv_mmx.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_yuv_sw.c"
+			RelativePath="..\..\src\render\SDL_yuv_sw.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\video\SDL_yuv_sw_c.h"
+			RelativePath="..\..\src\render\SDL_yuv_sw_c.h"
 			>
 		</File>
 		<File

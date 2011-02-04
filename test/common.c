@@ -6,7 +6,7 @@
 #include "common.h"
 
 #define VIDEO_USAGE \
-"[--video driver] [--renderer driver] [--info all|video|modes|render|event] [--display N] [--fullscreen | --windows N] [--title title] [--icon icon.bmp] [--center | --position X,Y] [--geometry WxH] [--depth N] [--refresh R] [--vsync] [--noframe] [--resize] [--minimize] [--maximize] [--grab] [--double] [--triple]"
+"[--video driver] [--renderer driver] [--info all|video|modes|render|event] [--display N] [--fullscreen | --windows N] [--title title] [--icon icon.bmp] [--center | --position X,Y] [--geometry WxH] [--depth N] [--refresh R] [--vsync] [--noframe] [--resize] [--minimize] [--maximize] [--grab]"
 
 #define AUDIO_USAGE \
 "[--rate N] [--format U8|S8|U16|U16LE|U16BE|S16|S16LE|S16BE] [--channels N] [--samples N]"
@@ -211,14 +211,6 @@ CommonArg(CommonState * state, int index)
         state->render_flags |= SDL_RENDERER_PRESENTVSYNC;
         return 1;
     }
-    if (SDL_strcasecmp(argv[index], "--double") == 0) {
-        state->render_flags |= SDL_RENDERER_PRESENTFLIP2;
-        return 1;
-    }
-    if (SDL_strcasecmp(argv[index], "--triple") == 0) {
-        state->render_flags |= SDL_RENDERER_PRESENTFLIP3;
-        return 1;
-    }
     if (SDL_strcasecmp(argv[index], "--noframe") == 0) {
         state->window_flags |= SDL_WINDOW_BORDERLESS;
         return 1;
@@ -329,73 +321,11 @@ static void
 PrintRendererFlag(Uint32 flag)
 {
     switch (flag) {
-    case SDL_RENDERER_SINGLEBUFFER:
-        fprintf(stderr, "SingleBuffer");
-        break;
-    case SDL_RENDERER_PRESENTCOPY:
-        fprintf(stderr, "PresentCopy");
-        break;
-    case SDL_RENDERER_PRESENTFLIP2:
-        fprintf(stderr, "PresentFlip2");
-        break;
-    case SDL_RENDERER_PRESENTFLIP3:
-        fprintf(stderr, "PresentFlip3");
-        break;
-    case SDL_RENDERER_PRESENTDISCARD:
-        fprintf(stderr, "PresentDiscard");
-        break;
     case SDL_RENDERER_PRESENTVSYNC:
         fprintf(stderr, "PresentVSync");
         break;
     case SDL_RENDERER_ACCELERATED:
         fprintf(stderr, "Accelerated");
-        break;
-    default:
-        fprintf(stderr, "0x%8.8x", flag);
-        break;
-    }
-}
-
-static void
-PrintBlendMode(Uint32 flag)
-{
-    switch (flag) {
-    case SDL_BLENDMODE_NONE:
-        fprintf(stderr, "None");
-        break;
-    case SDL_BLENDMODE_MASK:
-        fprintf(stderr, "Mask");
-        break;
-    case SDL_BLENDMODE_BLEND:
-        fprintf(stderr, "Blend");
-        break;
-    case SDL_BLENDMODE_ADD:
-        fprintf(stderr, "Add");
-        break;
-    case SDL_BLENDMODE_MOD:
-        fprintf(stderr, "Mod");
-        break;
-    default:
-        fprintf(stderr, "0x%8.8x", flag);
-        break;
-    }
-}
-
-static void
-PrintScaleMode(Uint32 flag)
-{
-    switch (flag) {
-    case SDL_SCALEMODE_NONE:
-        fprintf(stderr, "None");
-        break;
-    case SDL_SCALEMODE_FAST:
-        fprintf(stderr, "Fast");
-        break;
-    case SDL_SCALEMODE_SLOW:
-        fprintf(stderr, "Slow");
-        break;
-    case SDL_SCALEMODE_BEST:
-        fprintf(stderr, "Best");
         break;
     default:
         fprintf(stderr, "0x%8.8x", flag);
@@ -520,36 +450,6 @@ PrintRenderer(SDL_RendererInfo * info)
                 fprintf(stderr, " | ");
             }
             PrintRendererFlag(flag);
-            ++count;
-        }
-    }
-    fprintf(stderr, ")\n");
-
-    fprintf(stderr, "    Blend: 0x%8.8X", info->blend_modes);
-    fprintf(stderr, " (");
-    count = 0;
-    for (i = 0; i < sizeof(info->blend_modes) * 8; ++i) {
-        Uint32 flag = (1 << i);
-        if (info->blend_modes & flag) {
-            if (count > 0) {
-                fprintf(stderr, " | ");
-            }
-            PrintBlendMode(flag);
-            ++count;
-        }
-    }
-    fprintf(stderr, ")\n");
-
-    fprintf(stderr, "    Scale: 0x%8.8X", info->scale_modes);
-    fprintf(stderr, " (");
-    count = 0;
-    for (i = 0; i < sizeof(info->scale_modes) * 8; ++i) {
-        Uint32 flag = (1 << i);
-        if (info->scale_modes & flag) {
-            if (count > 0) {
-                fprintf(stderr, " | ");
-            }
-            PrintScaleMode(flag);
             ++count;
         }
     }
@@ -746,7 +646,10 @@ CommonInit(CommonState * state)
         state->windows =
             (SDL_Window **) SDL_malloc(state->num_windows *
                                         sizeof(*state->windows));
-        if (!state->windows) {
+        state->renderers =
+            (SDL_Renderer **) SDL_malloc(state->num_windows *
+                                        sizeof(*state->renderers));
+        if (!state->windows || !state->renderers) {
             fprintf(stderr, "Out of memory!\n");
             return SDL_FALSE;
         }
@@ -785,6 +688,8 @@ CommonInit(CommonState * state)
 
             SDL_ShowWindow(state->windows[i]);
 
+            state->renderers[i] = NULL;
+
             if (!state->skip_renderer
                 && (state->renderdriver
                     || !(state->window_flags & SDL_WINDOW_OPENGL))) {
@@ -807,8 +712,9 @@ CommonInit(CommonState * state)
                         return SDL_FALSE;
                     }
                 }
-                if (SDL_CreateRenderer
-                    (state->windows[i], m, state->render_flags) < 0) {
+                state->renderers[i] = SDL_CreateRenderer(state->windows[i],
+                                            m, state->render_flags);
+                if (!state->renderers[i]) {
                     fprintf(stderr, "Couldn't create renderer: %s\n",
                             SDL_GetError());
                     return SDL_FALSE;
@@ -817,12 +723,11 @@ CommonInit(CommonState * state)
                     SDL_RendererInfo info;
 
                     fprintf(stderr, "Current renderer:\n");
-                    SDL_GetRendererInfo(&info);
+                    SDL_GetRendererInfo(state->renderers[i], &info);
                     PrintRenderer(&info);
                 }
             }
         }
-        SDL_SelectRenderer(state->windows[0]);
     }
 
     if (state->flags & SDL_INIT_AUDIO) {
@@ -1112,14 +1017,24 @@ CommonEvent(CommonState * state, SDL_Event * event, int *done)
 void
 CommonQuit(CommonState * state)
 {
+    int i;
+
+    if (state->windows) {
+        SDL_free(state->windows);
+    }
+    if (state->renderers) {
+        for (i = 0; i < state->num_windows; ++i) {
+            if (state->renderers[i]) {
+                SDL_DestroyRenderer(state->renderers[i]);
+            }
+        }
+        SDL_free(state->renderers);
+    }
     if (state->flags & SDL_INIT_VIDEO) {
         SDL_VideoQuit();
     }
     if (state->flags & SDL_INIT_AUDIO) {
         SDL_AudioQuit();
-    }
-    if (state->windows) {
-        SDL_free(state->windows);
     }
     SDL_free(state);
 }

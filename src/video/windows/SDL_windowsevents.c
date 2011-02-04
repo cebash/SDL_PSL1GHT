@@ -195,14 +195,12 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         /* transform coords for VGA, WVGA... */
         {
             SDL_VideoData *videodata = data->videodata;
-            if(videodata->CoordTransform &&
-                (videodata->render == RENDER_GAPI || videodata->render == RENDER_RAW))
-            {
+            if(videodata->CoordTransform) {
                 POINT pt;
                 pt.x = LOWORD(lParam);
                 pt.y = HIWORD(lParam);
                 videodata->CoordTransform(data->window, &pt);
-                    SDL_SendMouseMotion(data->window, 0, pt.x, pt.y);
+                SDL_SendMouseMotion(data->window, 0, pt.x, pt.y);
                 break;
             }
         }
@@ -500,25 +498,6 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 SetCursor(cursor);
                 returnCode = TRUE;
             }
-        }
-        break;
-
-        /* We are about to get palette focus! */
-    case WM_QUERYNEWPALETTE:
-        {
-            /*
-                WIN_RealizePalette(current_video);
-                returnCode = TRUE;
-             */
-        }
-        break;
-
-        /* Another application changed the palette */
-    case WM_PALETTECHANGED:
-        {
-            /*
-               WIN_PaletteChanged(current_video, (HWND) wParam);
-             */
         }
         break;
 

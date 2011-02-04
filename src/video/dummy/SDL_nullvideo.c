@@ -44,7 +44,7 @@
 
 #include "SDL_nullvideo.h"
 #include "SDL_nullevents_c.h"
-#include "SDL_nullrender_c.h"
+#include "SDL_nullframebuffer_c.h"
 
 #define DUMMYVID_DRIVER_NAME "dummy"
 
@@ -92,6 +92,9 @@ DUMMY_CreateDevice(int devindex)
     device->VideoQuit = DUMMY_VideoQuit;
     device->SetDisplayMode = DUMMY_SetDisplayMode;
     device->PumpEvents = DUMMY_PumpEvents;
+    device->CreateWindowFramebuffer = SDL_DUMMY_CreateWindowFramebuffer;
+    device->UpdateWindowFramebuffer = SDL_DUMMY_UpdateWindowFramebuffer;
+    device->DestroyWindowFramebuffer = SDL_DUMMY_DestroyWindowFramebuffer;
 
     device->free = DUMMY_DeleteDevice;
 
@@ -118,7 +121,6 @@ DUMMY_VideoInit(_THIS)
     if (SDL_AddBasicVideoDisplay(&mode) < 0) {
         return -1;
     }
-    SDL_AddRenderDriver(&_this->displays[0], &SDL_DUMMY_RenderDriver);
 
     SDL_zero(mode);
     SDL_AddDisplayMode(&_this->displays[0], &mode);

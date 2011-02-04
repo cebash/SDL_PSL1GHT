@@ -208,14 +208,6 @@ typedef enum
     SDL_GRAB_ON = 1
 } SDL_GrabMode;
 
-typedef enum
-{
-    SDL_TEXTURESCALEMODE_NONE = SDL_SCALEMODE_NONE,
-    SDL_TEXTURESCALEMODE_FAST = SDL_SCALEMODE_FAST,
-    SDL_TEXTURESCALEMODE_SLOW = SDL_SCALEMODE_SLOW,
-    SDL_TEXTURESCALEMODE_BEST = SDL_SCALEMODE_BEST
-} SDL_TextureScaleMode;
-
 struct SDL_SysWMinfo;
 
 /**
@@ -281,8 +273,8 @@ struct SDL_SysWMinfo;
 #define SDL_AllocSurface    SDL_CreateRGBSurface
 
 extern DECLSPEC const SDL_version *SDLCALL SDL_Linked_Version(void);
-extern DECLSPEC char *SDLCALL SDL_AudioDriverName(char *namebuf, int maxlen);
-extern DECLSPEC char *SDLCALL SDL_VideoDriverName(char *namebuf, int maxlen);
+extern DECLSPEC const char *SDLCALL SDL_AudioDriverName(char *namebuf, int maxlen);
+extern DECLSPEC const char *SDLCALL SDL_VideoDriverName(char *namebuf, int maxlen);
 extern DECLSPEC const SDL_VideoInfo *SDLCALL SDL_GetVideoInfo(void);
 extern DECLSPEC int SDLCALL SDL_VideoModeOK(int width,
                                             int height,
@@ -336,7 +328,6 @@ extern DECLSPEC int SDLCALL SDL_EnableKeyRepeat(int delay, int interval);
 extern DECLSPEC void SDLCALL SDL_GetKeyRepeat(int *delay, int *interval);
 extern DECLSPEC int SDLCALL SDL_EnableUNICODE(int enable);
 
-typedef SDL_Texture* SDL_TextureID;
 typedef SDL_Window* SDL_WindowID;
 
 #define SDL_RenderPoint SDL_RenderDrawPoint

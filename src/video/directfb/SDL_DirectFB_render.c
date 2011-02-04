@@ -26,7 +26,6 @@
 
 #include "SDL_DirectFB_video.h"
 #include "SDL_DirectFB_render.h"
-#include "../SDL_rect_c.h"
 #include "../SDL_yuv_sw_c.h"
 
 /* the following is not yet tested ... */
@@ -43,22 +42,6 @@ static int DirectFB_CreateTexture(SDL_Renderer * renderer,
 static int DirectFB_QueryTexturePixels(SDL_Renderer * renderer,
                                        SDL_Texture * texture,
                                        void **pixels, int *pitch);
-static int DirectFB_SetTexturePalette(SDL_Renderer * renderer,
-                                      SDL_Texture * texture,
-                                      const SDL_Color * colors,
-                                      int firstcolor, int ncolors);
-static int DirectFB_GetTexturePalette(SDL_Renderer * renderer,
-                                      SDL_Texture * texture,
-                                      SDL_Color * colors,
-                                      int firstcolor, int ncolors);
-static int DirectFB_SetTextureAlphaMod(SDL_Renderer * renderer,
-                                       SDL_Texture * texture);
-static int DirectFB_SetTextureColorMod(SDL_Renderer * renderer,
-                                       SDL_Texture * texture);
-static int DirectFB_SetTextureBlendMode(SDL_Renderer * renderer,
-                                        SDL_Texture * texture);
-static int DirectFB_SetTextureScaleMode(SDL_Renderer * renderer,
-                                        SDL_Texture * texture);
 static int DirectFB_UpdateTexture(SDL_Renderer * renderer,
                                   SDL_Texture * texture,
                                   const SDL_Rect * rect,
@@ -72,13 +55,10 @@ static void DirectFB_UnlockTexture(SDL_Renderer * renderer,
 static void DirectFB_DirtyTexture(SDL_Renderer * renderer,
                                   SDL_Texture * texture, int numrects,
                                   const SDL_Rect * rects);
-static int DirectFB_SetDrawBlendMode(SDL_Renderer * renderer);
 static int DirectFB_RenderDrawPoints(SDL_Renderer * renderer,
                                 const SDL_Point * points, int count);
 static int DirectFB_RenderDrawLines(SDL_Renderer * renderer,
                                const SDL_Point * points, int count);
-static int DirectFB_RenderDrawRects(SDL_Renderer * renderer,
-		const SDL_Rect ** rects, int count);
 static int DirectFB_RenderFillRects(SDL_Renderer * renderer,
 		const SDL_Rect ** rects, int count);
 static int DirectFB_RenderCopy(SDL_Renderer * renderer,
@@ -96,20 +76,9 @@ SDL_RenderDriver DirectFB_RenderDriver = {
     DirectFB_CreateRenderer,
     {
      "directfb",
-     (SDL_RENDERER_SINGLEBUFFER | SDL_RENDERER_PRESENTCOPY |
-      SDL_RENDERER_PRESENTFLIP2 | SDL_RENDERER_PRESENTFLIP3 |
-      SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_PRESENTDISCARD |
-      SDL_RENDERER_ACCELERATED),
-     (SDL_TEXTUREMODULATE_NONE | SDL_TEXTUREMODULATE_COLOR |
-      SDL_TEXTUREMODULATE_ALPHA),
-     (SDL_BLENDMODE_NONE | SDL_BLENDMODE_MASK | SDL_BLENDMODE_BLEND |
-      SDL_BLENDMODE_ADD | SDL_BLENDMODE_MOD),
-     (SDL_SCALEMODE_NONE | SDL_SCALEMODE_FAST |
-      SDL_SCALEMODE_SLOW | SDL_SCALEMODE_BEST),
-     14,
+     (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED),
+     12,
      {
-      SDL_PIXELFORMAT_INDEX4LSB,
-      SDL_PIXELFORMAT_INDEX8,
       SDL_PIXELFORMAT_RGB332,
       SDL_PIXELFORMAT_RGB555,
       SDL_PIXELFORMAT_RGB565,
@@ -143,7 +112,6 @@ typedef struct
     Uint32 format;
     void *pixels;
     int pitch;
-    IDirectFBPalette *palette;
     SDL_VideoDisplay *display;
     SDL_DirtyRectList dirty;
 #if (DFB_VERSION_ATLEAST(1,2,0))
@@ -168,7 +136,6 @@ TextureHasAlpha(DirectFB_TextureData * data)
     if (!data)
         return 0;
     switch (data->format) {
-    case SDL_PIXELFORMAT_INDEX4LSB:
     case SDL_PIXELFORMAT_ARGB4444:
     case SDL_PIXELFORMAT_ARGB1555:
     case SDL_PIXELFORMAT_ARGB8888:
@@ -198,12 +165,6 @@ SetBlendMode(DirectFB_RenderData * data, int blendMode,
             SDL_DFB_CHECK(destsurf->SetSrcBlendFunction(destsurf, DSBF_ONE));
             SDL_DFB_CHECK(destsurf->SetDstBlendFunction(destsurf, DSBF_ZERO));
             break;
-        case SDL_BLENDMODE_MASK:
-            data->blitFlags = DSBLIT_BLEND_ALPHACHANNEL;
-            data->drawFlags = DSDRAW_BLEND;
-            SDL_DFB_CHECK(destsurf->SetSrcBlendFunction(destsurf, DSBF_SRCALPHA));
-            SDL_DFB_CHECK(destsurf->SetDstBlendFunction(destsurf, DSBF_INVSRCALPHA));
-            break;
         case SDL_BLENDMODE_BLEND:
             data->blitFlags = DSBLIT_BLEND_ALPHACHANNEL;
             data->drawFlags = DSDRAW_BLEND;
@@ -222,12 +183,6 @@ SetBlendMode(DirectFB_RenderData * data, int blendMode,
                 SDL_DFB_CHECK(destsurf->SetSrcBlendFunction(destsurf, DSBF_ONE));
             SDL_DFB_CHECK(destsurf->SetDstBlendFunction(destsurf, DSBF_ONE));
             break;
-        case SDL_BLENDMODE_MOD:
-            data->blitFlags = DSBLIT_BLEND_ALPHACHANNEL;
-            data->drawFlags = DSDRAW_BLEND;
-            SDL_DFB_CHECK(destsurf->SetSrcBlendFunction(destsurf, DSBF_DESTCOLOR));
-            SDL_DFB_CHECK(destsurf->SetDstBlendFunction(destsurf, DSBF_ZERO));
-            break;
         }
         data->lastBlendMode = blendMode;
     }
@@ -243,39 +198,6 @@ DirectFB_AddRenderDriver(_THIS)
     }
 }
 
-static int
-DisplayPaletteChanged(void *userdata, SDL_Palette * palette)
-{
-#if USE_DISPLAY_PALETTE
-    DirectFB_RenderData *data = (DirectFB_RenderData *) userdata;
-    SDL_DFB_WINDOWSURFACE(data->window);
-    IDirectFBPalette *surfpal;
-
-    int i;
-    int ncolors;
-    DFBColor entries[256];
-
-    SDL_DFB_CHECKERR(destsurf->GetPalette(destsurf, &surfpal));
-
-    /* FIXME: number of colors */
-    ncolors = (palette->ncolors < 256 ? palette->ncolors : 256);
-
-    for (i = 0; i < ncolors; ++i) {
-        entries[i].r = palette->colors[i].r;
-        entries[i].g = palette->colors[i].g;
-        entries[i].b = palette->colors[i].b;
-        entries[i].a = palette->colors[i].unused;
-    }
-    SDL_DFB_CHECKERR(surfpal->SetEntries(surfpal, entries, ncolors, 0));
-    return 0;
-  error:
-#else
-    SDL_Unsupported();
-#endif
-    return -1;
-}
-
-
 SDL_Renderer *
 DirectFB_CreateRenderer(SDL_Window * window, Uint32 flags)
 {
@@ -283,7 +205,6 @@ DirectFB_CreateRenderer(SDL_Window * window, Uint32 flags)
     SDL_VideoDisplay *display = window->display;
     SDL_Renderer *renderer = NULL;
     DirectFB_RenderData *data = NULL;
-    DFBSurfaceCapabilities scaps;
     char *p;
 
     SDL_DFB_CALLOC(renderer, 1, sizeof(*renderer));
@@ -293,22 +214,13 @@ DirectFB_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->ActivateRenderer = DirectFB_ActivateRenderer;
     renderer->CreateTexture = DirectFB_CreateTexture;
     renderer->QueryTexturePixels = DirectFB_QueryTexturePixels;
-    renderer->SetTexturePalette = DirectFB_SetTexturePalette;
-    renderer->GetTexturePalette = DirectFB_GetTexturePalette;
-    renderer->SetTextureAlphaMod = DirectFB_SetTextureAlphaMod;
-    renderer->SetTextureColorMod = DirectFB_SetTextureColorMod;
-    renderer->SetTextureBlendMode = DirectFB_SetTextureBlendMode;
-    renderer->SetTextureScaleMode = DirectFB_SetTextureScaleMode;
     renderer->UpdateTexture = DirectFB_UpdateTexture;
     renderer->LockTexture = DirectFB_LockTexture;
     renderer->UnlockTexture = DirectFB_UnlockTexture;
     renderer->DirtyTexture = DirectFB_DirtyTexture;
     renderer->RenderDrawPoints = DirectFB_RenderDrawPoints;
     renderer->RenderDrawLines = DirectFB_RenderDrawLines;
-    /* SetDrawColor - no needed */
-    renderer->SetDrawBlendMode = DirectFB_SetDrawBlendMode;
     renderer->RenderFillRects = DirectFB_RenderFillRects;
-    renderer->RenderDrawRects = DirectFB_RenderDrawRects;
     /* RenderDrawEllipse - no reference implementation yet */
     /* RenderFillEllipse - no reference implementation yet */
     renderer->RenderCopy = DirectFB_RenderCopy;
@@ -321,8 +233,7 @@ DirectFB_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->window = window;      /* SDL window */
     renderer->driverdata = data;
 
-    renderer->info.flags =
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTDISCARD;
+    renderer->info.flags = SDL_RENDERER_ACCELERATED;
 
     data->window = window;
 
@@ -334,24 +245,10 @@ DirectFB_CreateRenderer(SDL_Window * window, Uint32 flags)
     } else
         data->flipflags |= DSFLIP_ONSYNC;
 
-    SDL_DFB_CHECKERR(windata->surface->
-                     GetCapabilities(windata->surface, &scaps));
-    if (scaps & DSCAPS_DOUBLE)
-        renderer->info.flags |= SDL_RENDERER_PRESENTFLIP2;
-    else if (scaps & DSCAPS_TRIPLE)
-        renderer->info.flags |= SDL_RENDERER_PRESENTFLIP3;
-    else
-        renderer->info.flags |= SDL_RENDERER_SINGLEBUFFER;
-
     data->isyuvdirect = 0;      /* default is off! */
     p = SDL_getenv(DFBENV_USE_YUV_DIRECT);
     if (p)
         data->isyuvdirect = atoi(p);
-
-    /* Set up a palette watch on the display palette */
-    if (display->palette) {
-        SDL_AddPaletteWatch(display->palette, DisplayPaletteChanged, data);
-    }
 
     return renderer;
 
@@ -365,10 +262,6 @@ static DFBSurfacePixelFormat
 SDLToDFBPixelFormat(Uint32 format)
 {
     switch (format) {
-    case SDL_PIXELFORMAT_INDEX4LSB:
-        return DSPF_ALUT44;
-    case SDL_PIXELFORMAT_INDEX8:
-        return DSPF_LUT8;
     case SDL_PIXELFORMAT_RGB332:
         return DSPF_RGB332;
     case SDL_PIXELFORMAT_RGB555:
@@ -395,12 +288,6 @@ SDLToDFBPixelFormat(Uint32 format)
         return DSPF_UYVY;       /* Packed mode: U0+Y0+V0+Y1 (1 plane) */
     case SDL_PIXELFORMAT_YVYU:
         return DSPF_UNKNOWN;    /* Packed mode: Y0+V0+Y1+U0 (1 plane) */
-    case SDL_PIXELFORMAT_INDEX1LSB:
-        return DSPF_UNKNOWN;
-    case SDL_PIXELFORMAT_INDEX1MSB:
-        return DSPF_UNKNOWN;
-    case SDL_PIXELFORMAT_INDEX4MSB:
-        return DSPF_UNKNOWN;
 #if (DFB_VERSION_ATLEAST(1,2,0))
     case SDL_PIXELFORMAT_RGB444:
         return DSPF_RGB444;
@@ -549,12 +436,6 @@ DirectFB_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
         /* Create the surface */
         SDL_DFB_CHECKERR(devdata->dfb->CreateSurface(devdata->dfb, &dsc,
                                                      &data->surface));
-        if (SDL_ISPIXELFORMAT_INDEXED(data->format)
-            && !SDL_ISPIXELFORMAT_FOURCC(data->format)) {
-            SDL_DFB_CHECKERR(data->surface->GetPalette(data->surface,
-                                                       &data->palette));
-        }
-
     }
 #if (DFB_VERSION_ATLEAST(1,2,0))
     data->render_options = DSRO_NONE;
@@ -593,114 +474,6 @@ DirectFB_QueryTexturePixels(SDL_Renderer * renderer,
         *pitch = texturedata->pitch;
     }
     return 0;
-}
-
-static int
-DirectFB_SetTexturePalette(SDL_Renderer * renderer,
-                           SDL_Texture * texture,
-                           const SDL_Color * colors, int firstcolor,
-                           int ncolors)
-{
-    DirectFB_TextureData *data = (DirectFB_TextureData *) texture->driverdata;
- 
-    if (SDL_ISPIXELFORMAT_INDEXED(data->format)
-        && !SDL_ISPIXELFORMAT_FOURCC(data->format)) {
-        DFBColor entries[256];
-        int i;
-
-        for (i = 0; i < ncolors; ++i) {
-            entries[i].r = colors[i].r;
-            entries[i].g = colors[i].g;
-            entries[i].b = colors[i].b;
-            entries[i].a = 0xFF;
-        }
-        SDL_DFB_CHECKERR(data->
-                         palette->SetEntries(data->palette, entries, ncolors,
-                                             firstcolor));
-        return 0;
-    } else {
-        SDL_SetError("YUV textures don't have a palette");
-        return -1;
-    }
-  error:
-    return -1;
-}
-
-static int
-DirectFB_GetTexturePalette(SDL_Renderer * renderer,
-                           SDL_Texture * texture, SDL_Color * colors,
-                           int firstcolor, int ncolors)
-{
-    DirectFB_TextureData *data = (DirectFB_TextureData *) texture->driverdata;
-
-    if (SDL_ISPIXELFORMAT_INDEXED(data->format)
-        && !SDL_ISPIXELFORMAT_FOURCC(data->format)) {
-        DFBColor entries[256];
-        int i;
-
-        SDL_DFB_CHECKERR(data->
-                         palette->GetEntries(data->palette, entries, ncolors,
-                                             firstcolor));
-
-        for (i = 0; i < ncolors; ++i) {
-            colors[i].r = entries[i].r;
-            colors[i].g = entries[i].g;
-            colors[i].b = entries[i].b;
-            colors->unused = SDL_ALPHA_OPAQUE;
-        }
-        return 0;
-    } else {
-        SDL_SetError("YUV textures don't have a palette");
-        return -1;
-    }
-  error:
-    return -1;
-}
-
-static int
-DirectFB_SetTextureAlphaMod(SDL_Renderer * renderer, SDL_Texture * texture)
-{
-    return 0;
-}
-
-static int
-DirectFB_SetTextureColorMod(SDL_Renderer * renderer, SDL_Texture * texture)
-{
-    return 0;
-}
-
-static int
-DirectFB_SetTextureBlendMode(SDL_Renderer * renderer, SDL_Texture * texture)
-{
-    switch (texture->blendMode) {
-    case SDL_BLENDMODE_NONE:
-    case SDL_BLENDMODE_MASK:
-    case SDL_BLENDMODE_BLEND:
-    case SDL_BLENDMODE_ADD:
-    case SDL_BLENDMODE_MOD:
-        return 0;
-    default:
-        SDL_Unsupported();
-        texture->blendMode = SDL_BLENDMODE_NONE;
-        return -1;
-    }
-}
-
-static int
-DirectFB_SetDrawBlendMode(SDL_Renderer * renderer)
-{
-    switch (renderer->blendMode) {
-    case SDL_BLENDMODE_NONE:
-    case SDL_BLENDMODE_MASK:
-    case SDL_BLENDMODE_BLEND:
-    case SDL_BLENDMODE_ADD:
-    case SDL_BLENDMODE_MOD:
-        return 0;
-    default:
-        SDL_Unsupported();
-        renderer->blendMode = SDL_BLENDMODE_NONE;
-        return -1;
-    }
 }
 
 static int
@@ -857,11 +630,9 @@ PrepareDraw(SDL_Renderer * renderer)
 
     switch (renderer->blendMode) {
     case SDL_BLENDMODE_NONE:
-    case SDL_BLENDMODE_MASK:
     case SDL_BLENDMODE_BLEND:
         break;
     case SDL_BLENDMODE_ADD:
-    case SDL_BLENDMODE_MOD:
         r = ((int) r * (int) a) / 255;
         g = ((int) g * (int) a) / 255;
         b = ((int) b * (int) a) / 255;
@@ -905,24 +676,6 @@ static int DirectFB_RenderDrawLines(SDL_Renderer * renderer,
 
     for (i=0; i < count - 1; i++)
     	SDL_DFB_CHECKERR(destsurf->DrawLine(destsurf, points[i].x, points[i].y, points[i+1].x, points[i+1].y));
-
-    return 0;
-  error:
-    return -1;
-}
-
-static int
-DirectFB_RenderDrawRects(SDL_Renderer * renderer, const SDL_Rect ** rects, int count)
-{
-    DirectFB_RenderData *data = (DirectFB_RenderData *) renderer->driverdata;
-    SDL_DFB_WINDOWSURFACE(data->window);
-    int i;
-
-    PrepareDraw(renderer);
-
-    for (i=0; i<count; i++)
-    	SDL_DFB_CHECKERR(destsurf->DrawRectangle(destsurf, rects[i]->x, rects[i]->y,
-    			rects[i]->w, rects[i]->h));
 
     return 0;
   error:
