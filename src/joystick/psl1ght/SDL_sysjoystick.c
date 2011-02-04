@@ -136,10 +136,7 @@ SDL_SYS_JoystickOpen(SDL_Joystick * joystick)
 
 #define CheckPSL1GHTAxis( btn, bnum) \
 	if( new_pad_data.btn != joystick->hwdata->old_pad_data.btn) {\
-		if( new_pad_data.btn == 0) \
-		SDL_PrivateJoystickAxis( joystick, (bnum), SDL_RELEASED); \
-		else \
-		SDL_PrivateJoystickAxis( joystick, (bnum), SDL_PRESSED); \
+		SDL_PrivateJoystickAxis( joystick, (bnum), ((new_pad_data.btn-0x80)<<8)|new_pad_data.btn); \
 	} \
 	joystick->hwdata->old_pad_data.btn = new_pad_data.btn;
 
