@@ -2668,6 +2668,74 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
             EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit"
         fi
         ;;
+    *-psl1ght)
+        ARCH=psl1ght
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -D__PSL1GHT__ -DHAVE_POW -DHAVE_MMAP=0 -DDEBUG_ERROR"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -I\"$PSL1GHT/include\" -g -O0 "
+		EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lreality -lgcm_sys -lsysutil -lc -llv2 -lc-glue-ppu -lpsl1ght"
+        CheckPSL1GHTVideo
+        #CheckDummyAudio
+        # Set up files for the thread library
+        if test x$enable_threads = xyes; then
+            AC_DEFINE(SDL_THREAD_PSL1GHT)
+            SOURCES="$SOURCES $srcdir/src/thread/psl1ght/*.c"
+            SOURCES="$SOURCES $srcdir/src/thread/generic/SDL_sysmutex.c"
+            SOURCES="$SOURCES $srcdir/src/thread/generic/SDL_syscond.c"
+            have_threads=yes
+        fi
+        # Set up files for the atomic operations library
+        if test x$enable_atomic = xyes; then
+			AC_DEFINE(SDL_ATOMIC_LINUX)
+			SOURCES="$SOURCES $srcdir/src/atomic/linux/*.c"
+			have_atomic=yes
+        fi
+        # Set up files for the joystick library
+        if test x$enable_joystick = xyes; then
+            AC_DEFINE(SDL_JOYSTICK_PSL1GHT)
+            SOURCES="$SOURCES $srcdir/src/joystick/psl1ght/*.c"
+			EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lio"
+            have_joystick=yes
+        fi
+        # Set up files for the timer library
+        if test x$enable_timers = xyes; then
+            AC_DEFINE(SDL_TIMER_PSL1GHT)
+            SOURCES="$SOURCES $srcdir/src/timer/psl1ght/*.c"
+            have_timers=yes
+        fi
+        # Set up files for the audio library
+        if test x$enable_audio = xyes; then
+            AC_DEFINE(SDL_AUDIO_DRIVER_PSL1GHT)
+            SOURCES="$SOURCES $srcdir/src/audio/psl1ght/*.c"
+			EXTRA_LDFLAGS="$EXTRA_LDFLAGS -laudio"
+            have_audio=yes
+        fi
+		;;
+    *-riscos)
+        ARCH=riscos
+        CheckOSS
+        CheckPTHREAD
+        # Set up files for the video library
+        if test x$enable_video = xyes; then
+            AC_DEFINE(SDL_VIDEO_DRIVER_RISCOS)
+            SOURCES="$SOURCES $srcdir/src/video/riscos/*.c"
+            SOURCES="$SOURCES $srcdir/src/video/riscos/*.S"
+            have_video=yes
+        fi
+        # Set up files for the joystick library
+        if test x$enable_joystick = xyes; then
+            AC_DEFINE(SDL_JOYSTICK_RISCOS)
+            SOURCES="$SOURCES $srcdir/src/joystick/riscos/*.c"
+            have_joystick=yes
+        fi
+        # Set up files for the timer library
+        if test x$enable_timers = xyes; then
+            AC_DEFINE(SDL_TIMER_RISCOS)
+            SOURCES="$SOURCES $srcdir/src/timer/riscos/*.c"
+            have_timers=yes
+        fi
+        # The RISC OS platform requires special setup.
+        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -ljpeg -ltiff -lpng -lz"
+        ;;
     *)
         AC_MSG_ERROR([
 *** Unsupported host:  Please add to configure.in

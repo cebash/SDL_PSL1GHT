@@ -39,6 +39,8 @@
 #include "windows/SDL_systhread_c.h"
 #elif SDL_THREAD_NDS
 #include "nds/SDL_systhread_c.h"
+#elif SDL_THREAD_PSL1GHT
+#include "psl1ght/SDL_systhread_c.h"
 #else
 #error Need thread implementation for this platform
 #include "generic/SDL_systhread_c.h"

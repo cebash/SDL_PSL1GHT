@@ -140,6 +140,8 @@ SDL_InitSubSystem(Uint32 flags)
 int
 SDL_Init(Uint32 flags)
 {
+	printf("SDL_Init( %08X)\n", flags);
+
     if (SDL_AssertionsInit() < 0) {
         return -1;
     }

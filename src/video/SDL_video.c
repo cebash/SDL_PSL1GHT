@@ -21,6 +21,7 @@
 */
 #include "SDL_config.h"
 
+
 /* The high-level video driver subsystem */
 
 #include "SDL.h"
@@ -93,6 +94,9 @@ static VideoBootStrap *bootstrap[] = {
 #endif
 #if SDL_VIDEO_DRIVER_ANDROID
     &Android_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_PSL1GHT
+    &PSL1GHT_bootstrap,
 #endif
     NULL
 };
@@ -177,6 +181,8 @@ SDL_VideoInit(const char *driver_name)
     int index;
     int i;
 
+	printf( "SDL_VideoInit");
+
     /* Check to make sure we don't overwrite '_this' */
     if (_this != NULL) {
         SDL_VideoQuit();
@@ -218,7 +224,7 @@ SDL_VideoInit(const char *driver_name)
         if (driver_name) {
             SDL_SetError("%s not available", driver_name);
         } else {
-            SDL_SetError("No available video device");
+            SDL_SetError("No available video device (on %d drivers)", SDL_GetNumVideoDrivers());
         }
         return -1;
     }
