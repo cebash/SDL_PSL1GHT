@@ -11,7 +11,7 @@ SOURCE		:=	source
 INCLUDE		:=	include
 DATA		:=	data
 DATA_BIN	:=	data_bin
-LIBS		:=	-lSDL -lreality -lgcm_sys -lsysutil -lio -lc -lm -llv2 -lc-glue-ppu -lpsl1ght -laudio
+LIBS		:=	-lSDL -lreality -lgcm_sys -lsysutil -lio -lc -lm -llv2 -lpsl1ght -laudio
 
 TITLE		:=	Template - PSL1GHT
 APPID		:=	TEST00003
