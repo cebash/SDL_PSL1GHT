@@ -21,10 +21,8 @@
 */
 #include "SDL_config.h"
 
-#include "../../render/SDL_sysrender.h"
-
-/* SDL surface based renderer implementation */
-
-extern SDL_RenderDriver SDL_PSL1GHT_RenderDriver;
+extern int SDL_PSL1GHT_CreateWindowFramebuffer(_THIS, SDL_Window * window, Uint32 * format, void ** pixels, int *pitch);
+extern int SDL_PSL1GHT_UpdateWindowFramebuffer(_THIS, SDL_Window * window, int numrects, SDL_Rect * rects);
+extern void SDL_PSL1GHT_DestroyWindowFramebuffer(_THIS, SDL_Window * window);
 
 /* vi: set ts=4 sw=4 expandtab: */

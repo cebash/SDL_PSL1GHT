@@ -20,7 +20,7 @@
     slouken@libsdl.org
 */
 #include "SDL_config.h"
-
+/*
 #include "SDL_video.h"
 #include "../SDL_sysvideo.h"
 #include "../../render/SDL_sysrender.h"
@@ -30,13 +30,15 @@
 #include "../../render/software/SDL_blendpoint.h"
 #include "../../render/software/SDL_drawline.h"
 #include "../../render/software/SDL_drawpoint.h"
-
+*/
+#include "../SDL_sysvideo.h"
 #include "SDL_PSL1GHTvideo.h"
 
 #include <rsx/reality.h>
 #include <unistd.h>
 #include <assert.h>
 
+#define PSL1GHT_SURFACE   "_SDL_PSL1GHTSurface"
 
 /* SDL surface based renderer implementation */
 
@@ -60,7 +62,7 @@ static void SDL_PSL1GHT_RenderPresent(SDL_Renderer * renderer);
 static void SDL_PSL1GHT_DestroyRenderer(SDL_Renderer * renderer);
 
 
-SDL_RenderDriver SDL_PSL1GHT_RenderDriver = {
+SDL_RenderDriver PSL1GHT_RenderDriver = {
     SDL_PSL1GHT_CreateRenderer,
     {
         "psl1ght",
@@ -84,6 +86,40 @@ static void flip( gcmContextData *context, int current_screen)
     gcmSetWaitFlip(context); // Prevent the RSX from continuing until the flip has finished.
 }
 
+int SDL_PSL1GHT_CreateWindowFramebuffer(_THIS, SDL_Window * window, Uint32 * format, void ** pixels, int *pitch)
+{
+    SDL_Surface *surface;
+    const Uint32 surface_format = SDL_PIXELFORMAT_RGB888;
+    int w, h;
+    int bpp;
+    Uint32 Rmask, Gmask, Bmask, Amask;
+
+    /* Free the old framebuffer surface */
+    surface = (SDL_Surface *) SDL_GetWindowData(window, PSL1GHT_SURFACE);
+    if (surface) {
+        SDL_FreeSurface(surface);
+    }
+
+    /* Create a new one */
+    SDL_PixelFormatEnumToMasks(surface_format, &bpp, &Rmask, &Gmask, &Bmask, &Amask);
+    SDL_GetWindowSize(window, &w, &h);
+    surface = SDL_CreateRGBSurface(0, w, h, bpp, Rmask, Gmask, Bmask, Amask);
+    if (!surface) {
+        return -1;
+    }
+
+    /* Save the info and return! */
+    SDL_SetWindowData(window, PSL1GHT_SURFACE, surface);
+    *format = surface_format;
+    *pixels = surface->pixels;
+    *pitch = surface->pitch;
+    printf( "\tReset Flip Status\n");
+    gcmResetFlipStatus();
+    printf( "\tFinished\n");
+    flip(data->context, data->current_screen);
+    return 0;
+}
+
 SDL_Renderer *
 SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
 {
@@ -104,52 +140,6 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         return NULL;
     }
 
-    renderer = (SDL_Renderer *) SDL_calloc(1, sizeof(*renderer));
-    if (!renderer) {
-        printf("ERROR\n");
-        SDL_OutOfMemory();
-        return NULL;
-    }
-
-    data = (SDL_PSL1GHT_RenderData *) SDL_malloc(sizeof(*data));
-    if (!data) {
-        printf("ERROR\n");
-        SDL_PSL1GHT_DestroyRenderer(renderer);
-        SDL_OutOfMemory();
-        return NULL;
-    }
-    SDL_zerop(data);
-    
-    printf("\tMem allocated\n");
-    // Get a copy of the command buffer
-    data->context = ((SDL_DeviceData*) window->display->device->driverdata)->_CommandBuffer;
-
-    renderer->RenderDrawPoints = SDL_PSL1GHT_RenderDrawPoints;
-    renderer->RenderDrawLines = SDL_PSL1GHT_RenderDrawLines;
-    renderer->RenderFillRects = SDL_PSL1GHT_RenderFillRects;
-    renderer->RenderCopy = SDL_PSL1GHT_RenderCopy;
-    renderer->RenderReadPixels = SDL_PSL1GHT_RenderReadPixels;
-    renderer->RenderPresent = SDL_PSL1GHT_RenderPresent;
-    renderer->DestroyRenderer = SDL_PSL1GHT_DestroyRenderer;
-    renderer->info.name = SDL_PSL1GHT_RenderDriver.info.name;
-    renderer->info.flags = 0;
-    renderer->window = window;
-    renderer->driverdata = data;
-    printf( "\tSetup_SoftwareRenderer()\n");
-    //Setup_SoftwareRenderer(renderer);
-
-/*
-    if (flags & SDL_RENDERER_PRESENTFLIP2) {
-        renderer->info.flags |= SDL_RENDERER_PRESENTFLIP2;
-        n = 2;
-    } else if (flags & SDL_RENDERER_PRESENTFLIP3) {
-        renderer->info.flags |= SDL_RENDERER_PRESENTFLIP3;
-        n = 3;
-    } else {
-        renderer->info.flags |= SDL_RENDERER_PRESENTCOPY;
-        n = 1;
-    }
-*/
     n = 2;
     printf("\tCreate the %d screen(s):\n", n);
     for (i = 0; i < n; ++i) {

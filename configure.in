@@ -1436,6 +1436,7 @@ CheckPSL1GHTVideo()
 AC_HELP_STRING([--enable-video-psl1ght], [use PSL1GHT video driver [[default=yes]]]),
                   , enable_video_psl1ght=yes)
     if test x$enable_video_psl1ght = xyes; then
+        AC_DEFINE(SDL_VIDEO_RENDER_PSL1GHT)
         AC_DEFINE(SDL_VIDEO_DRIVER_PSL1GHT)
         SOURCES="$SOURCES $srcdir/src/video/psl1ght/*.c"
         have_video=yes
