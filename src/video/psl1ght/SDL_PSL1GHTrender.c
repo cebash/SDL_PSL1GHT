@@ -23,8 +23,13 @@
 
 #include "SDL_video.h"
 #include "../SDL_sysvideo.h"
-#include "../SDL_yuv_sw_c.h"
-#include "../SDL_renderer_sw.h"
+#include "../../render/SDL_sysrender.h"
+#include "../../render/software/SDL_draw.h"
+#include "../../render/software/SDL_blendfillrect.h"
+#include "../../render/software/SDL_blendline.h"
+#include "../../render/software/SDL_blendpoint.h"
+#include "../../render/software/SDL_drawline.h"
+#include "../../render/software/SDL_drawpoint.h"
 
 #include "SDL_PSL1GHTvideo.h"
 
@@ -41,8 +46,6 @@ static int SDL_PSL1GHT_RenderDrawPoints(SDL_Renderer * renderer,
                                       const SDL_Point * points, int count);
 static int SDL_PSL1GHT_RenderDrawLines(SDL_Renderer * renderer,
                                      const SDL_Point * points, int count);
-static int SDL_PSL1GHT_RenderDrawRects(SDL_Renderer * renderer,
-                                     const SDL_Rect ** rects, int count);
 static int SDL_PSL1GHT_RenderFillRects(SDL_Renderer * renderer,
                                      const SDL_Rect ** rects, int count);
 static int SDL_PSL1GHT_RenderCopy(SDL_Renderer * renderer,
@@ -53,10 +56,6 @@ static int SDL_PSL1GHT_RenderReadPixels(SDL_Renderer * renderer,
                                       const SDL_Rect * rect,
                                       Uint32 format,
                                       void * pixels, int pitch);
-static int SDL_PSL1GHT_RenderWritePixels(SDL_Renderer * renderer,
-                                       const SDL_Rect * rect,
-                                       Uint32 format,
-                                       const void * pixels, int pitch);
 static void SDL_PSL1GHT_RenderPresent(SDL_Renderer * renderer);
 static void SDL_PSL1GHT_DestroyRenderer(SDL_Renderer * renderer);
 
@@ -66,12 +65,7 @@ SDL_RenderDriver SDL_PSL1GHT_RenderDriver = {
     {
         "psl1ght",
         ( 
-//         SDL_RENDERER_SINGLEBUFFER | 
-         SDL_RENDERER_PRESENTVSYNC |
-         SDL_RENDERER_PRESENTCOPY |
-         SDL_RENDERER_PRESENTFLIP2 | 
-//         SDL_RENDERER_PRESENTFLIP3 |
-         SDL_RENDERER_PRESENTDISCARD
+         SDL_RENDERER_PRESENTVSYNC
         ),
     }
 };
@@ -101,7 +95,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     int bpp;
     Uint32 Rmask, Gmask, Bmask, Amask;
 
-    printf( "SDL_PSL1GHT_CreateRenderer( %016X, %08X)\n", (unsigned long long) window, flags);
+    printf( "SDL_PSL1GHT_CreateRenderer( %08X, %08X)\n", (unsigned int) window, flags);
 
     if (!SDL_PixelFormatEnumToMasks
         (displayMode->format, &bpp, &Rmask, &Gmask, &Bmask, &Amask)) {
@@ -132,11 +126,9 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
 
     renderer->RenderDrawPoints = SDL_PSL1GHT_RenderDrawPoints;
     renderer->RenderDrawLines = SDL_PSL1GHT_RenderDrawLines;
-    renderer->RenderDrawRects = SDL_PSL1GHT_RenderDrawRects;
     renderer->RenderFillRects = SDL_PSL1GHT_RenderFillRects;
     renderer->RenderCopy = SDL_PSL1GHT_RenderCopy;
     renderer->RenderReadPixels = SDL_PSL1GHT_RenderReadPixels;
-    renderer->RenderWritePixels = SDL_PSL1GHT_RenderWritePixels;
     renderer->RenderPresent = SDL_PSL1GHT_RenderPresent;
     renderer->DestroyRenderer = SDL_PSL1GHT_DestroyRenderer;
     renderer->info.name = SDL_PSL1GHT_RenderDriver.info.name;
@@ -144,7 +136,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->window = window;
     renderer->driverdata = data;
     printf( "\tSetup_SoftwareRenderer()\n");
-    Setup_SoftwareRenderer(renderer);
+    //Setup_SoftwareRenderer(renderer);
 
 /*
     if (flags & SDL_RENDERER_PRESENTFLIP2) {
@@ -199,7 +191,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
             return NULL;
         }
         printf( "\t\tSDL_SetSurfacePalette()\n");
-        SDL_SetSurfacePalette(data->screens[i], display->palette);
+        //SDL_SetSurfacePalette(data->screens[i], display->palette);
     }
     data->current_screen = 0;
 
@@ -220,8 +212,7 @@ SDL_PSL1GHT_RenderDrawPoints(SDL_Renderer * renderer,
 
     printf( "SDL_PSL1GHT_RenderDrawPoints () \n");
 
-    if (renderer->blendMode == SDL_BLENDMODE_NONE ||
-        renderer->blendMode == SDL_BLENDMODE_MASK) {
+    if (renderer->blendMode == SDL_BLENDMODE_NONE) {
         Uint32 color = SDL_MapRGBA(target->format,
                                    renderer->r, renderer->g, renderer->b,
                                    renderer->a);
@@ -243,8 +234,7 @@ SDL_PSL1GHT_RenderDrawLines(SDL_Renderer * renderer,
     SDL_Surface *target = data->screens[data->current_screen];
 
     printf( "SDL_PSL1GHT_RenderDrawLines()\n");
-    if (renderer->blendMode == SDL_BLENDMODE_NONE ||
-        renderer->blendMode == SDL_BLENDMODE_MASK) {
+    if (renderer->blendMode == SDL_BLENDMODE_NONE) {
         Uint32 color = SDL_MapRGBA(target->format,
                                    renderer->r, renderer->g, renderer->b,
                                    renderer->a);
@@ -257,31 +247,6 @@ SDL_PSL1GHT_RenderDrawLines(SDL_Renderer * renderer,
     }
 }
 
-static int
-SDL_PSL1GHT_RenderDrawRects(SDL_Renderer * renderer, const SDL_Rect ** rects,
-                          int count)
-{
-    SDL_PSL1GHT_RenderData *data =
-        (SDL_PSL1GHT_RenderData *) renderer->driverdata;
-    SDL_Surface *target = data->screens[data->current_screen];
-
-    printf( "SDL_PSL1GHT_RenderDrawRects()\n");
-    if (renderer->blendMode == SDL_BLENDMODE_NONE ||
-        renderer->blendMode == SDL_BLENDMODE_MASK) {
-        Uint32 color = SDL_MapRGBA(target->format,
-                                   renderer->r, renderer->g, renderer->b,
-                                   renderer->a);
-
-        printf("\tSDL_DrawRects()\n");
-        return SDL_DrawRects(target, rects, count, color);
-    } else {
-        printf("\tSDL_BlendRects()\n");
-        return SDL_BlendRects(target, rects, count,
-                              renderer->blendMode,
-                              renderer->r, renderer->g, renderer->b,
-                              renderer->a);
-    }
-}
 
 static int
 SDL_PSL1GHT_RenderFillRects(SDL_Renderer * renderer, const SDL_Rect ** rects,
@@ -293,8 +258,7 @@ SDL_PSL1GHT_RenderFillRects(SDL_Renderer * renderer, const SDL_Rect ** rects,
 
     printf( "SDL_PSL1GHT_RenderFillRects()\n");
 
-    if (renderer->blendMode == SDL_BLENDMODE_NONE ||
-        renderer->blendMode == SDL_BLENDMODE_MASK) {
+    if (renderer->blendMode == SDL_BLENDMODE_NONE) {
         Uint32 color = SDL_MapRGBA(target->format,
                                    renderer->r, renderer->g, renderer->b,
                                    renderer->a);
@@ -335,7 +299,6 @@ SDL_PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
         Uint8 *src, *dst;
         int row;
         size_t length;
-        Uint8 *dstpixels;
 
         src = (Uint8 *)((SDL_Surface *)texture->driverdata)->pixels;
         dst = (Uint8 *) data->screens[data->current_screen]->pixels + dstrect->y * data->screens[data->current_screen]->pitch + dstrect->x
@@ -381,31 +344,9 @@ SDL_PSL1GHT_RenderReadPixels(SDL_Renderer * renderer, const SDL_Rect * rect,
                              format, pixels, pitch);
 }
 
-static int
-SDL_PSL1GHT_RenderWritePixels(SDL_Renderer * renderer, const SDL_Rect * rect,
-                            Uint32 format, const void * pixels, int pitch)
-{
-    SDL_PSL1GHT_RenderData *data =
-        (SDL_PSL1GHT_RenderData *) renderer->driverdata;
-    SDL_Window *window = renderer->window;
-    SDL_VideoDisplay *display = window->display;
-    SDL_Surface *screen = data->screens[data->current_screen];
-    Uint32 screen_format = display->current_mode.format;
-    Uint8 *screen_pixels = (Uint8 *) screen->pixels +
-                            rect->y * screen->pitch +
-                            rect->x * screen->format->BytesPerPixel;
-    int screen_pitch = screen->pitch;
-
-    printf( "SDL_PSL1GHT_RenderWritePixels()\n");
-    return SDL_ConvertPixels(rect->w, rect->h,
-                             format, pixels, pitch,
-                             screen_format, screen_pixels, screen_pitch);
-}
-
 static void
 SDL_PSL1GHT_RenderPresent(SDL_Renderer * renderer)
 {
-    static int frame_number;
     SDL_PSL1GHT_RenderData *data =
         (SDL_PSL1GHT_RenderData *) renderer->driverdata;
 

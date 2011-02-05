@@ -21,6 +21,8 @@
 */
 #include "SDL_config.h"
 
+#include "../../render/SDL_sysrender.h"
+
 /* SDL surface based renderer implementation */
 
 extern SDL_RenderDriver SDL_PSL1GHT_RenderDriver;
