@@ -1,6 +1,6 @@
 #!/bin/sh
 
-resources="icon.bmp picture.xbm sail.bmp sample.bmp sample.wav utf8.txt player.bmp"
+resources="icon.bmp sail.bmp sample.bmp sample.wav utf8.txt player.bmp"
 
 for source in *.c
 do
@@ -23,25 +23,30 @@ prepare() {
 		perl dir_patch.pl $source $resources
 		
 		echo "Creating project $project"
-		mkdir -p $project/source $project/include $project/data_bin
-		cp Makefile.psl1ght $project/Makefile
+		mkdir -p "$project/source" "$project/include" "$project/data_bin"
+		cp -v "Makefile.psl1ght" "$project/Makefile"
 
-		if grep -q common.h $source
+		if grep -q "common.h" $source
 		then
-			echo "\tneeds common.c and icon.bmp"
-			cp common.h $project/include
-			cp common.c $project/source
-			cp icon.bmp $project/data_bin
+			cp -v "common.h" "$project/include"
+			cp -v "common.c" "$project/source"
+			cp -v "icon.bmp" "$project/data_bin"
 		fi
 
-		cp $source $project/source
+		if grep -q "picture.xbm" $source
+		then
+			cp -v "picture.xbm" "$project/include"
+		fi
+
+		cp "$source" "$project/source"
 
 		#copy resources if needed
 		for res in $resources 
 		do
-			grep -q $res $source && cp -v $res $project/data_bin
+			grep -q "$res" "$source" && cp -v "$res" "$project/data_bin"
 		done
 	done 
+	return 0
 }
 
 build() {
