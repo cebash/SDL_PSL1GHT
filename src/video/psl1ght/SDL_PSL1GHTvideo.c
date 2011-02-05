@@ -36,7 +36,7 @@
 
 #include "SDL_PSL1GHTvideo.h"
 #include "SDL_PSL1GHTevents_c.h"
-#include "../../render/SDL_sysrender.h"
+#include "SDL_PSL1GHTframebuffer_c.h"
 #include "SDL_PSL1GHTmodes_c.h"
 
 
@@ -124,8 +124,12 @@ PSL1GHT_VideoInit(_THIS)
     initializeGPU(devdata);
     PSL1GHT_InitModes(_this);
 
-    SDL_AddRenderDriver(&_this->displays[0], &PSL1GHT_RenderDriver);
+	_this->CreateWindowFramebuffer = SDL_PSL1GHT_CreateWindowFramebuffer;
+	_this->UpdateWindowFramebuffer = SDL_PSL1GHT_UpdateWindowFramebuffer;
+	_this->DestroyWindowFramebuffer = SDL_PSL1GHT_DestroyWindowFramebuffer;
 
+	_this->num_displays = 1;
+	//SDL_AddRenderDriver(&_this->displays[0], &PSL1GHT_RenderDriver);
 
     gcmSetFlipMode(GCM_FLIP_VSYNC); // Wait for VSYNC to flip
 
