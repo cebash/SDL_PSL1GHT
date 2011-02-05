@@ -57,6 +57,7 @@ SDL_Delay(Uint32 ms)
 }
 
 /* Data to handle a single periodic alarm */
+/*
 static int timer_alive = 0;
 static SDL_Thread *timer = NULL;
 
@@ -71,9 +72,9 @@ RunTimer(void *unused)
     }
     return (0);
 }
-
+*/
 /* This is only called if the event thread is not running */
-int
+/*int
 SDL_SYS_TimerInit(void)
 {
     timer_alive = 1;
@@ -105,6 +106,6 @@ SDL_SYS_StopTimer(void)
 {
     return;
 }
-
+*/
 #endif /* SDL_TIMER_PSL1GHT */
 /* vi: set ts=4 sw=4 expandtab: */
