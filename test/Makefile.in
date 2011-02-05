@@ -7,12 +7,9 @@ EXE	= @EXE@
 CFLAGS  = @CFLAGS@
 LIBS	= @LIBS@
 
-TARGETS = checkkeys$(EXE) graywin$(EXE) loopwave$(EXE) testalpha$(EXE) testatomic$(EXE) testaudioinfo$(EXE) testbitmap$(EXE) testblitspeed$(EXE) testcursor$(EXE) testdraw2$(EXE) testdyngles$(EXE) testdyngl$(EXE) testerror$(EXE) testfile$(EXE) testfill$(EXE) testgamma$(EXE) testgl2$(EXE) testgles$(EXE) testgl$(EXE) testhaptic$(EXE) testhread$(EXE) testiconv$(EXE) testime$(EXE) testintersections$(EXE) testjoystick$(EXE) testkeys$(EXE) testloadso$(EXE) testlock$(EXE) testmultiaudio$(EXE) testoverlay2$(EXE) testoverlay$(EXE) testplatform$(EXE) testpower$(EXE) testresample$(EXE) testsem$(EXE) testshape$(EXE) testsprite2$(EXE) testsprite$(EXE) testspriteminimal$(EXE) testtimer$(EXE) testver$(EXE) testvidinfo$(EXE) testwin$(EXE) testwm2$(EXE) testwm$(EXE) threadwin$(EXE) torturethread$(EXE) testgesture$(EXE)
+TARGETS = checkkeys$(EXE) graywin$(EXE) loopwave$(EXE) testalpha$(EXE) testbitmap$(EXE) testblitspeed$(EXE) testcdrom$(EXE) testcursor$(EXE) testdyngl$(EXE) testerror$(EXE) testfile$(EXE) testgamma$(EXE) testgl$(EXE) testhread$(EXE) testiconv$(EXE) testjoystick$(EXE) testkeys$(EXE) testlock$(EXE) testoverlay2$(EXE) testoverlay$(EXE) testpalette$(EXE) testplatform$(EXE) testsem$(EXE) testsprite$(EXE) testtimer$(EXE) testver$(EXE) testvidinfo$(EXE) testwin$(EXE) testwm$(EXE) threadwin$(EXE) torturethread$(EXE) testloadso$(EXE)
 
-all: Makefile $(TARGETS)
-
-Makefile: $(srcdir)/Makefile.in
-	$(SHELL) config.status $@
+all: $(TARGETS)
 
 checkkeys$(EXE): $(srcdir)/checkkeys.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
@@ -21,18 +18,6 @@ graywin$(EXE): $(srcdir)/graywin.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
 loopwave$(EXE): $(srcdir)/loopwave.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
-testresample$(EXE): $(srcdir)/testresample.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
-testaudioinfo$(EXE): $(srcdir)/testaudioinfo.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
-testmultiaudio$(EXE): $(srcdir)/testmultiaudio.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
-testpower$(EXE): $(srcdir)/testpower.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
 testalpha$(EXE): $(srcdir)/testalpha.c
@@ -44,19 +29,13 @@ testbitmap$(EXE): $(srcdir)/testbitmap.c
 testblitspeed$(EXE): $(srcdir)/testblitspeed.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
+testcdrom$(EXE): $(srcdir)/testcdrom.c
+	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
+
 testcursor$(EXE): $(srcdir)/testcursor.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
-testintersections$(EXE): $(srcdir)/testintersections.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/testintersections.c $(srcdir)/common.c $(CFLAGS) $(LIBS)
-
-testdraw2$(EXE): $(srcdir)/testdraw2.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/testdraw2.c $(srcdir)/common.c $(CFLAGS) $(LIBS)
-
 testdyngl$(EXE): $(srcdir)/testdyngl.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
-testdyngles$(EXE): $(srcdir)/testdyngles.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
 testerror$(EXE): $(srcdir)/testerror.c
@@ -65,20 +44,11 @@ testerror$(EXE): $(srcdir)/testerror.c
 testfile$(EXE): $(srcdir)/testfile.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
-testfill$(EXE): $(srcdir)/testfill.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
 testgamma$(EXE): $(srcdir)/testgamma.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS) @MATHLIB@
 
 testgl$(EXE): $(srcdir)/testgl.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS) @GLLIB@ @MATHLIB@
-
-testgl2$(EXE): $(srcdir)/testgl2.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/testgl2.c $(srcdir)/common.c $(CFLAGS) $(LIBS) @GLLIB@ @MATHLIB@
-
-testgles$(EXE): $(srcdir)/testgles.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/testgles.c $(srcdir)/common.c $(CFLAGS) $(LIBS) @GLLIB@ @MATHLIB@
 
 testhread$(EXE): $(srcdir)/testhread.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
@@ -101,23 +71,17 @@ testoverlay2$(EXE): $(srcdir)/testoverlay2.c
 testoverlay$(EXE): $(srcdir)/testoverlay.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
+testpalette$(EXE): $(srcdir)/testpalette.c
+	$(CC) -o $@ $? $(CFLAGS) $(LIBS) @MATHLIB@
+
 testplatform$(EXE): $(srcdir)/testplatform.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
 testsem$(EXE): $(srcdir)/testsem.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
-testshape$(EXE): $(srcdir)/testshape.c
-	$(CC) -o $@ $? -std=c99 $(CFLAGS) $(LIBS)
-
-testspriteminimal$(EXE): $(srcdir)/testspriteminimal.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS) @MATHLIB@
-
 testsprite$(EXE): $(srcdir)/testsprite.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS) @MATHLIB@
-
-testsprite2$(EXE): $(srcdir)/testsprite2.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/testsprite2.c $(srcdir)/common.c $(CFLAGS) $(LIBS) @MATHLIB@
 
 testtimer$(EXE): $(srcdir)/testtimer.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
@@ -134,9 +98,6 @@ testwin$(EXE): $(srcdir)/testwin.c
 testwm$(EXE): $(srcdir)/testwm.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
-testwm2$(EXE): $(srcdir)/testwm2.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/testwm2.c $(srcdir)/common.c $(CFLAGS) $(LIBS)
-
 threadwin$(EXE): $(srcdir)/threadwin.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
@@ -146,17 +107,6 @@ torturethread$(EXE): $(srcdir)/torturethread.c
 testloadso$(EXE): $(srcdir)/testloadso.c
 	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
 
-testhaptic$(EXE): $(srcdir)/testhaptic.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
-testatomic$(EXE): $(srcdir)/testatomic.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS)
-
-testgesture$(EXE): $(srcdir)/testgesture.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS) @MATHLIB@
- 
-testime$(EXE): $(srcdir)/testime.c
-	$(CC) -o $@ $? $(CFLAGS) $(LIBS) @SDL_TTF_LIB@
 
 clean:
 	rm -f $(TARGETS)

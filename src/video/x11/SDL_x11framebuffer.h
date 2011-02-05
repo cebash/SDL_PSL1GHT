@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+    Copyright (C) 1997-2009 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,12 @@
 */
 #include "SDL_config.h"
 
-extern int WIN_CreateWindowFramebuffer(_THIS, SDL_Window * window, Uint32 * format, void ** pixels, int *pitch);
-extern int WIN_UpdateWindowFramebuffer(_THIS, SDL_Window * window, int numrects, SDL_Rect * rects);
-extern void WIN_DestroyWindowFramebuffer(_THIS, SDL_Window * window);
+
+extern int X11_CreateWindowFramebuffer(_THIS, SDL_Window * window,
+                                       Uint32 * format,
+                                       void ** pixels, int *pitch);
+extern int X11_UpdateWindowFramebuffer(_THIS, SDL_Window * window,
+                                       int numrects, SDL_Rect * rects);
+extern void X11_DestroyWindowFramebuffer(_THIS, SDL_Window * window);
 
 /* vi: set ts=4 sw=4 expandtab: */

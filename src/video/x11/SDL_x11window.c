@@ -30,7 +30,6 @@
 #include "SDL_x11mouse.h"
 #include "SDL_x11gamma.h"
 #include "SDL_x11shape.h"
-#include "../Xext/extensions/StdCmap.h"
 
 #ifdef SDL_VIDEO_DRIVER_PANDORA
 #include "SDL_x11opengles.h"
@@ -176,6 +175,7 @@ SetupWindowData(_THIS, SDL_Window * window, Window w, BOOL created)
         } else {
             window->flags &= ~SDL_WINDOW_SHOWN;
         }
+        data->visual = attrib.visual;
     }
 
     {

@@ -49,12 +49,7 @@ case "$host" in
         else
             SYS_GL_LIBS="-lOSMesa"
         fi
-        ;;
-    *-*-qnx*)
-        EXE=""
-        MATHLIB=""
-        SYS_GL_LIBS="-lGLES_CM"
-        ;;
+		;;
     *)
         EXE=""
         MATHLIB="-lm"
@@ -65,7 +60,7 @@ AC_SUBST(EXE)
 AC_SUBST(MATHLIB)
 
 dnl Check for SDL
-SDL_VERSION=1.3.0
+SDL_VERSION=1.2.10
 AM_PATH_SDL($SDL_VERSION,
             :,
 	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
@@ -98,53 +93,13 @@ AC_TRY_COMPILE([
 have_opengl=yes
 ])
 AC_MSG_RESULT($have_opengl)
-
-dnl Check for OpenGL ES
-AC_MSG_CHECKING(for OpenGL ES support)
-have_opengles=no
-AC_TRY_COMPILE([
- #if defined (__QNXNTO__)
-    #include <GLES/gl.h>
- #elif defined (__IPHONEOS__)
-    #include <OpenGLES/ES1/gl.h>
- #else
-    #error "No OpenGL ES support"
- #endif /* __QNXNTO__ */
-],[
-],[
-have_opengles=yes
-])
-AC_MSG_RESULT($have_opengles)
-
 if test x$have_opengl = xyes; then
     CFLAGS="$CFLAGS -DHAVE_OPENGL"
-    GLLIB="$XPATH $SYS_GL_LIBS"
-elif test x$have_opengles = xyes; then
-    CFLAGS="$CFLAGS -DHAVE_OPENGLES"
     GLLIB="$XPATH $SYS_GL_LIBS"
 else
     GLLIB=""
 fi
-
 AC_SUBST(GLLIB)
-
-dnl Check for SDL_ttf
-AC_MSG_CHECKING(for SDL_ttf)
-have_SDL_ttf=no
-AC_TRY_COMPILE([
- #include "SDL_ttf.h"
-],[
-],[
-have_SDL_ttf=yes
-])
-AC_MSG_RESULT($have_SDL_ttf)
-
-if test x$have_SDL_ttf = xyes; then
-    CFLAGS="$CFLAGS -DHAVE_SDL_TTF"
-    SDL_TTF_LIB="-lSDL_ttf"
-fi
-
-AC_SUBST(SDL_TTF_LIB)
 
 dnl Finally create all the generated files
 AC_OUTPUT([Makefile])
