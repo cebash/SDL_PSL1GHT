@@ -51,7 +51,7 @@ PSL1GHT_InitModes(_THIS)
     assert(videoGetResolution(state.displayMode.resolution, &res) == 0);
 
     /* Setting up the DisplayMode based on current settings */
-    mode.format = SDL_PIXELFORMAT_RGB888;
+    mode.format = SDL_PIXELFORMAT_ARGB8888;
     mode.refresh_rate = 0;
     mode.w = res.width;
     mode.h = res.height;
@@ -79,9 +79,9 @@ PSL1GHT_InitModes(_THIS)
 /* DisplayModes available on the PS3 */
 static SDL_DisplayMode ps3fb_modedb[] = {
     /* Native resolutions (progressive, "fullscreen") */
-    {SDL_PIXELFORMAT_RGB888, 1920, 1080, 0, NULL}, // 1080p
-    {SDL_PIXELFORMAT_RGB888, 1280, 720, 0, NULL}, // 720p
-    {SDL_PIXELFORMAT_RGB888, 720, 480, 0, NULL}, // 480p
+    {SDL_PIXELFORMAT_ARGB8888, 1920, 1080, 0, NULL}, // 1080p
+    {SDL_PIXELFORMAT_ARGB8888, 1280, 720, 0, NULL}, // 720p
+    {SDL_PIXELFORMAT_ARGB8888, 720, 480, 0, NULL}, // 480p
 };
 
 /* PS3 videomode number according to ps3fb_modedb */
