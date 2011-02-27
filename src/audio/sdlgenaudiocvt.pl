@@ -384,7 +384,18 @@ sub buildArbitraryResampleFunc {
     my $eps_adjust = ($upsample) ? 'dstsize' : 'srcsize';
     my $incr = '';
     my $incr2 = '';
+    my $preround = '';
+    my $round = '';
 
+    if ($fsize * $channels > 8) {
+        $preround = '(';
+        my $modulo = $fsize * $channels / 8;
+	if ($modulo & ($modulo - 1)) {
+	    $round = ') / '.$modulo.' * '.$modulo;
+	} else {
+	    $round = ') & ~'.($modulo - 1);
+	}
+    }
 
     # !!! FIXME: DEBUG_CONVERT should report frequencies.
     print <<EOF;
@@ -396,7 +407,7 @@ ${sym}(SDL_AudioCVT * cvt, SDL_AudioFormat format)
 #endif
 
     const int srcsize = cvt->len_cvt - $fudge;
-    const int dstsize = (int) (((double)cvt->len_cvt) * cvt->rate_incr);
+    const int dstsize = ${preround}(int) (((double)cvt->len_cvt) * cvt->rate_incr)${round};
     register int eps = 0;
 EOF
 
@@ -528,6 +539,18 @@ sub buildMultipleResampleFunc {
     $funcs{$hashid} = $sym;
     $custom_converters++;
 
+    my $preround = '';
+    my $round = '';
+    if ($fsize * $channels > 8 && !$upsample) {
+        $preround = '(';
+        my $modulo = $fsize * $channels / 8;
+	if ($modulo & ($modulo - 1)) {
+	    $round = ') / '.$modulo.' * '.$modulo;
+	} else {
+	    $round = ') & ~'.($modulo - 1);
+	}
+    }
+
     # !!! FIXME: DEBUG_CONVERT should report frequencies.
     print <<EOF;
 static void SDLCALL
@@ -538,7 +561,7 @@ ${sym}(SDL_AudioCVT * cvt, SDL_AudioFormat format)
 #endif
 
     const int srcsize = cvt->len_cvt;
-    const int dstsize = cvt->len_cvt $lencvtop $multiple;
+    const int dstsize = ${preround}cvt->len_cvt $lencvtop $multiple${round};
 EOF
 
     my $endcomparison = '!=';
