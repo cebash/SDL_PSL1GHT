@@ -69,7 +69,7 @@ int
 SDL_SYS_CreateThread(SDL_Thread * thread, void *args)
 {
 	sys_ppu_thread_t id;
-	size_t stack_size = 0x1000;
+	size_t stack_size = 0x4000;
 	u64 priority = 1500;
 
     /* Create the thread and go! */
