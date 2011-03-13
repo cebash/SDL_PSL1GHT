@@ -90,6 +90,13 @@ static void flip( gcmContextData *context, int current_screen)
     gcmSetWaitFlip(context); // Prevent the RSX from continuing until the flip has finished.
 }
 
+static void waitFlip()
+{
+    while(gcmGetFlipStatus() != 0)
+      usleep(200);
+    gcmResetFlipStatus();
+}
+
 SDL_Renderer *
 SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
 {
@@ -207,6 +214,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     gcmResetFlipStatus();
     printf( "\tFinished\n");
     flip(data->context, data->current_screen);
+    waitFlip();
     return renderer;
 }
 
@@ -413,17 +421,15 @@ SDL_PSL1GHT_RenderPresent(SDL_Renderer * renderer)
 
     printf( "\tRendering to screen %d\n", data->current_screen);
 
-    printf( "\tWait for vsync\n");
-    /* Wait for vsync */
-    //if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
-        while(gcmGetFlipStatus() != 0)
-            usleep(200);
-        gcmResetFlipStatus();
-    //}
-
     printf( "\tPage flip\n");
     /* Page flip */
     flip(data->context, data->current_screen);
+
+    printf( "\tWait for vsync\n");
+    /* Wait for vsync */
+    //if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
+        waitFlip();
+    //}
 
     printf( "\tUpdate the flipping chain, if any\n");
     /* Update the flipping chain, if any */
