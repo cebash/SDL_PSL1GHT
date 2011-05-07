@@ -28,7 +28,7 @@
 
 #include "SDL_PSL1GHTvideo.h"
 
-#include <rsx/reality.h>
+#include <rsx/rsx.h>
 #include <unistd.h>
 #include <assert.h>
 
@@ -86,7 +86,7 @@ typedef struct
 static void flip( gcmContextData *context, int current_screen)
 {
     assert(gcmSetFlip(context, current_screen) == 0);
-    realityFlushBuffer(context);
+    rsxFlushBuffer(context);
     gcmSetWaitFlip(context); // Prevent the RSX from continuing until the flip has finished.
 }
 
@@ -181,7 +181,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         printf( "\t\tAllocate RSX memory for pixels\n");
         /* Allocate RSX memory for pixels */
         SDL_free(data->screens[i]->pixels);
-        data->screens[i]->pixels = rsxMemAlign(64, data->screens[i]->h * data->screens[i]->pitch);
+        data->screens[i]->pixels = rsxMemalign(64, data->screens[i]->h * data->screens[i]->pitch);
         if (!data->screens[i]->pixels) {
             printf("ERROR\n");
             SDL_FreeSurface(data->screens[i]);
@@ -191,7 +191,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
 
         u32 offset = 0;
         printf( "\t\tPrepare RSX offsets (%16X, %08X) \n", (unsigned int) data->screens[i]->pixels, (unsigned int) &offset);
-        if ( realityAddressToOffset(data->screens[i]->pixels, &offset) != 0) {
+        if ( rsxAddressToOffset(data->screens[i]->pixels, &offset) != 0) {
             printf("ERROR\n");
 //            SDL_FreeSurface(data->screens[i]);
             SDL_OutOfMemory();

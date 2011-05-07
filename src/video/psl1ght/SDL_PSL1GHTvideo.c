@@ -43,8 +43,7 @@
 #include <malloc.h>
 #include <assert.h>
 
-#include <rsx/reality.h>
-#include <rsx/gcm.h>
+#include <rsx/rsx.h>
 
 #define PSL1GHTVID_DRIVER_NAME "psl1ght"
 
@@ -151,7 +150,7 @@ void initializeGPU( SDL_DeviceData * devdata)
     assert(host_addr != NULL);
 
     // Initilise Reality, which sets up the command buffer and shared IO memory
-    devdata->_CommandBuffer = realityInit(0x10000, 1024*1024, host_addr);
+    devdata->_CommandBuffer = rsxInit(0x10000, 1024*1024, host_addr);
     assert(devdata->_CommandBuffer != NULL);
 }
 

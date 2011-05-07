@@ -43,7 +43,7 @@ typedef struct SDL_PSL1GHT_JoyData
 
 struct joystick_hwdata
 {
-	PadData old_pad_data;
+	padData old_pad_data;
 };
 
 static SDL_PSL1GHT_JoyData joy_data[MAX_PADS];
@@ -60,7 +60,7 @@ SDL_SYS_JoystickInit(void)
 {
 	int iReturn = 0;
     SDL_numjoysticks = MAX_PADS;
-	PadInfo padinfo;
+	padInfo padinfo;
 
 	pdprintf("SDL_SYS_JoystickInit\n");
 
@@ -158,7 +158,7 @@ SDL_SYS_JoystickOpen(SDL_Joystick * joystick)
 void
 SDL_SYS_JoystickUpdate(SDL_Joystick * joystick)
 {
-	PadData new_pad_data;
+	padData new_pad_data;
 	if( ioPadGetData(joystick->index, &new_pad_data) != 0)
 		SDL_SetError("No joystick available with that index");
 	else if(new_pad_data.len >= 8)

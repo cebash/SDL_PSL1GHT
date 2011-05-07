@@ -79,7 +79,7 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 	//8 16 or 32 block buffer
 	_params.numBlocks = AUDIO_BLOCK_8;
 	//extended attributes
-	_params.attr = 0;
+	_params.attrib = 0;
 	//sound level (1 is default)
 	_params.level = 1;
 
@@ -105,8 +105,8 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 	printf("audioSetNotifyEventQueue: %d\n",ret);
 
 	// clears the event queue
-	ret = sys_event_queue_drain(_snd_queue);
-	printf("sys_event_queue_drain: %d\n",ret);
+	ret = sysEventQueueDrain(_snd_queue);
+	printf("sysEentQueueDrain: %d\n",ret);
 
 	ret=audioPortStart(_portNum);
 	deprintf("audioPortStart: %d\n",ret);
@@ -153,8 +153,8 @@ PSL1GHT_AUD_CloseDevice(_THIS)
 	deprintf("audioRemoveNotifyEventQueue: %d\n",ret);
 	ret=audioPortClose(_portNum);
 	deprintf("audioPortClose: %d\n",ret);
-	ret=sys_event_queue_destroy(_snd_queue, 0);
-	deprintf("sys_event_queue_destroy: %d\n",ret);
+	ret=sysEventQueueDestroy(_snd_queue, 0);
+	deprintf("sysEventQueueDestroy: %d\n",ret);
 	ret=audioQuit();
 	deprintf("audioQuit: %d\n",ret);
 
@@ -186,8 +186,8 @@ ALSA_WaitDevice(_THIS)
 	//deprintf( "ALSA_WaitDevice(%08X.%08X)\n", SHW64(this));
 	
 	sys_event_t event;
-	s32 ret = sys_event_queue_receive( _snd_queue, &event, 20 * 1000);
-	//deprintf( "sys_event_queue_receive: %08X\n", ret);
+	s32 ret = sysEventQueueReceive( _snd_queue, &event, 20 * 1000);
+	//deprintf( "sysEventQueueReceive: %08X\n", ret);
 }
 
 

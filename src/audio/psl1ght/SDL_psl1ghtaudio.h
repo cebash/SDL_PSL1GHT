@@ -34,8 +34,8 @@ struct SDL_PrivateAudioData
     //:TransferSoundData *sound;
     /* The file descriptor for the audio device */
 
-	AudioPortParam params;
-	AudioPortConfig config;
+	audioPortParam params;
+	audioPortConfig config;
 	u32 portNum;
 	u32 last_filled_buf;
 	sys_event_queue_t snd_queue; // Queue identifier

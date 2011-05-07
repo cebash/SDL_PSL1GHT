@@ -26,7 +26,7 @@
 
 #include "../SDL_sysvideo.h"
 
-#include <rsx/gcm.h>
+#include <rsx/rsx.h>
 #include <sysutil/video.h>
 
 /* Debugging
@@ -59,7 +59,7 @@ typedef struct SDL_DeviceData
 
 typedef struct SDL_DisplayModeData
 {
-    VideoConfiguration vconfig;
+    videoConfiguration vconfig;
 } PSL1GHT_DisplayModeData;
 #endif /* _SDL_PSL1GHTvideo_h */
 

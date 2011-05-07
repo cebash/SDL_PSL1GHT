@@ -25,7 +25,6 @@
 #include "../SDL_sysvideo.h"
 #include "SDL_timer.h"
 
-#include <rsx/reality.h>
 #include <sysutil/video.h>
 
 #include <assert.h>
@@ -36,7 +35,7 @@ PSL1GHT_InitModes(_THIS)
     deprintf(1, "+PSL1GHT_InitModes()\n");
     SDL_DisplayMode mode;
     PSL1GHT_DisplayModeData *modedata;
-    VideoState state;
+    videoState state;
 
     modedata = (PSL1GHT_DisplayModeData *) SDL_malloc(sizeof(*modedata));
     if (!modedata) {
@@ -47,7 +46,7 @@ PSL1GHT_InitModes(_THIS)
     assert(state.state == 0); // Make sure display is enabled
 
     // Get the current resolution
-	VideoResolution res;
+	videoResolution res;
     assert(videoGetResolution(state.displayMode.resolution, &res) == 0);
 
     /* Setting up the DisplayMode based on current settings */
@@ -135,7 +134,7 @@ PSL1GHT_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode
 {
     deprintf(1, "+PSL1GHT_SetDisplayMode()\n");
     PSL1GHT_DisplayModeData *dispdata = (PSL1GHT_DisplayModeData *) mode->driverdata;
-	VideoState state;
+	videoState state;
 
     /* Set the new DisplayMode */
     deprintf(2, "Setting PS3_MODE to %u\n", dispdata->vconfig.resolution);

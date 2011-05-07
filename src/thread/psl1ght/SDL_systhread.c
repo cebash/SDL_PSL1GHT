@@ -25,7 +25,8 @@
 
 #include <stdio.h>
 #include <signal.h>
-#include <psl1ght/lv2/thread.h>
+#include <lv2/thread.h>
+#include <sys/thread.h>
 
 #include "SDL_mutex.h"
 #include "SDL_thread.h"
@@ -59,10 +60,10 @@ SDL_UnmaskSignals(sigset_t * omask)
 }
 
 static void
-RunThread(u64 arg)
+RunThread(void *arg)
 {
-    SDL_RunThread((void *)arg);
-	sys_ppu_thread_exit(0);
+    SDL_RunThread(arg);
+	sysThreadExit(0);
 }
 
 int
@@ -73,7 +74,7 @@ SDL_SYS_CreateThread(SDL_Thread * thread, void *args)
 	u64 priority = 1500;
 
     /* Create the thread and go! */
-	int s = sys_ppu_thread_create(	&id, RunThread, (u64)args, priority, stack_size, THREAD_JOINABLE, "SDL");
+	int s = sysThreadCreate(&id, RunThread, args, priority, stack_size, THREAD_JOINABLE, "SDL");
     thread->handle = id;
 
     if ( s != 0)
@@ -96,7 +97,7 @@ SDL_threadID
 SDL_ThreadID(void)
 {
 	sys_ppu_thread_t id;
-	sys_ppu_thread_get_id(&id);
+	sysThreadGetId(&id);
     return ((SDL_threadID) id);
 }
 
@@ -105,7 +106,7 @@ SDL_SYS_WaitThread(SDL_Thread * thread)
 {
 	u64 retval;
 
-	int t = sys_ppu_thread_join(thread->handle, &retval);
+	int t = sysThreadJoin(thread->handle, &retval);
 }
 
 /* vi: set ts=4 sw=4 expandtab: */
