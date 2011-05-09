@@ -181,7 +181,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         printf( "\t\tAllocate RSX memory for pixels\n");
         /* Allocate RSX memory for pixels */
         SDL_free(data->screens[i]->pixels);
-        data->screens[i]->pixels = rsxMemAlign(16, data->screens[i]->h * data->screens[i]->pitch);
+        data->screens[i]->pixels = rsxMemAlign(64, data->screens[i]->h * data->screens[i]->pitch);
         if (!data->screens[i]->pixels) {
             printf("ERROR\n");
             SDL_FreeSurface(data->screens[i]);
