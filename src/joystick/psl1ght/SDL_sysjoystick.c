@@ -159,7 +159,9 @@ void
 SDL_SYS_JoystickUpdate(SDL_Joystick * joystick)
 {
 	PadData new_pad_data;
-	if( ioPadGetData(joystick->index, &new_pad_data) == 0)
+	if( ioPadGetData(joystick->index, &new_pad_data) != 0)
+		SDL_SetError("No joystick available with that index");
+	else if(new_pad_data.len >= 8)
 	{
 		// Update axes
 		CheckPSL1GHTAxis( ANA_L_H, 0);
@@ -188,8 +190,6 @@ SDL_SYS_JoystickUpdate(SDL_Joystick * joystick)
 		CheckPSL1GHTButton( BTN_R2, 14);
 		CheckPSL1GHTButton( BTN_L2, 15);
 	}
-	else
-		SDL_SetError("No joystick available with that index");
 
     return;
 }
