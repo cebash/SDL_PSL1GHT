@@ -359,12 +359,15 @@ SDL_PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
         Uint8 *dstpixels;
 
         src = (Uint8 *)((SDL_Surface *)texture->driverdata)->pixels;
-        dst = (Uint8 *) data->screens[data->current_screen]->pixels + dstrect->y * data->screens[data->current_screen]->pitch + dstrect->x
+        dst = (Uint8 *) data->screens[data->current_screen]->pixels +
+            dstrect->y * data->screens[data->current_screen]->pitch + dstrect->x
                         * SDL_BYTESPERPIXEL(texture->format);
         length = dstrect->w * SDL_BYTESPERPIXEL(texture->format);
-        for (row = 0; row < dstrect->h; ++row) {
+        if (length > data->screens[data->current_screen]->w * SDL_BYTESPERPIXEL(texture->format))
+          length = data->screens[data->current_screen]->w * SDL_BYTESPERPIXEL(texture->format);
+        for (row = 0; row < dstrect->h && row < data->screens[data->current_screen]->h; ++row) {
             SDL_memcpy(dst, src, length);
-            src += texture->w * SDL_BYTESPERPIXEL(texture->format);
+            src += ((SDL_Surface *)texture->driverdata)->pitch;
             dst += data->screens[data->current_screen]->pitch;
         }
 		return 0;
