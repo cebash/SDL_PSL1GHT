@@ -65,7 +65,7 @@ PSL1GHT_Available(void)
 static void
 PSL1GHT_DeleteDevice(SDL_VideoDevice * device)
 {
-    printf( "PSL1GHT_DeleteDevice( %16X)\n", device);
+    deprintf (1, "PSL1GHT_DeleteDevice( %16X)\n", device);
     SDL_free(device);
 }
 
@@ -73,7 +73,7 @@ static SDL_VideoDevice *
 PSL1GHT_CreateDevice(int devindex)
 {
     SDL_VideoDevice *device;
-    printf( "PSL1GHT_CreateDevice( %16X)\n", devindex);
+    deprintf (1, "PSL1GHT_CreateDevice( %16X)\n", devindex);
 
     /* Initialize all variables that we clean on shutdown */
     device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
@@ -135,7 +135,7 @@ PSL1GHT_VideoInit(_THIS)
 void
 PSL1GHT_VideoQuit(_THIS)
 {
-    printf("PSL1GHT_VideoQuit()\n");
+    deprintf (1, "PSL1GHT_VideoQuit()\n");
     PSL1GHT_QuitModes(_this);
     PSL1GHT_QuitSysEvent(_this);
     SDL_free( _this->driverdata);
@@ -144,7 +144,7 @@ PSL1GHT_VideoQuit(_THIS)
 
 void initializeGPU( SDL_DeviceData * devdata)
 {
-    printf("initializeGPU()\n");
+    deprintf (1, "initializeGPU()\n");
    // Allocate a 1Mb buffer, alligned to a 1Mb boundary to be our shared IO memory with the RSX.
     void *host_addr = memalign(1024*1024, 1024*1024);
     assert(host_addr != NULL);
