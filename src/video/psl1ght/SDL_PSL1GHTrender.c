@@ -80,6 +80,7 @@ typedef struct
 {
     int current_screen;
     SDL_Surface *screens[3];
+    void *textures[3];
     gcmContextData *context; // Context to keep track of the RSX buffer.    
 } SDL_PSL1GHT_RenderData;
 
@@ -181,7 +182,8 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         deprintf (1,  "\t\tAllocate RSX memory for pixels\n");
         /* Allocate RSX memory for pixels */
         SDL_free(data->screens[i]->pixels);
-        data->screens[i]->pixels = rsxMemalign(64, data->screens[i]->h * data->screens[i]->pitch);
+        data->screens[i]->flags |= SDL_PREALLOC;
+        data->screens[i]->pixels = data->textures[i] = rsxMemalign(64, data->screens[i]->h * data->screens[i]->pitch);
         if (!data->screens[i]->pixels) {
             deprintf (1, "ERROR\n");
             SDL_FreeSurface(data->screens[i]);
@@ -193,7 +195,8 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         deprintf (1,  "\t\tPrepare RSX offsets (%16X, %08X) \n", (unsigned int) data->screens[i]->pixels, (unsigned int) &offset);
         if ( rsxAddressToOffset(data->screens[i]->pixels, &offset) != 0) {
             deprintf (1, "ERROR\n");
-//            SDL_FreeSurface(data->screens[i]);
+            SDL_FreeSurface(data->screens[i]);
+            rsxFree(data->textures[i]);
             SDL_OutOfMemory();
             return NULL;
         }
@@ -201,7 +204,8 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         // Setup the display buffers
         if ( gcmSetDisplayBuffer(i, offset, data->screens[i]->pitch, data->screens[i]->w,data->screens[i]->h) != 0) {
             deprintf (1, "ERROR\n");
-//            SDL_FreeSurface(data->screens[i]);
+            SDL_FreeSurface(data->screens[i]);
+            rsxFree(data->textures[i]);
             SDL_OutOfMemory();
             return NULL;
         }
@@ -469,8 +473,11 @@ SDL_PSL1GHT_DestroyRenderer(SDL_Renderer * renderer)
     if (data) {
         for (i = 0; i < SDL_arraysize(data->screens); ++i) {
             if (data->screens[i]) {
-             //   SDL_FreeSurface(data->screens[i]);
+               SDL_FreeSurface(data->screens[i]);
             }
+	    if (data->textures[i]) {
+                rsxFree(data->textures[i]);
+	    }
         }
         SDL_free(data);
     }
