@@ -190,6 +190,7 @@ SDL_PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
             SDL_OutOfMemory();
             return NULL;
         }
+	memset(data->textures[i], 0, data->screens[i]->h * data->screens[i]->pitch);
 
         u32 offset = 0;
         deprintf (1,  "\t\tPrepare RSX offsets (%16X, %08X) \n", (unsigned int) data->screens[i]->pixels, (unsigned int) &offset);
