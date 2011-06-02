@@ -61,8 +61,7 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
     while ((!valid_datatype) && (test_format)) {
         this->spec.format = test_format;
         switch (test_format) {
-        //case AUDIO_F32LSB: // FIXME maybe the float is MSB ?
-        case AUDIO_F32SYS: // FIXME maybe the float is MSB ?
+        case AUDIO_F32MSB:
             valid_datatype = 1;
             break;
         default:
@@ -111,7 +110,7 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 	ret=audioPortStart(_portNum);
 	deprintf("audioPortStart: %d\n",ret);
 
-	_last_filled_buf = 1;
+	_last_filled_buf = _config.numBlocks - 1;
 
 	this->spec.format = test_format;
 	this->spec.size = sizeof(float) * AUDIO_BLOCK_SAMPLES * _config.channelCount;
@@ -169,7 +168,7 @@ PSL1GHT_AUD_GetDeviceBuf(_THIS)
 
     //int playing = _config.readIndex;
     int playing = *((u64*)(u64)_config.readIndex);
-    int filling = (playing + 1) % _config.numBlocks;
+    int filling = (_last_filled_buf + 1) % _config.numBlocks;
 	Uint8 * dma_buf = (Uint8 *)(u64)_config.audioDataStart;
 	//deprintf( "\tWriting to buffer %d \n", filling);
 	// deprintf( "\tbuffer address (%08X.%08X => %08X.%08X)\n", SHW64(_config.audioDataStart), SHW64(dma_buf));
