@@ -386,8 +386,7 @@ SDL_RunAudio(void *devicep)
         }
 #endif
 
-        /* stream_len = device->convert.len; */
-        stream_len = device->spec.size;
+        stream_len = device->convert.len;
     } else {
         silence = device->spec.silence;
         stream_len = device->spec.size;
@@ -943,7 +942,7 @@ open_audio_device(const char *devname, int iscapture,
             return 0;
         }
         if (device->convert.needed) {
-            device->convert.len = (int) (((double) obtained->size) /
+            device->convert.len = (int) (((double) device->spec.size) /
                                          device->convert.len_ratio);
 
             device->convert.buf =
