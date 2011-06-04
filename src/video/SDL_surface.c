@@ -974,6 +974,9 @@ SDL_FreeSurface(SDL_Surface * surface)
     if (surface == NULL) {
         return;
     }
+    if (surface->flags & SDL_DONTFREE) {
+        return;
+    }
     if (--surface->refcount > 0) {
         return;
     }

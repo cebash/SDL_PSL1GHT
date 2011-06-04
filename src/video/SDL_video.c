@@ -2825,6 +2825,9 @@ SDL_VideoQuit(void)
     if (!_this) {
         return;
     }
+
+    SDL_VideoQuitCompat();
+
     /* Halt event processing before doing anything else */
     SDL_StopEventLoop();
     SDL_EnableScreenSaver();

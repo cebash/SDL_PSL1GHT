@@ -528,12 +528,14 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
     /* Destroy existing window */
     SDL_PublicSurface = NULL;
     if (SDL_ShadowSurface) {
+        SDL_ShadowSurface->flags &= ~SDL_DONTFREE;
         SDL_FreeSurface(SDL_ShadowSurface);
         SDL_ShadowSurface = NULL;
     }
     if (SDL_VideoSurface) {
         SDL_DelPaletteWatch(SDL_VideoSurface->format->palette,
                             SDL_VideoPaletteChanged, NULL);
+        SDL_VideoSurface->flags &= ~SDL_DONTFREE;
         SDL_FreeSurface(SDL_VideoSurface);
         SDL_VideoSurface = NULL;
     }
@@ -652,6 +654,7 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
             return NULL;
         }
         SDL_VideoSurface->flags |= surface_flags;
+        SDL_VideoSurface->flags |= SDL_DONTFREE;
         SDL_PublicSurface = SDL_VideoSurface;
         return SDL_PublicSurface;
     }
@@ -684,6 +687,7 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
         return NULL;
     }
     SDL_VideoSurface->flags |= surface_flags;
+    SDL_VideoSurface->flags |= SDL_DONTFREE;
 
     /* Set a default screen palette */
     if (SDL_VideoSurface->format->palette) {
@@ -706,6 +710,7 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
             return NULL;
         }
         SDL_ShadowSurface->flags |= surface_flags;
+        SDL_ShadowSurface->flags |= SDL_DONTFREE;
 
         /* 8-bit SDL_ShadowSurface surfaces report that they have exclusive palette */
         if (SDL_ShadowSurface->format->palette) {
@@ -732,6 +737,33 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
 
     /* We're finally done! */
     return SDL_PublicSurface;
+}
+
+void
+SDL_VideoQuitCompat(void)
+{
+    /* Destroy existing window */
+    SDL_PublicSurface = NULL;
+    if (SDL_ShadowSurface) {
+        SDL_ShadowSurface->flags &= ~SDL_DONTFREE;
+        SDL_FreeSurface(SDL_ShadowSurface);
+        SDL_ShadowSurface = NULL;
+    }
+    if (SDL_VideoSurface) {
+        SDL_DelPaletteWatch(SDL_VideoSurface->format->palette,
+                            SDL_VideoPaletteChanged, NULL);
+        SDL_VideoSurface->flags &= ~SDL_DONTFREE;
+        SDL_FreeSurface(SDL_VideoSurface);
+        SDL_VideoSurface = NULL;
+    }
+    if (SDL_VideoContext) {
+        /* SDL_GL_MakeCurrent(0, NULL); *//* Doesn't do anything */
+        SDL_GL_DeleteContext(SDL_VideoContext);
+        SDL_VideoContext = NULL;
+    }
+    if (SDL_VideoWindow) {
+        SDL_DestroyWindow(SDL_VideoWindow);
+    }
 }
 
 SDL_Surface *

@@ -477,6 +477,7 @@ extern int SDL_GetGammaRampForDisplay(SDL_VideoDisplay * display, Uint16 * red, 
 extern void SDL_AddRenderDriver(SDL_VideoDisplay *display, const SDL_RenderDriver * driver);
 
 extern int SDL_RecreateWindow(SDL_Window * window, Uint32 flags);
+extern void SDL_VideoQuitCompat(void);
 
 extern void SDL_OnWindowShown(SDL_Window * window);
 extern void SDL_OnWindowHidden(SDL_Window * window);
