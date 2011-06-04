@@ -34,17 +34,34 @@
 
 static void eventHandle(u64 status, u64 param, void * userdata) {
     _THIS = userdata;
-    if(status == SYSUTIL_EXIT_GAME){
-	printf("Quit game requested\n");
-	SDL_SendQuit();
-    }else if(status == SYSUTIL_MENU_OPEN){
-	//xmb opened, should prob pause game or something :P
-    }else if(status == SYSUTIL_MENU_CLOSE){
-	//xmb closed, and then resume
-    }else if(status == SYSUTIL_DRAW_BEGIN){
-    }else if(status == SYSUTIL_DRAW_END){
-    }else{
-	printf("Unhandled event: %08llX\n", (unsigned long long int)status);
+    SDL_Window *window = NULL;
+
+    // There should only be one window
+    if (_this->num_displays == 1) {
+        SDL_VideoDisplay *display = &_this->displays[0];
+        if (display->windows != NULL) {
+            window = display->windows;
+        }
+    }
+
+    // Process event
+    if (status == SYSUTIL_EXIT_GAME) {
+	    deprintf(1, "Quit game requested\n");
+	    SDL_SendQuit();
+    } else if(status == SYSUTIL_MENU_OPEN) {
+	    // XMB opened
+	    if (window) {
+	        SDL_SendWindowEvent(window, SDL_WINDOWEVENT_LEAVE, 0, 0);
+	    }
+    } else if(status == SYSUTIL_MENU_CLOSE) {
+		// XMB closed
+	    if (window) {
+	        SDL_SendWindowEvent(window, SDL_WINDOWEVENT_ENTER, 0, 0);
+	    }
+    } else if(status == SYSUTIL_DRAW_BEGIN) {
+    } else if(status == SYSUTIL_DRAW_END) {
+    } else {
+	    deprintf(1, "Unhandled event: %08llX\n", (unsigned long long int)status);
     }
 }
 
