@@ -4,7 +4,7 @@
 #   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
 #   Free Software Foundation, Inc.
 
-timestamp='2010-11-03'
+timestamp='2009-10-07'
 
 # This file is (in principle) common to ALL GNU software.
 # The presence of a machine in this file suggests that SOME GNU software
@@ -939,10 +939,6 @@ case $basic_machine in
 	ppc64le-* | powerpc64little-*)
 		basic_machine=powerpc64le-`echo $basic_machine | sed 's/^[^-]*-//'`
 		;;
-	ppu*)
-		basic_machine=powerpc64-unknown
-		os=-psl1ght
-       ;;
 	ps2)
 		basic_machine=i386-ibm
 		;;
@@ -1327,8 +1323,6 @@ case $os in
 		;;
 	-linux-dietlibc)
 		os=-linux-dietlibc
-		;;
-	-psl1ght*)
 		;;
 	-linux*)
 		os=`echo $os | sed -e 's|linux|linux-gnu|'`
