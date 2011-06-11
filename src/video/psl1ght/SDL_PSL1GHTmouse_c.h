@@ -21,49 +21,10 @@
 */
 #include "SDL_config.h"
 
-#ifndef _SDL_PSL1GHTvideo_h
-#define _SDL_PSL1GHTvideo_h
+#include "SDL_PSL1GHTvideo.h"
 
-#include "../SDL_sysvideo.h"
-
-#include <rsx/rsx.h>
-#include <sysutil/video.h>
-
-/* Debugging
- * 0: No debug messages
- * 1: Video debug messages
- * 2: SPE debug messages
- * 3: Memory adresses
- */
-#define VIDEO_DEBUG_LEVEL 0
-
-#ifdef VIDEO_DEBUG_LEVEL
-#define deprintf( level, fmt, args... ) \
-    do \
-{ \
-    if ( (unsigned)(level) <= VIDEO_DEBUG_LEVEL ) \
-    { \
-        fprintf( stdout, fmt, ##args ); \
-        fflush( stdout ); \
-    } \
-} while ( 0 )
-#else
-#define deprintf( level, fmt, args... )
-#endif
-
-/* Private RSX data */
-typedef struct SDL_DeviceData
-{
-	gcmContextData *_CommandBuffer; // Context to keep track of the RSX buffer.
-
-	bool _mouseConnected;
-	Uint8 _mouseButtons;
-} SDL_DeviceData;
-
-typedef struct SDL_DisplayModeData
-{
-    videoConfiguration vconfig;
-} PSL1GHT_DisplayModeData;
-#endif /* _SDL_PSL1GHTvideo_h */
+extern void PSL1GHT_PumpMouse(_THIS);
+extern void PSL1GHT_InitMouse(_THIS);
+extern void PSL1GHT_QuitMouse(_THIS);
 
 /* vi: set ts=4 sw=4 expandtab: */
