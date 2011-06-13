@@ -68,7 +68,7 @@
 #define HAVE_MATH_H 1
 #define HAVE_ICONV_H 1
 #define HAVE_SIGNAL_H 1
-/* #undef HAVE_ALTIVEC_H */
+#define HAVE_ALTIVEC_H 1
 
 /* C library functions */
 #define HAVE_MALLOC 1
@@ -297,6 +297,6 @@
 
 /* Enable assembly routines */
 #define SDL_ASSEMBLY_ROUTINES 1
-/* #undef SDL_ALTIVEC_BLITTERS */
+#define SDL_ALTIVEC_BLITTERS 1
 
 #endif /* _SDL_config_h */
