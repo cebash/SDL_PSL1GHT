@@ -101,7 +101,7 @@ static int NDS_CreateWindowFramebuffer(_THIS, SDL_Window *window,
     int bpp;
     Uint32 Rmask, Gmask, Bmask, Amask;
 	const SDL_VideoDisplay *display = SDL_GetDisplayForWindow(window);
-	const SDL_DisplayMode *mode = display->current_mode;
+	const SDL_DisplayMode *mode = display->driverdata;
 	const Uint32 fmt = mode->format;
 
 	if (fmt != SDL_PIXELFORMAT_ABGR1555) {

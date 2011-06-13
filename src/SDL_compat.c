@@ -488,9 +488,9 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
     }
 
     /* See if we can simply resize the existing window and surface */
-    //if (SDL_ResizeVideoMode(width, height, bpp, flags) == 0) {
-    //    return SDL_PublicSurface;
-    //}
+    if (SDL_ResizeVideoMode(width, height, bpp, flags) == 0) {
+        return SDL_PublicSurface;
+    }
 
     /* Destroy existing window */
     SDL_PublicSurface = NULL;
@@ -540,7 +540,7 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
     if (!SDL_VideoWindow) {
         return NULL;
     }
-    //SDL_SetWindowIcon(SDL_VideoWindow, SDL_VideoIcon);
+    SDL_SetWindowIcon(SDL_VideoWindow, SDL_VideoIcon);
 
     SetupScreenSaver(flags);
 
@@ -576,7 +576,6 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
             return NULL;
         }
         SDL_VideoSurface->flags |= surface_flags;
-        SDL_VideoSurface->flags |= SDL_DONTFREE;
         SDL_PublicSurface = SDL_VideoSurface;
         return SDL_PublicSurface;
     }
