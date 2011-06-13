@@ -36,12 +36,12 @@
 
 #include "SDL_PSL1GHTvideo.h"
 #include "SDL_PSL1GHTevents_c.h"
-#include "SDL_PSL1GHTrender_c.h"
 #include "SDL_PSL1GHTmodes_c.h"
 
 
 #include <malloc.h>
 #include <assert.h>
+#include <unistd.h>
 
 #include <rsx/rsx.h>
 
@@ -106,7 +106,6 @@ VideoBootStrap PSL1GHT_bootstrap = {
 int
 PSL1GHT_VideoInit(_THIS)
 {
-    SDL_DisplayMode mode;
     SDL_DeviceData *devdata = NULL;
 
     devdata = (SDL_DeviceData*) SDL_calloc(1, sizeof(SDL_DeviceData));
@@ -122,9 +121,6 @@ PSL1GHT_VideoInit(_THIS)
 
     initializeGPU(devdata);
     PSL1GHT_InitModes(_this);
-
-    SDL_AddRenderDriver(&_this->displays[0], &SDL_PSL1GHT_RenderDriver);
-
 
     gcmSetFlipMode(GCM_FLIP_VSYNC); // Wait for VSYNC to flip
 

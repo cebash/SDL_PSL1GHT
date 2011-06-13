@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 
 #import <UIKit/UIKit.h>
@@ -34,9 +33,6 @@
 #include "SDL_uikitevents.h"
 #include "SDL_uikitwindow.h"
 #include "SDL_uikitopengles.h"
-
-#include "SDL_renderer_sw.h"
-#include "SDL_renderer_gles.h"
 
 #include "SDL_assert.h"
 
@@ -56,7 +52,7 @@ BOOL SDL_UIKit_supports_multiple_displays = NO;
 static int
 UIKit_Available(void)
 {
-	return (1);
+    return (1);
 }
 
 static void UIKit_DeleteDevice(SDL_VideoDevice * device)
@@ -85,21 +81,22 @@ UIKit_CreateDevice(int devindex)
     device->GetDisplayModes = UIKit_GetDisplayModes;
     device->SetDisplayMode = UIKit_SetDisplayMode;
     device->PumpEvents = UIKit_PumpEvents;
-	device->CreateWindow = UIKit_CreateWindow;
-	device->DestroyWindow = UIKit_DestroyWindow;
-	
-	
-	/* OpenGL (ES) functions */
-	device->GL_MakeCurrent		= UIKit_GL_MakeCurrent;
-	device->GL_SwapWindow		= UIKit_GL_SwapWindow;
-	device->GL_CreateContext	= UIKit_GL_CreateContext;
-	device->GL_DeleteContext    = UIKit_GL_DeleteContext;
-	device->GL_GetProcAddress   = UIKit_GL_GetProcAddress;
-	device->GL_LoadLibrary	    = UIKit_GL_LoadLibrary;
-	device->free = UIKit_DeleteDevice;
+    device->CreateWindow = UIKit_CreateWindow;
+    device->DestroyWindow = UIKit_DestroyWindow;
+    device->GetWindowWMInfo = UIKit_GetWindowWMInfo;
+    
+    
+    /* OpenGL (ES) functions */
+    device->GL_MakeCurrent        = UIKit_GL_MakeCurrent;
+    device->GL_SwapWindow        = UIKit_GL_SwapWindow;
+    device->GL_CreateContext    = UIKit_GL_CreateContext;
+    device->GL_DeleteContext    = UIKit_GL_DeleteContext;
+    device->GL_GetProcAddress   = UIKit_GL_GetProcAddress;
+    device->GL_LoadLibrary        = UIKit_GL_LoadLibrary;
+    device->free = UIKit_DeleteDevice;
 
-	device->gl_config.accelerated = 1;
-	
+    device->gl_config.accelerated = 1;
+
     return device;
 }
 
@@ -121,6 +118,32 @@ The main screen should list a AxB mode for portrait orientation, and then
 
 */
 
+static CGSize
+UIKit_ForcePortrait(const CGSize size)
+{
+    CGSize retval;
+    if (size.width < size.height) { // portrait
+        retval = size;
+    } else {  // landscape
+        retval.width = size.height;
+        retval.height = size.width;
+    }
+    return retval;
+}
+
+static CGSize
+UIKit_ForceLandscape(const CGSize size)
+{
+    CGSize retval;
+    if (size.width > size.height) { // landscape
+        retval = size;
+    } else {  // portrait
+        retval.width = size.height;
+        retval.height = size.width;
+    }
+    return retval;
+}
+
 static void
 UIKit_GetDisplayModes(_THIS, SDL_VideoDisplay * display)
 {
@@ -138,22 +161,42 @@ UIKit_GetDisplayModes(_THIS, SDL_VideoDisplay * display)
         mode.refresh_rate = 0;
         mode.driverdata = NULL;
         SDL_AddDisplayMode(display, &mode);
+        mode.w = (int) rect.size.height;  // swap the orientation, add again.
+        mode.h = (int) rect.size.width;
+        SDL_AddDisplayMode(display, &mode);
         return;
     }
 
+    const int ismain = (uiscreen == [UIScreen mainScreen]);
     const NSArray *modes = [uiscreen availableModes];
     const NSUInteger mode_count = [modes count];
     NSUInteger i;
     for (i = 0; i < mode_count; i++) {
         UIScreenMode *uimode = (UIScreenMode *) [modes objectAtIndex:i];
-        const CGSize size = [uimode size];
+        CGSize size = [uimode size];
         mode.format = SDL_PIXELFORMAT_ABGR8888;
-        mode.w = (int) size.width;
-        mode.h = (int) size.height;
         mode.refresh_rate = 0;
         mode.driverdata = uimode;
-        [uimode retain];
-        SDL_AddDisplayMode(display, &mode);
+        mode.w = (int) size.width;
+        mode.h = (int) size.height;
+        if (SDL_AddDisplayMode(display, &mode))
+            [uimode retain];
+
+        if (ismain) {
+            // Add the mode twice, flipped to portrait and landscape.
+            //  SDL_AddDisplayMode() will ignore duplicates.
+            size = UIKit_ForcePortrait([uimode size]);
+            mode.w = (int) size.width;
+            mode.h = (int) size.height;
+            if (SDL_AddDisplayMode(display, &mode))
+                [uimode retain];
+
+            size = UIKit_ForceLandscape(size);
+            mode.w = (int) size.width;
+            mode.h = (int) size.height;
+            if (SDL_AddDisplayMode(display, &mode))
+                [uimode retain];
+        }
     }
 }
 

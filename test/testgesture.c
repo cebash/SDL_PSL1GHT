@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 /*  Usage:
  *  Spacebar to begin recording a gesture on all touches.
  *  s to save all touches into "./gestureSave"
@@ -5,11 +16,11 @@
  */
 
 #include <stdio.h>
-#include <SDL.h>
 #include <math.h>
-#include <SDL_touch.h>
-#include <SDL_gesture.h>
 
+#include "SDL.h"
+#include "SDL_touch.h"
+#include "SDL_gesture.h"
 
 /* Make sure we have good macros for printing 32 and 64 bit values */
 #ifndef PRIs32
@@ -42,12 +53,14 @@
 #define EVENT_BUF_SIZE 256
 
 
-#define VERBOSE SDL_FALSE
+#define VERBOSE 0
 
-SDL_Event events[EVENT_BUF_SIZE];
-int eventWrite;
+static SDL_Window *window;
+static SDL_Event events[EVENT_BUF_SIZE];
+static int eventWrite;
 
-int colors[7] = {0xFF,0xFF00,0xFF0000,0xFFFF00,0x00FFFF,0xFF00FF,0xFFFFFF};
+
+static int colors[7] = {0xFF,0xFF00,0xFF0000,0xFFFF00,0x00FFFF,0xFF00FF,0xFFFFFF};
 
 typedef struct {
   float x,y;
@@ -58,11 +71,11 @@ typedef struct {
   Point p;
 } Knob;
 
-Knob knob;
+static Knob knob;
 
 void handler (int sig)
 {
-  printf ("exiting...(%d)\n", sig);
+  SDL_Log ("exiting...(%d)", sig);
   exit (0);
 }
 
@@ -134,40 +147,39 @@ void drawKnob(SDL_Surface* screen,Knob k) {
 
 void DrawScreen(SDL_Surface* screen)
 {
-  int x, y, i;
-  if(SDL_MUSTLOCK(screen))
-    {                                              
-      if(SDL_LockSurface(screen) < 0) return;
-    }
+  int i;
+#if 1
+  SDL_FillRect(screen, NULL, 0);
+#else
+  int x, y;
   for(y = 0;y < screen->h;y++)
     for(x = 0;x < screen->w;x++)
 	setpix(screen,(float)x,(float)y,((x%255)<<16) + ((y%255)<<8) + (x+y)%255);
+#endif
 
   //draw Touch History
-  for(i = SDL_max(0,eventWrite - EVENT_BUF_SIZE);i < eventWrite;i++) {
-    SDL_Event event = events[i&(EVENT_BUF_SIZE-1)];
-    int age = eventWrite - i - 1;
+  for(i = eventWrite; i < eventWrite+EVENT_BUF_SIZE; ++i) {
+    const SDL_Event *event = &events[i&(EVENT_BUF_SIZE-1)];
+    float age = (float)(i - eventWrite) / EVENT_BUF_SIZE;
 	float x, y;
 	unsigned int c, col;
 
-    if(event.type == SDL_FINGERMOTION || 
-       event.type == SDL_FINGERDOWN ||
-       event.type == SDL_FINGERUP) {
-      SDL_Touch* inTouch = SDL_GetTouch(event.tfinger.touchId);
+    if(event->type == SDL_FINGERMOTION || 
+       event->type == SDL_FINGERDOWN ||
+       event->type == SDL_FINGERUP) {
+      SDL_Touch* inTouch = SDL_GetTouch(event->tfinger.touchId);
       if(inTouch == NULL) continue;
 
-      x = ((float)event.tfinger.x)/inTouch->xres;
-      y = ((float)event.tfinger.y)/inTouch->yres;      
+      x = ((float)event->tfinger.x)/inTouch->xres;
+      y = ((float)event->tfinger.y)/inTouch->yres;      
       
       //draw the touch:      
-      c = colors[event.tfinger.touchId%7]; 
-      col = 
-	((unsigned int)(c*(.1+.85))) |
-	((unsigned int)((0xFF*(1-((float)age)/EVENT_BUF_SIZE))) & 0xFF)<<24;
+      c = colors[event->tfinger.fingerId%7]; 
+      col = ((unsigned int)(c*(.1+.85))) | (unsigned int)(0xFF*age)<<24;
 
-      if(event.type == SDL_FINGERMOTION)
+      if(event->type == SDL_FINGERMOTION)
 	drawCircle(screen,x*screen->w,y*screen->h,5,col);
-      else if(event.type == SDL_FINGERDOWN)
+      else if(event->type == SDL_FINGERDOWN)
 	drawCircle(screen,x*screen->w,y*screen->h,-10,col);     
     }
   }
@@ -175,14 +187,20 @@ void DrawScreen(SDL_Surface* screen)
   if(knob.p.x > 0)
     drawKnob(screen,knob);
   
-  if(SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
-  SDL_Flip(screen);
+  SDL_UpdateWindowSurface(window);
 }
 
 SDL_Surface* initScreen(int width,int height)
 {
-  return SDL_SetVideoMode(width, height, DEPTH,
-			  SDL_HWSURFACE | SDL_RESIZABLE);
+  if (!window) {
+    window = SDL_CreateWindow("Gesture Test",
+                              SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                              WIDTH, HEIGHT, SDL_WINDOW_RESIZABLE);
+  }
+  if (!window) {
+    return NULL;
+  }
+  return SDL_GetWindowSurface(window);
 }
 
 int main(int argc, char* argv[])
@@ -224,12 +242,12 @@ int main(int argc, char* argv[])
 		break;
 	      case SDLK_s:
 		src = SDL_RWFromFile("gestureSave","w");
-		printf("Wrote %i templates\n",SDL_SaveAllDollarTemplates(src));
+		SDL_Log("Wrote %i templates",SDL_SaveAllDollarTemplates(src));
 		SDL_RWclose(src);
 		break;
 	      case SDLK_l:
 		src = SDL_RWFromFile("gestureSave","r");
-		printf("Loaded: %i\n",SDL_LoadDollarTemplates(-1,src));
+		SDL_Log("Loaded: %i",SDL_LoadDollarTemplates(-1,src));
 		SDL_RWclose(src);
 		break;
 	      case SDLK_ESCAPE:
@@ -237,17 +255,18 @@ int main(int argc, char* argv[])
 		break;
 	    }
 	    break;
-	  case SDL_VIDEORESIZE:
-	    if (!(screen = initScreen(event.resize.w,
-				      event.resize.h)))
+	  case SDL_WINDOWEVENT:
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+	      if (!(screen = initScreen(0, 0)))
 	      {
 		SDL_Quit();
 		return 1;
 	      }
+            }
 	    break;
 	  case SDL_FINGERMOTION:
 #if VERBOSE
-	    printf("Finger: %i,x: %i, y: %i\n",event.tfinger.fingerId,
+	    SDL_Log("Finger: %i,x: %i, y: %i",event.tfinger.fingerId,
 	    	   event.tfinger.x,event.tfinger.y);
 #endif
 		{
@@ -257,24 +276,24 @@ int main(int argc, char* argv[])
 	    break;	    
 	  case SDL_FINGERDOWN:
 #if VERBOSE
-	    printf("Finger: %"PRIs64" down - x: %i, y: %i\n",
+	    SDL_Log("Finger: %"PRIs64" down - x: %i, y: %i",
 		   event.tfinger.fingerId,event.tfinger.x,event.tfinger.y);
 #endif
 	    break;
 	  case SDL_FINGERUP:
 #if VERBOSE
-	    printf("Finger: %"PRIs64" up - x: %i, y: %i\n",
+	    SDL_Log("Finger: %"PRIs64" up - x: %i, y: %i",
 	    	   event.tfinger.fingerId,event.tfinger.x,event.tfinger.y);
 #endif
 	    break;
 	  case SDL_MULTIGESTURE:
 #if VERBOSE	    
-	    printf("Multi Gesture: x = %f, y = %f, dAng = %f, dR = %f\n",
+	    SDL_Log("Multi Gesture: x = %f, y = %f, dAng = %f, dR = %f",
 		   event.mgesture.x,
 		   event.mgesture.y,
 		   event.mgesture.dTheta,
 		   event.mgesture.dDist);
-	    printf("MG: numDownTouch = %i\n",event.mgesture.numFingers);
+	    SDL_Log("MG: numDownTouch = %i",event.mgesture.numFingers);
 #endif
 	    knob.p.x = event.mgesture.x;
 	    knob.p.y = event.mgesture.y;
@@ -282,12 +301,12 @@ int main(int argc, char* argv[])
 	    knob.r += event.mgesture.dDist;
 	    break;
 	  case SDL_DOLLARGESTURE:
-	    printf("Gesture %"PRIs64" performed, error: %f\n",
+	    SDL_Log("Gesture %"PRIs64" performed, error: %f",
 		   event.dgesture.gestureId,
 		   event.dgesture.error);
 	    break;
 	  case SDL_DOLLARRECORD:
-	    printf("Recorded gesture: %"PRIs64"\n",event.dgesture.gestureId);
+	    SDL_Log("Recorded gesture: %"PRIs64"",event.dgesture.gestureId);
 	    break;
 	  }
       }

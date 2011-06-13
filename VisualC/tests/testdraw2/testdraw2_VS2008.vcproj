@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="testdraw2"
 	ProjectGUID="{8682FE1E-0CF6-4EDD-9BB5-1733D8C8B4DF}"
+	RootNamespace="testdraw2"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -102,6 +103,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy SDL"
+				CommandLine="copy &quot;$(SolutionDir)\SDL\$(ConfigurationName)\SDL.dll&quot; &quot;$(TargetDir)\SDL.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -138,7 +141,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Debug/testdraw2.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -192,6 +195,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy SDL"
+				CommandLine="copy &quot;$(SolutionDir)\SDL\$(ConfigurationName)\SDL.dll&quot; &quot;$(TargetDir)\SDL.dll&quot;"
 			/>
 		</Configuration>
 	</Configurations>

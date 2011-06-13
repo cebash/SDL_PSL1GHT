@@ -1,15 +1,26 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 
 #include "testnative.h"
 
-#ifdef TEST_NATIVE_WIN32
+#ifdef TEST_NATIVE_WINDOWS
 
-static void *CreateWindowWin32(int w, int h);
-static void DestroyWindowWin32(void *window);
+static void *CreateWindowNative(int w, int h);
+static void DestroyWindowNative(void *window);
 
-NativeWindowFactory Win32WindowFactory = {
-    "win32",
-    CreateWindowWin32,
-    DestroyWindowWin32
+NativeWindowFactory WindowsWindowFactory = {
+    "windows",
+    CreateWindowNative,
+    DestroyWindowNative
 };
 
 LRESULT CALLBACK
@@ -29,7 +40,7 @@ WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 static void *
-CreateWindowWin32(int w, int h)
+CreateWindowNative(int w, int h)
 {
     HWND hwnd;
     WNDCLASS wc;
@@ -67,7 +78,7 @@ CreateWindowWin32(int w, int h)
 }
 
 static void
-DestroyWindowWin32(void *window)
+DestroyWindowNative(void *window)
 {
     DestroyWindow((HWND) window);
 }

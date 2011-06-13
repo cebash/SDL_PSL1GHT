@@ -109,4 +109,22 @@ SDL_SYS_WaitThread(SDL_Thread * thread)
 	int t = sysThreadJoin(thread->handle, &retval);
 }
 
+int
+SDL_SYS_SetThreadPriority(SDL_ThreadPriority priority)
+{
+    int value;
+
+    if (priority == SDL_THREAD_PRIORITY_LOW) {
+        value = 3000;
+    } else if (priority == SDL_THREAD_PRIORITY_HIGH) {
+        value = 1;
+    } else {
+        value = 1500;
+    }
+
+	sys_ppu_thread_t id;
+	sysThreadGetId(&id);
+	return sysThreadSetPriority(id, value);
+}
+
 /* vi: set ts=4 sw=4 expandtab: */

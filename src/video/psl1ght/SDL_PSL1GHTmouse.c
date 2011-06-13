@@ -78,11 +78,12 @@ void updateMouseButtons(_THIS, const mouseData *mouse) {
 }
 
 void updateMousePosition(_THIS, const mouseData *mouse) {
-    SDL_DeviceData *data =
-        (SDL_DeviceData *) _this->driverdata;
-
     // Mouse movement is relative
     SDL_SendMouseMotion(0, 1, mouse->x_axis, mouse->y_axis);
+}
+
+void updateMouseWheel(_THIS, const mouseData *mouse) {
+    SDL_SendMouseWheel(0, mouse->tilt, mouse->wheel);
 }
 
 void
@@ -104,6 +105,7 @@ PSL1GHT_PumpMouse(_THIS)
             // Send SDL events
             updateMouseButtons(_this, &datalist.list[i]);
             updateMousePosition(_this, &datalist.list[i]);
+            updateMouseWheel(_this, &datalist.list[i]);
         }
     }
 }

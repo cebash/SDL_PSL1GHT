@@ -1,29 +1,29 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 #include "SDL_config.h"
 
 /* Allow access to a raw mixing buffer */
 
 #include "SDL_timer.h"
+#include "SDL_loadso.h"
 #include "SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "SDL_dx5audio.h"
@@ -38,19 +38,19 @@
 #endif
 
 /* DirectX function pointers for audio */
-static HINSTANCE DSoundDLL = NULL;
+static void* DSoundDLL = NULL;
 static HRESULT(WINAPI * DSoundCreate) (LPGUID, LPDIRECTSOUND *, LPUNKNOWN) =
     NULL;
 
 static void
 DSOUND_Unload(void)
 {
-    if (DSoundDLL != NULL) {
-        FreeLibrary(DSoundDLL);
-    }
-
     DSoundCreate = NULL;
-    DSoundDLL = NULL;
+
+    if (DSoundDLL != NULL) {
+        SDL_UnloadObject(DSoundDLL);
+        DSoundDLL = NULL;
+    }
 }
 
 
@@ -61,17 +61,16 @@ DSOUND_Load(void)
 
     DSOUND_Unload();
 
-    DSoundDLL = LoadLibrary(TEXT("DSOUND.DLL"));
+    DSoundDLL = SDL_LoadObject("DSOUND.DLL");
     if (DSoundDLL == NULL) {
         SDL_SetError("DirectSound: failed to load DSOUND.DLL");
     } else {
         /* Now make sure we have DirectX 5 or better... */
         /*  (DirectSoundCaptureCreate was added in DX5) */
-        if (!GetProcAddress(DSoundDLL, TEXT("DirectSoundCaptureCreate"))) {
+        if (!SDL_LoadFunction(DSoundDLL, "DirectSoundCaptureCreate")) {
             SDL_SetError("DirectSound: System doesn't appear to have DX5.");
         } else {
-            DSoundCreate = (void *) GetProcAddress(DSoundDLL,
-                                                   TEXT("DirectSoundCreate"));
+            DSoundCreate = SDL_LoadFunction(DSoundDLL, "DirectSoundCreate");
         }
 
         if (!DSoundCreate) {

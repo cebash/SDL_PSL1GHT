@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 #include "SDL_config.h"
 
@@ -96,6 +95,7 @@ SDL_memcpyMMX(Uint8 * dst, const Uint8 * src, int len)
 void
 SDL_BlitCopy(SDL_BlitInfo * info)
 {
+    SDL_bool overlap;
     Uint8 *src, *dst;
     int w, h;
     int srcskip, dstskip;
@@ -106,6 +106,21 @@ SDL_BlitCopy(SDL_BlitInfo * info)
     dst = info->dst;
     srcskip = info->src_pitch;
     dstskip = info->dst_pitch;
+
+    /* Properly handle overlapping blits */
+    if (src < dst) {
+        overlap = (dst < (src + h*srcskip));
+    } else {
+        overlap = (src < (dst + h*dstskip));
+    }
+    if (overlap) {
+        while (h--) {
+            SDL_memmove(dst, src, w);
+            src += srcskip;
+            dst += dstskip;
+        }
+        return;
+    }
 
 #ifdef __SSE__
     if (SDL_HasSSE() &&
@@ -138,31 +153,6 @@ SDL_BlitCopy(SDL_BlitInfo * info)
         SDL_memcpy(dst, src, w);
         src += srcskip;
         dst += dstskip;
-    }
-}
-
-void
-SDL_BlitCopyOverlap(SDL_BlitInfo * info)
-{
-    Uint8 *src, *dst;
-    int w, h;
-    int skip;
-
-    w = info->dst_w * info->dst_fmt->BytesPerPixel;
-    h = info->dst_h;
-    src = info->src;
-    dst = info->dst;
-    skip = info->src_pitch;
-    if ((dst < src) || (dst >= (src + h * skip))) {
-        SDL_BlitCopy(info);
-    } else {
-        src += ((h - 1) * skip);
-        dst += ((h - 1) * skip);
-        while (h--) {
-            SDL_revcpy(dst, src, w);
-            src -= skip;
-            dst -= skip;
-        }
     }
 }
 

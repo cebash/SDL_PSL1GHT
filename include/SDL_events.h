@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 
 /**
@@ -151,7 +150,7 @@ typedef struct SDL_KeyboardEvent
     Uint8 repeat;       /**< Non-zero if this is a key repeat */
     Uint8 padding2;
     Uint8 padding3;
-    SDL_keysym keysym;  /**< The key that was pressed or released */
+    SDL_Keysym keysym;  /**< The key that was pressed or released */
 } SDL_KeyboardEvent;
 
 #define SDL_TEXTEDITINGEVENT_TEXT_SIZE (32)
@@ -317,9 +316,8 @@ typedef struct SDL_TouchButtonEvent
 } SDL_TouchButtonEvent;
 
 
-
 /**
- *  \brief Multiple Finger Gesture Event
+ *  \brief Multiple Finger Gesture Event (event.mgesture.*)
  */
 typedef struct SDL_MultiGestureEvent
 {
@@ -334,6 +332,7 @@ typedef struct SDL_MultiGestureEvent
     Uint16 padding;
 } SDL_MultiGestureEvent;
 
+/* (event.dgesture.*) */
 typedef struct SDL_DollarGestureEvent
 {
     Uint32 type;        /**< ::SDL_DOLLARGESTURE */
@@ -350,8 +349,6 @@ typedef struct SDL_DollarGestureEvent
 } SDL_DollarGestureEvent;
 
 
-
-
 /**
  *  \brief The "quit requested" event
  */
@@ -359,6 +356,7 @@ typedef struct SDL_QuitEvent
 {
     Uint32 type;        /**< ::SDL_QUIT */
 } SDL_QuitEvent;
+
 
 /**
  *  \brief A user-defined event type (event.user.*)
@@ -371,6 +369,7 @@ typedef struct SDL_UserEvent
     void *data1;        /**< User defined data pointer */
     void *data2;        /**< User defined data pointer */
 } SDL_UserEvent;
+
 
 struct SDL_SysWMmsg;
 typedef struct SDL_SysWMmsg SDL_SysWMmsg;
@@ -579,6 +578,18 @@ extern DECLSPEC void SDLCALL SDL_SetEventFilter(SDL_EventFilter filter,
  */
 extern DECLSPEC SDL_bool SDLCALL SDL_GetEventFilter(SDL_EventFilter * filter,
                                                     void **userdata);
+
+/**
+ *  Add a function which is called when an event is added to the queue.
+ */
+extern DECLSPEC void SDLCALL SDL_AddEventWatch(SDL_EventFilter filter,
+                                               void *userdata);
+
+/**
+ *  Remove an event watch function added with SDL_AddEventWatch()
+ */
+extern DECLSPEC void SDLCALL SDL_DelEventWatch(SDL_EventFilter filter,
+                                               void *userdata);
 
 /**
  *  Run the filter function on the current event queue, removing any

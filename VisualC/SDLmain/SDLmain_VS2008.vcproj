@@ -29,8 +29,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Making sure basic SDL headers are in place..."
-				CommandLine="if exist &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot; goto SDLCONFIGOKAY&#x0D;&#x0A;echo Copying SDL_config_win32.h to SDL_config.h...&#x0D;&#x0A;copy &quot;$(ProjectDir)\..\..\include\SDL_config_win32.h&quot; &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot;&#x0D;&#x0A;:SDLCONFIGOKAY&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot; goto SDLREVISIONOKAY&#x0D;&#x0A;echo Creating stub SDL_revision.h file...&#x0D;&#x0A;echo #define SDL_REVISION 0 &gt;&quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot;&#x0D;&#x0A;:SDLREVISIONOKAY&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -154,74 +153,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_NoSTDIO|Win32"
-			OutputDirectory=".\Release_NOSTDIO"
-			IntermediateDirectory=".\Release_NOSTDIO"
-			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				Description="Making sure basic SDL headers are in place..."
-				CommandLine="if exist &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot; goto SDLCONFIGOKAY&#x0D;&#x0A;echo Copying SDL_config_win32.h to SDL_config.h...&#x0D;&#x0A;copy &quot;$(ProjectDir)\..\..\include\SDL_config_win32.h&quot; &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot;&#x0D;&#x0A;:SDLCONFIGOKAY&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot; goto SDLREVISIONOKAY&#x0D;&#x0A;echo Creating stub SDL_revision.h file...&#x0D;&#x0A;echo #define SDL_REVISION 0 &gt;&quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot;&#x0D;&#x0A;:SDLREVISIONOKAY&#x0D;&#x0A;"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\include\SDL"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32,NDEBUG,_WINDOWS,NO_STDIO_REDIRECT"
-				StringPooling="true"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(IntDir)\SDLmain.lib"
-				SuppressStartupBanner="true"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release_NoSTDIO|x64"
 			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
@@ -299,8 +230,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Making sure basic SDL headers are in place..."
-				CommandLine="if exist &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot; goto SDLCONFIGOKAY&#x0D;&#x0A;echo Copying SDL_config_win32.h to SDL_config.h...&#x0D;&#x0A;copy &quot;$(ProjectDir)\..\..\include\SDL_config_win32.h&quot; &quot;$(ProjectDir)\..\..\include\SDL_config.h&quot;&#x0D;&#x0A;:SDLCONFIGOKAY&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot; goto SDLREVISIONOKAY&#x0D;&#x0A;echo Creating stub SDL_revision.h file...&#x0D;&#x0A;echo #define SDL_REVISION 0 &gt;&quot;$(ProjectDir)\..\..\include\SDL_revision.h&quot;&#x0D;&#x0A;:SDLREVISIONOKAY&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -319,10 +249,10 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include,..\..\include\SDL"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="1"
+				DebugInformationFormat="4"
 				CompileAs="0"
 			/>
 			<Tool
@@ -388,7 +318,7 @@
 				RuntimeLibrary="2"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="1"
+				DebugInformationFormat="3"
 				CompileAs="0"
 			/>
 			<Tool
@@ -426,7 +356,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\Src\Main\Win32\SDL_win32_main.c"
+			RelativePath="..\..\src\main\windows\SDL_windows_main.c"
 			>
 		</File>
 	</Files>

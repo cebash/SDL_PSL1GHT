@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 
 /* Simple program -- figure out what kind of video display we have */
 
@@ -455,9 +466,7 @@ main(int argc, char *argv[])
         printf("Display %d: %dx%d at %d,%d\n", d,
                bounds.w, bounds.h, bounds.x, bounds.y);
 
-        SDL_SelectVideoDisplay(d);
-
-        SDL_GetDesktopDisplayMode(&mode);
+        SDL_GetDesktopDisplayMode(d, &mode);
         SDL_PixelFormatEnumToMasks(mode.format, &bpp, &Rmask, &Gmask, &Bmask,
                                    &Amask);
         printf("  Current mode: %dx%d@%dHz, %d bits-per-pixel\n", mode.w,
@@ -471,13 +480,13 @@ main(int argc, char *argv[])
         }
 
         /* Print available fullscreen video modes */
-        nmodes = SDL_GetNumDisplayModes();
+        nmodes = SDL_GetNumDisplayModes(d);
         if (nmodes == 0) {
             printf("No available fullscreen video modes\n");
         } else {
             printf("  Fullscreen video modes:\n");
             for (i = 0; i < nmodes; ++i) {
-                SDL_GetDisplayMode(i, &mode);
+                SDL_GetDisplayMode(d, i, &mode);
                 SDL_PixelFormatEnumToMasks(mode.format, &bpp, &Rmask,
                                            &Gmask, &Bmask, &Amask);
                 printf("    Mode %d: %dx%d@%dHz, %d bits-per-pixel\n", i,

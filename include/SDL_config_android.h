@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 
 #ifndef _SDL_config_android_h
@@ -32,16 +31,6 @@
  */
 
 #include <stdarg.h>
-
-/*
-typedef signed char int8_t;
-typedef unsigned char uint8_t;
-typedef signed short int16_t;
-typedef unsigned short uint16_t;
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
-*/
-
 
 #define HAVE_ALLOCA_H		1
 #define HAVE_SYS_TYPES_H	1
@@ -115,9 +104,6 @@ typedef unsigned int uint32_t;
 
 #define SIZEOF_VOIDP 4
 
-typedef unsigned int size_t;
-//typedef unsigned long uintptr_t;
-
 /* Enable various audio drivers */
 #define SDL_AUDIO_DRIVER_ANDROID	1
 #define SDL_AUDIO_DRIVER_DUMMY	1
@@ -142,5 +128,6 @@ typedef unsigned int size_t;
 /* Enable OpenGL ES */
 #define SDL_VIDEO_OPENGL_ES	1
 #define SDL_VIDEO_RENDER_OGL_ES	1
+#define SDL_VIDEO_RENDER_OGL_ES2	1
 
 #endif /* _SDL_config_minimal_h */

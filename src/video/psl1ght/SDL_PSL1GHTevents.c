@@ -35,15 +35,9 @@
 
 static void eventHandle(u64 status, u64 param, void * userdata) {
     _THIS = userdata;
-    SDL_Window *window = NULL;
-
+    
     // There should only be one window
-    if (_this->num_displays == 1) {
-        SDL_VideoDisplay *display = &_this->displays[0];
-        if (display->windows != NULL) {
-            window = display->windows;
-        }
-    }
+    SDL_Window *window = _this->windows;
 
     // Process event
     if (status == SYSUTIL_EXIT_GAME) {

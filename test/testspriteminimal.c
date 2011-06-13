@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 /* Simple program:  Move N sprites around on the screen as fast as possible */
 
 #include <stdlib.h>
@@ -6,8 +17,13 @@
 
 #include "SDL.h"
 
+#ifdef __NDS__
+#define WINDOW_WIDTH    256
+#define WINDOW_HEIGHT   (2*192)
+#else
 #define WINDOW_WIDTH    640
 #define WINDOW_HEIGHT   480
+#endif
 #define NUM_SPRITES     100
 #define MAX_SPEED       1
 
@@ -24,7 +40,7 @@ quit(int rc)
 }
 
 int
-LoadSprite(char *file)
+LoadSprite(char *file, SDL_Renderer *renderer)
 {
     SDL_Surface *temp;
 
@@ -60,11 +76,7 @@ LoadSprite(char *file)
     }
 
     /* Create textures from the image */
-    sprite = SDL_CreateTextureFromSurface(0, temp);
-    if (!sprite) {
-        SDL_SetColorKey(temp, 0, 0);
-        sprite = SDL_CreateTextureFromSurface(0, temp);
-    }
+    sprite = SDL_CreateTextureFromSurface(renderer, temp);
     if (!sprite) {
         fprintf(stderr, "Couldn't create texture: %s\n", SDL_GetError());
         SDL_FreeSurface(temp);
@@ -77,7 +89,7 @@ LoadSprite(char *file)
 }
 
 void
-MoveSprites(SDL_Window * window, SDL_Texture * sprite)
+MoveSprites(SDL_Window * window, SDL_Renderer * renderer, SDL_Texture * sprite)
 {
     int i;
     int window_w = WINDOW_WIDTH;
@@ -85,8 +97,8 @@ MoveSprites(SDL_Window * window, SDL_Texture * sprite)
     SDL_Rect *position, *velocity;
 
     /* Draw a gray background */
-    SDL_SetRenderDrawColor(0xA0, 0xA0, 0xA0, 0xFF);
-    SDL_RenderClear();
+    SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
+    SDL_RenderClear(renderer);
 
     /* Move the sprite, bounce at the wall, and draw */
     for (i = 0; i < NUM_SPRITES; ++i) {
@@ -104,17 +116,18 @@ MoveSprites(SDL_Window * window, SDL_Texture * sprite)
         }
 
         /* Blit the sprite onto the screen */
-        SDL_RenderCopy(sprite, NULL, position);
+        SDL_RenderCopy(renderer, sprite, NULL, position);
     }
 
     /* Update the screen! */
-    SDL_RenderPresent();
+    SDL_RenderPresent(renderer);
 }
 
 int
 main(int argc, char *argv[])
 {
     SDL_Window *window;
+    SDL_Renderer *renderer;
     int i, done;
     SDL_Event event;
 
@@ -127,7 +140,12 @@ main(int argc, char *argv[])
         quit(2);
     }
 
-    if (LoadSprite("icon.bmp") < 0) {
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    if (!renderer) {
+        quit(2);
+    }
+
+    if (LoadSprite("icon.bmp", renderer) < 0) {
         quit(2);
     }
 
@@ -155,7 +173,7 @@ main(int argc, char *argv[])
                 done = 1;
             }
         }
-        MoveSprites(window, sprite);
+        MoveSprites(window, renderer, sprite);
     }
 
     quit(0);
