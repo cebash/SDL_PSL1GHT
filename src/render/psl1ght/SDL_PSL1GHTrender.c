@@ -517,24 +517,33 @@ PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
         Uint8 *src_pixels, *dst_pixels;
         int row;
         size_t length;
+        u32 srcOffset, dstOffset;
 
+        // Scaling is not needed, use a DMA to blit the texture on the framebuffer
         src_pixels = src->pixels;
         dst_pixels = surface->pixels +
             final_rect.y * surface->pitch + final_rect.x
                         * SDL_BYTESPERPIXEL(texture->format);
 
+        rsxAddressToOffset(dst_pixels, &dstOffset);
+        rsxAddressToOffset(src_pixels, &srcOffset);
+
         length = final_rect.w * SDL_BYTESPERPIXEL(texture->format);
         if (length > surface->w * SDL_BYTESPERPIXEL(texture->format))
             length = surface->w * SDL_BYTESPERPIXEL(texture->format);
 
-        for (row = 0; row < final_rect.h && row < surface->h; ++row) {
-            SDL_memcpy(dst_pixels, src_pixels, length);
-            src_pixels += src->pitch;
-            dst_pixels += surface->pitch;
-        }
+        int rowcount = final_rect.h;
+        if (rowcount > surface->h)
+            rowcount = surface->h;
+
+        rsxSetTransferData(data->context, GCM_TRANSFER_LOCAL_TO_LOCAL,
+            dstOffset, surface->pitch,
+            srcOffset, src->pitch,
+            length, rowcount);
 
 		return 0;        
     } else {
+        // Software fallback for now
         return SDL_BlitScaled(src, srcrect, surface, &final_rect);
     }
 }
@@ -600,6 +609,7 @@ PSL1GHT_DestroyTexture(SDL_Renderer * renderer, SDL_Texture * texture)
 {
     SDL_Surface *surface = (SDL_Surface *) texture->driverdata;
 
+    // TODO: Wait for the DMA transfer to complete
     rsxFree(surface->pixels);
     SDL_FreeSurface(surface);
 }
