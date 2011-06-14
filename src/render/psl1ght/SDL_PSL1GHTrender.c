@@ -230,6 +230,8 @@ static int
 PSL1GHT_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
 {
     int bpp;
+    int pitch;
+    void *pixels;
     Uint32 Rmask, Gmask, Bmask, Amask;
 
     if (!SDL_PixelFormatEnumToMasks
@@ -238,17 +240,18 @@ PSL1GHT_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
         return -1;
     }
 
+    // Allocate GFX memory for textures
+    pitch = texture->w * SDL_BYTESPERPIXEL(texture->format);
+    pixels = rsxMemalign(64, texture->h * pitch);
+
     texture->driverdata =
-        SDL_CreateRGBSurface(0, texture->w, texture->h, bpp, Rmask, Gmask,
-                             Bmask, Amask);
+        SDL_CreateRGBSurfaceFrom(pixels, texture->w, texture->h, bpp, pitch,
+                            Rmask, Gmask, Bmask, Amask);
+
     SDL_SetSurfaceColorMod(texture->driverdata, texture->r, texture->g,
                            texture->b);
     SDL_SetSurfaceAlphaMod(texture->driverdata, texture->a);
     SDL_SetSurfaceBlendMode(texture->driverdata, texture->blendMode);
-
-    if (texture->access == SDL_TEXTUREACCESS_STATIC) {
-        SDL_SetSurfaceRLE(texture->driverdata, 1);
-    }
 
     if (!texture->driverdata) {
         return -1;
@@ -509,6 +512,8 @@ PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
     }
 
     if ( srcrect->w == final_rect.w && srcrect->h == final_rect.h ) {
+        PSL1GHT_RenderData *data = (PSL1GHT_RenderData *) renderer->driverdata;
+        
         Uint8 *src_pixels, *dst_pixels;
         int row;
         size_t length;
@@ -595,6 +600,7 @@ PSL1GHT_DestroyTexture(SDL_Renderer * renderer, SDL_Texture * texture)
 {
     SDL_Surface *surface = (SDL_Surface *) texture->driverdata;
 
+    rsxFree(surface->pixels);
     SDL_FreeSurface(surface);
 }
 
