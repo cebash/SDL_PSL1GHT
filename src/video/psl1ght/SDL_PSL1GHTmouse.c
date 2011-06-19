@@ -52,38 +52,46 @@ void checkMouseConnected(_THIS) {
 void updateMouseButtons(_THIS, const mouseData *mouse) {
     SDL_DeviceData *data =
         (SDL_DeviceData *) _this->driverdata;
+    // There should only be one window
+    SDL_Window *window = _this->windows;
 
     // Check left mouse button changes
     bool oldLMB = data->_mouseButtons & 1;
     bool newLMB = mouse->buttons & 1;
     if (newLMB != oldLMB) {
-        SDL_SendMouseButton(0, newLMB ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_LEFT);
+        SDL_SendMouseButton(window, newLMB ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_LEFT);
     }
 
     // Check rigth mouse button changes
     bool oldRMB = data->_mouseButtons & 2;
     bool newRMB = mouse->buttons & 2;
     if (newRMB != oldRMB) {
-        SDL_SendMouseButton(0, newRMB ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_RIGHT);
+        SDL_SendMouseButton(window, newRMB ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_RIGHT);
     }
 
     // Check middle mouse button changes
     bool oldMMB = data->_mouseButtons & 4;
     bool newMMB = mouse->buttons & 4;
     if (newMMB != oldMMB) {
-        SDL_SendMouseButton(0, newMMB ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_MIDDLE);
+        SDL_SendMouseButton(window, newMMB ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_MIDDLE);
     }
 
     data->_mouseButtons = mouse->buttons;
 }
 
 void updateMousePosition(_THIS, const mouseData *mouse) {
+    // There should only be one window
+    SDL_Window *window = _this->windows;
+
     // Mouse movement is relative
-    SDL_SendMouseMotion(0, 1, mouse->x_axis, mouse->y_axis);
+    SDL_SendMouseMotion(window, 1, mouse->x_axis, mouse->y_axis);
 }
 
 void updateMouseWheel(_THIS, const mouseData *mouse) {
-    SDL_SendMouseWheel(0, mouse->tilt, mouse->wheel);
+    // There should only be one window
+    SDL_Window *window = _this->windows;
+
+    SDL_SendMouseWheel(window, mouse->tilt, mouse->wheel);
 }
 
 void
