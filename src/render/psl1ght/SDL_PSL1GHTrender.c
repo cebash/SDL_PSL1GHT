@@ -83,18 +83,12 @@ SDL_RenderDriver PSL1GHT_RenderDriver = {
 
 typedef struct
 {
+    bool first_fb; // Is this the first flip ?
     int current_screen;
     SDL_Surface *screens[3];
     void *textures[3];
     gcmContextData *context; // Context to keep track of the RSX buffer.
 } PSL1GHT_RenderData;
-
-static void flip( gcmContextData *context, int current_screen)
-{
-    assert(gcmSetFlip(context, current_screen) == 0);
-    rsxFlushBuffer(context);
-    gcmSetWaitFlip(context); // Prevent the RSX from continuing until the flip has finished.
-}
 
 static void waitFlip()
 {
@@ -149,6 +143,7 @@ PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
     // Get a copy of the command buffer
     data->context = ((SDL_DeviceData*) display->device->driverdata)->_CommandBuffer;
     data->current_screen = 0;
+    data->first_fb = true;
     
     pitch = displayMode->w * SDL_BYTESPERPIXEL(displayMode->format);
     
@@ -196,8 +191,6 @@ PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
         }
     }
 
-    deprintf (1,  "\tReset Flip Status\n");
-    gcmResetFlipStatus();
     deprintf (1,  "\tFinished\n");
 
     renderer->CreateTexture = PSL1GHT_CreateTexture;
@@ -590,17 +583,19 @@ PSL1GHT_RenderPresent(SDL_Renderer * renderer)
 {
     PSL1GHT_RenderData *data = (PSL1GHT_RenderData *) renderer->driverdata;
 
-    flip(data->context, data->current_screen);
-
-    deprintf (1,  "\tWait for vsync\n");
-    /* Wait for vsync */
-    //if (renderer->info.flags & SDL_RENDERER_PRESENTVSYNC) {
+    if (!data->first_fb)
         waitFlip();
-    //}
+    else
+        gcmResetFlipStatus();
 
-    deprintf (1,  "\tUpdate the flipping chain, if any\n");
-    
-    /* Update the flipping chain, if any */
+    gcmSetFlip(data->context, data->current_screen);
+    rsxFlushBuffer(data->context);
+
+    gcmSetWaitFlip(data->context);
+
+    data->first_fb = false;
+
+    // Update the flipping chain, if any
     data->current_screen = (data->current_screen + 1) % 2;
 }
 
