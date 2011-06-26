@@ -491,11 +491,13 @@ static int
 PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
               const SDL_Rect * srcrect, const SDL_Rect * dstrect)
 {
-    SDL_Surface *surface = PSL1GHT_ActivateRenderer(renderer);
+    PSL1GHT_RenderData *data = (PSL1GHT_RenderData *) renderer->driverdata;
+    SDL_Surface *dst = PSL1GHT_ActivateRenderer(renderer);
     SDL_Surface *src = (SDL_Surface *) texture->driverdata;
     SDL_Rect final_rect = *dstrect;
+    u32 src_offset, dst_offset;
 
-    if (!surface) {
+    if (!dst) {
         return -1;
     }
 
@@ -504,41 +506,44 @@ PSL1GHT_RenderCopy(SDL_Renderer * renderer, SDL_Texture * texture,
         final_rect.y += renderer->viewport.y;
     }
 
-    if ( srcrect->w == final_rect.w && srcrect->h == final_rect.h ) {
-        PSL1GHT_RenderData *data = (PSL1GHT_RenderData *) renderer->driverdata;
-        
-        Uint8 *src_pixels, *dst_pixels;
-        int row;
-        size_t length;
-        u32 srcOffset, dstOffset;
+    rsxAddressToOffset(dst->pixels, &dst_offset);
+    rsxAddressToOffset(src->pixels, &src_offset);
 
-        // Scaling is not needed, use a DMA to blit the texture on the framebuffer
-        src_pixels = src->pixels;
-        dst_pixels = surface->pixels +
-            final_rect.y * surface->pitch + final_rect.x
-                        * SDL_BYTESPERPIXEL(texture->format);
+    gcmTransferScale scale;
+    scale.conversion = GCM_TRANSFER_CONVERSION_TRUNCATE;
+    scale.format = GCM_TRANSFER_SCALE_FORMAT_A8R8G8B8;
+    scale.operation = GCM_TRANSFER_OPERATION_SRCCOPY;
+    scale.clipX = final_rect.x;
+    scale.clipY = final_rect.y;
+    scale.clipW = final_rect.w;
+    scale.clipH = final_rect.h;
+    scale.outX = final_rect.x;
+    scale.outY = final_rect.y;
+    scale.outW = final_rect.w;
+    scale.outH = final_rect.h;
+    scale.ratioX = (srcrect->w << 20) / final_rect.w;
+    scale.ratioY = (srcrect->h << 20) / final_rect.h;
+    scale.inX = srcrect->x;
+    scale.inY = srcrect->y;
+    scale.inW = srcrect->w;
+    scale.inH = srcrect->h;
+    scale.offset = src_offset;
+    scale.pitch = src->pitch;
+    scale.origin = GCM_TRANSFER_ORIGIN_CORNER;
+    scale.interp = GCM_TRANSFER_INTERPOLATOR_NEAREST;
 
-        rsxAddressToOffset(dst_pixels, &dstOffset);
-        rsxAddressToOffset(src_pixels, &srcOffset);
+    gcmTransferSurface surface;
+    surface.format = GCM_TRANSFER_SURFACE_FORMAT_A8R8G8B8;
+    surface.pitch = dst->pitch;
+    surface.offset = dst_offset;
 
-        length = final_rect.w * SDL_BYTESPERPIXEL(texture->format);
-        if (length > surface->w * SDL_BYTESPERPIXEL(texture->format))
-            length = surface->w * SDL_BYTESPERPIXEL(texture->format);
+    // Hardware accelerated blit with scaling
+    rsxSetTransferScaleMode(data->context, GCM_TRANSFER_LOCAL_TO_LOCAL, GCM_TRANSFER_SURFACE);
+    rsxSetTransferScaleSurface(data->context, &scale, &surface);
 
-        int rowcount = final_rect.h;
-        if (rowcount > surface->h)
-            rowcount = surface->h;
+    // TODO: Blending / clipping
 
-        rsxSetTransferData(data->context, GCM_TRANSFER_LOCAL_TO_LOCAL,
-            dstOffset, surface->pitch,
-            srcOffset, src->pitch,
-            length, rowcount);
-
-		return 0;        
-    } else {
-        // Software fallback for now
-        return SDL_BlitScaled(src, srcrect, surface, &final_rect);
-    }
+    return 0;
 }
 
 static int
