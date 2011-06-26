@@ -48,7 +48,7 @@ SDL_CreateSemaphore(Uint32 initial_value)
 
 	sem = (SDL_sem *) SDL_malloc(sizeof(*sem));
 	if (sem) {
-		sysSemCreate( &sem->id, &attr, initial_value, initial_value);
+		sysSemCreate( &sem->id, &attr, initial_value, 32 * 1024);
 	} else {
 		SDL_OutOfMemory();
 	}
