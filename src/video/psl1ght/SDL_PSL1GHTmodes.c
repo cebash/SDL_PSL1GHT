@@ -176,7 +176,7 @@ PSL1GHT_QuitModes(_THIS)
             display->display_modes[j].driverdata = NULL;
         }
     }
-
+    // TODO : Free data
     deprintf(1, "-PSL1GHT_QuitModes()\n");
 }
 

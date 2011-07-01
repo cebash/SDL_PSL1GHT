@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 /* A simple program to test the Input Method support in the SDL library (1.3+) */
 
 #include <stdlib.h>
@@ -10,11 +21,7 @@
 #endif
 
 #define DEFAULT_PTSIZE  30
-#ifdef __QNXNTO__
-    #define DEFAULT_FONT    "/usr/photon/font_repository/tt0003m_.ttf"
-#else
-    #define DEFAULT_FONT    "/System/Library/Fonts/华文细黑.ttf"
-#endif
+#define DEFAULT_FONT    "/System/Library/Fonts/华文细黑.ttf"
 #define MAX_TEXT_LENGTH 256
 
 SDL_Surface *screen;
@@ -126,12 +133,9 @@ void InitVideo(int argc, char *argv[])
 
     if (fullscreen)
     {
-        SDL_DisplayMode mode;
-        SDL_GetDesktopDisplayMode(&mode);
-
-        width = mode.w;
-        height = mode.h;
-        fprintf(stderr, "%dx%d\n", width, height);
+        /* Use the desktop mode */
+        width = 0;
+        height = 0;
         flags |= SDL_FULLSCREEN;
     }
 
@@ -379,3 +383,5 @@ int main(int argc, char *argv[])
     CleanupVideo();
     return 0;
 }
+
+/* vi: set ts=4 sw=4 expandtab: */

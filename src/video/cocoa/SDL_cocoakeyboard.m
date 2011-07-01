@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 #include "SDL_config.h"
 
@@ -246,7 +245,7 @@ static void
 HandleNonDeviceModifier(unsigned int device_independent_mask,
                         unsigned int oldMods,
                         unsigned int newMods,
-                        SDL_scancode scancode)
+                        SDL_Scancode scancode)
 {
     unsigned int oldMask, newMask;
     
@@ -268,7 +267,7 @@ HandleNonDeviceModifier(unsigned int device_independent_mask,
  */
 static void
 HandleModifierOneSide(unsigned int oldMods, unsigned int newMods,
-                      SDL_scancode scancode, 
+                      SDL_Scancode scancode, 
                       unsigned int sided_device_dependent_mask)
 {
     unsigned int old_dep_mask, new_dep_mask;
@@ -297,8 +296,8 @@ HandleModifierOneSide(unsigned int oldMods, unsigned int newMods,
 static void
 HandleModifierSide(int device_independent_mask, 
                    unsigned int oldMods, unsigned int newMods, 
-                   SDL_scancode left_scancode, 
-                   SDL_scancode right_scancode,
+                   SDL_Scancode left_scancode, 
+                   SDL_Scancode right_scancode,
                    unsigned int left_device_dependent_mask, 
                    unsigned int right_device_dependent_mask)
 {
@@ -341,8 +340,8 @@ HandleModifierSide(int device_independent_mask,
 static void
 ReleaseModifierSide(unsigned int device_independent_mask, 
                     unsigned int oldMods, unsigned int newMods,
-                    SDL_scancode left_scancode, 
-                    SDL_scancode right_scancode,
+                    SDL_Scancode left_scancode, 
+                    SDL_Scancode right_scancode,
                     unsigned int left_device_dependent_mask, 
                     unsigned int right_device_dependent_mask)
 {
@@ -409,13 +408,13 @@ DoSidedModifiers(unsigned short scancode,
                  unsigned int oldMods, unsigned int newMods)
 {
 	/* Set up arrays for the key syms for the left and right side. */
-    const SDL_scancode left_mapping[]  = {
+    const SDL_Scancode left_mapping[]  = {
         SDL_SCANCODE_LSHIFT,
         SDL_SCANCODE_LCTRL,
         SDL_SCANCODE_LALT,
         SDL_SCANCODE_LGUI
     };
-    const SDL_scancode right_mapping[] = {
+    const SDL_Scancode right_mapping[] = {
         SDL_SCANCODE_RSHIFT,
         SDL_SCANCODE_RCTRL,
         SDL_SCANCODE_RALT,
@@ -489,8 +488,8 @@ UpdateKeymap(SDL_VideoData *data)
 #endif
     const void *chr_data;
     int i;
-    SDL_scancode scancode;
-    SDLKey keymap[SDL_NUM_SCANCODES];
+    SDL_Scancode scancode;
+    SDL_Keycode keymap[SDL_NUM_SCANCODES];
 
     /* See if the keymap needs to be updated */
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -675,7 +674,7 @@ Cocoa_HandleKeyEvent(_THIS, NSEvent *event)
 {
     SDL_VideoData *data = (SDL_VideoData *) _this->driverdata;
     unsigned short scancode = [event keyCode];
-    SDL_scancode code;
+    SDL_Scancode code;
 #if 0
     const char *text;
 #endif

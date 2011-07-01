@@ -1,3 +1,15 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
+
 /* Simple program:  Fill a colormap with gray and stripe it down the screen,
 		    Then move an alpha valued sprite around the screen.
  */
@@ -531,6 +543,9 @@ main(int argc, char *argv[])
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     done = 1;
+                }
+                if (event.key.keysym.sym == SDLK_RETURN) {
+                    SDL_WM_ToggleFullScreen(screen);
                 }
                 break;
             case SDL_QUIT:

@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,6 +60,19 @@ main(int argc, char *argv[])
         /* Check for events */
         while (SDL_PollEvent(&event)) {
             CommonEvent(state, &event, &done);
+
+            if (event.type == SDL_WINDOWEVENT) {
+                if (event.window.event == SDL_WINDOWEVENT_MOVED) {
+                    SDL_Window *window = SDL_GetWindowFromID(event.window.windowID);
+                    if (window) {
+                        printf("Window %d moved to %d,%d (display %d)\n",
+                            event.window.windowID,
+                            event.window.data1,
+                            event.window.data2,
+                            SDL_GetWindowDisplay(window));
+                    }
+                }
+            }
         }
     }
     quit(0);

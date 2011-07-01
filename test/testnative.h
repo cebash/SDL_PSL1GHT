@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 
 /* Definitions for platform dependent windowing functions to test SDL
    integration with native windows
@@ -15,9 +26,9 @@ typedef struct
     void (*DestroyNativeWindow) (void *window);
 } NativeWindowFactory;
 
-#ifdef SDL_VIDEO_DRIVER_WIN32
-#define TEST_NATIVE_WIN32
-extern NativeWindowFactory Win32WindowFactory;
+#ifdef SDL_VIDEO_DRIVER_WINDOWS
+#define TEST_NATIVE_WINDOWS
+extern NativeWindowFactory WindowsWindowFactory;
 #endif
 
 #ifdef SDL_VIDEO_DRIVER_X11

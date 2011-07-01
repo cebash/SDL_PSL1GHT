@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 
 /* Test out the multi-threaded event handling functions */
 
@@ -241,16 +252,7 @@ main(int argc, char *argv[])
     video_flags = SDL_SWSURFACE;
     parsed = 1;
     while (parsed) {
-        /* If the threaded option is enabled, and the SDL library hasn't
-           been compiled with threaded events enabled, then the mouse and
-           keyboard won't respond.
-         */
-        if ((argc >= 2) && (strcmp(argv[1], "-threaded") == 0)) {
-            init_flags |= SDL_INIT_EVENTTHREAD;
-            argc -= 1;
-            argv += 1;
-            printf("Running with threaded events\n");
-        } else if ((argc >= 2) && (strcmp(argv[1], "-fullscreen") == 0)) {
+        if ((argc >= 2) && (strcmp(argv[1], "-fullscreen") == 0)) {
             video_flags |= SDL_FULLSCREEN;
             argc -= 1;
             argv += 1;
@@ -320,9 +322,8 @@ main(int argc, char *argv[])
 
     /* Loop, waiting for QUIT */
     while (!done) {
-        if (!(init_flags & SDL_INIT_EVENTTHREAD)) {
-            SDL_PumpEvents();   /* Needed when event thread is off */
-        }
+        SDL_PumpEvents();
+
         if (SDL_PeepEvents(NULL, 0, SDL_PEEKEVENT, SDL_QUIT, SDL_QUIT)) {
             done = 1;
         }

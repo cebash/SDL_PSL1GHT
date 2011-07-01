@@ -58,11 +58,9 @@ static void plat_testTypes (void)
    if (SDL_ATvassert( ret == 0, "sizeof(Uint32) = %lu instead of 4", sizeof(Uint32) ))
       return;
 
-#ifdef SDL_HAS_64BIT_TYPE
    ret = plat_testSize( sizeof(Uint64), 8 );
    if (SDL_ATvassert( ret == 0, "sizeof(Uint64) = %lu instead of 8", sizeof(Uint64) ))
       return;
-#endif /* SDL_HAS_64BIT_TYPE */
 
    SDL_ATend();
 }
@@ -79,7 +77,7 @@ static void plat_testEndian (void)
     Uint16 swapped16 = 0xABCD;
     Uint32 value32 = 0xEFBEADDE;
     Uint32 swapped32 = 0xDEADBEEF;
-#ifdef SDL_HAS_64BIT_TYPE
+
     Uint64 value64, swapped64;
     value64 = 0xEFBEADDE;
     value64 <<= 32;
@@ -87,7 +85,6 @@ static void plat_testEndian (void)
     swapped64 = 0x1234ABCD;
     swapped64 <<= 32;
     swapped64 |= 0xDEADBEEF;
-#endif
 
     SDL_ATbegin( "Endianness" );
 
@@ -115,7 +112,6 @@ static void plat_testEndian (void)
              value32, SDL_Swap32(value32) ))
        return;
 
-#ifdef SDL_HAS_64BIT_TYPE
     /* Test 64 swap. */
     if (SDL_ATvassert( SDL_Swap64(value64) == swapped64,
 #ifdef _MSC_VER
@@ -125,7 +121,6 @@ static void plat_testEndian (void)
 #endif
              value64, SDL_Swap64(value64) ))
        return;
-#endif
 
     SDL_ATend();
 }
@@ -158,14 +153,14 @@ int test_platform (void)
    SDL_ATprintVerbose( 1, "CPU count: %d\n", SDL_GetCPUCount());
    SDL_ATprintVerbose( 1, "Available extensions:\n" );
    SDL_ATprintVerbose( 1, "   RDTSC %s\n", SDL_HasRDTSC()? "detected" : "not detected" );
+   SDL_ATprintVerbose( 1, "   AltiVec %s\n", SDL_HasAltiVec()? "detected" : "not detected" );
    SDL_ATprintVerbose( 1, "   MMX %s\n", SDL_HasMMX()? "detected" : "not detected" );
-   SDL_ATprintVerbose( 1, "   MMX Ext %s\n", SDL_HasMMXExt()? "detected" : "not detected" );
-   SDL_ATprintVerbose( 1, "   3DNow %s\n", SDL_Has3DNow()? "detected" : "not detected" );
-   SDL_ATprintVerbose( 1, "   3DNow Ext %s\n",
-         SDL_Has3DNowExt()? "detected" : "not detected" );
+   SDL_ATprintVerbose( 1, "   3DNow! %s\n", SDL_Has3DNow()? "detected" : "not detected" );
    SDL_ATprintVerbose( 1, "   SSE %s\n", SDL_HasSSE()? "detected" : "not detected" );
    SDL_ATprintVerbose( 1, "   SSE2 %s\n", SDL_HasSSE2()? "detected" : "not detected" );
-   SDL_ATprintVerbose( 1, "   AltiVec %s\n", SDL_HasAltiVec()? "detected" : "not detected" );
+   SDL_ATprintVerbose( 1, "   SSE3 %s\n", SDL_HasSSE3()? "detected" : "not detected" );
+   SDL_ATprintVerbose( 1, "   SSE4.1 %s\n", SDL_HasSSE41()? "detected" : "not detected" );
+   SDL_ATprintVerbose( 1, "   SSE4.2 %s\n", SDL_HasSSE42()? "detected" : "not detected" );
 
    plat_testTypes();
    plat_testEndian();
