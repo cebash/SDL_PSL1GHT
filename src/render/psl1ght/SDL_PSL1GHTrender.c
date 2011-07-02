@@ -189,6 +189,21 @@ PSL1GHT_CreateRenderer(SDL_Window * window, Uint32 flags)
             SDL_OutOfMemory();
             return NULL;
         }
+
+        /* Center drawable region on screen */
+        if (data->screens[i]->w > window->w) {
+            data->screens[i]->pixels =
+              ((Uint8 *)data->screens[i]->pixels) +
+              (data->screens[i]->w - window->w)/2*(bpp/8);
+            data->screens[i]->w = window->w;
+        }
+
+        if (data->screens[i]->h > window->h) {
+            data->screens[i]->pixels =
+              ((Uint8 *)data->screens[i]->pixels) +
+              (data->screens[i]->h - window->h)/2*data->screens[i]->pitch;
+            data->screens[i]->h = window->h;
+        }
     }
 
     deprintf (1,  "\tFinished\n");
