@@ -29,6 +29,7 @@
 
 #include "SDL_PSL1GHTvideo.h"
 #include "SDL_PSL1GHTevents_c.h"
+#include "SDL_PSL1GHTkeyboard_c.h"
 #include "SDL_PSL1GHTmouse_c.h"
 
 #include <sysutil/sysutil.h>
@@ -64,13 +65,16 @@ void
 PSL1GHT_PumpEvents(_THIS)
 {
     sysUtilCheckCallback();
+    PSL1GHT_PumpKeyboard(_this);
     PSL1GHT_PumpMouse(_this);
 }
+
 
 void
 PSL1GHT_InitSysEvent(_THIS)
 {
     sysUtilRegisterCallback(SYSUTIL_EVENT_SLOT0, eventHandle, _this);
+    PSL1GHT_InitKeyboard(_this);
     PSL1GHT_InitMouse(_this);
 }
 
@@ -78,6 +82,7 @@ void
 PSL1GHT_QuitSysEvent(_THIS)
 {
     sysUtilUnregisterCallback(SYSUTIL_EVENT_SLOT0);
+    PSL1GHT_QuitKeyboard(_this);
     PSL1GHT_QuitMouse(_this);
 }
 
