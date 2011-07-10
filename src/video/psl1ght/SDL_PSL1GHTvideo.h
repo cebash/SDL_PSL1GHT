@@ -54,11 +54,14 @@
 /* Private RSX data */
 typedef struct SDL_DeviceData
 {
-	gcmContextData *_CommandBuffer; // Context to keep track of the RSX buffer.
+    // Context to keep track of the RSX buffer.
+    gcmContextData *_CommandBuffer;
 
     bool _keyboardConnected;
-	bool _mouseConnected;
-	Uint8 _mouseButtons;
+    Uint32 _keyboardMapping;
+
+    bool _mouseConnected;
+    Uint8 _mouseButtons;
 } SDL_DeviceData;
 
 typedef struct SDL_DisplayModeData

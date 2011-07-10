@@ -28,8 +28,32 @@
 
 #include "SDL_PSL1GHTkeyboard_c.h"
 
-static void updateKeymap()
+static void unicodeToUtf8(Uint16 w, char *utf8buf)
 {
+    unsigned char *utf8s = (unsigned char *) utf8buf;
+
+    if ( w < 0x0080 ) {
+        utf8s[0] = ( unsigned char ) w;
+        utf8s[1] = 0;
+    }
+    else if ( w < 0x0800 ) {
+        utf8s[0] = 0xc0 | (( w ) >> 6 );
+        utf8s[1] = 0x80 | (( w ) & 0x3f );
+        utf8s[2] = 0;
+    }
+    else {
+        utf8s[0] = 0xe0 | (( w ) >> 12 );
+        utf8s[1] = 0x80 | (( ( w ) >> 6 ) & 0x3f );
+        utf8s[2] = 0x80 | (( w ) & 0x3f );
+        utf8s[3] = 0;
+    }
+}
+
+static void updateKeymap(_THIS)
+{
+    SDL_DeviceData *data =
+        (SDL_DeviceData *) _this->driverdata;
+
     int i;
     SDL_Scancode scancode;
     SDL_Keycode keymap[SDL_NUM_SCANCODES];
@@ -41,11 +65,15 @@ static void updateKeymap()
 
     ioKbGetConfiguration(0, &kbConfig);
 
+    data->_keyboardMapping = kbConfig.mapping;
+
     kbMkey._KbMkeyU.mkeys = 0;
     kbLed._KbLedU.leds = 0;
 
+    // Update SDL keycodes according to the keymap
     for (i = 0; i < SDL_arraysize(linux_scancode_table); i++) {
-        /* Make sure this scancode is a valid character scancode */
+
+        // Make sure this scancode is a valid character scancode
         scancode = linux_scancode_table[i];
         if (scancode == SDL_SCANCODE_UNKNOWN ||
             (keymap[scancode] & SDLK_SCANCODE_MASK)) {
@@ -57,7 +85,7 @@ static void updateKeymap()
     SDL_SetKeymap(0, keymap, SDL_NUM_SCANCODES);
 }
 
-void checkKeyboardConnected(_THIS)
+static void checkKeyboardConnected(_THIS)
 {
     SDL_DeviceData *data =
         (SDL_DeviceData *) _this->driverdata;
@@ -72,58 +100,51 @@ void checkKeyboardConnected(_THIS)
         // Old events in the queue are discarded
         ioKbClearBuf(0);
 
-        //set raw keyboard code types to get scan codes
+        // Set raw keyboard code types to get scan codes
         ioKbSetCodeType(0, KB_CODETYPE_RAW);
         ioKbSetReadMode(0, KB_RMODE_PACKET);
 
-        updateKeymap();
+        updateKeymap(_this);
     }
     else if (kbInfo.status[0] != 1 && data->_keyboardConnected) // Disconnected
     {
         data->_keyboardConnected = false;
+
+        SDL_ResetKeyboard();
     }
 }
 
-void updateModifiers(_THIS, const KbData *Keys)
+static void updateModifierKey(bool oldState, bool newState, SDL_Scancode scancode)
+{
+    if (oldState ^ newState) {
+        SDL_SendKeyboardKey(newState ? SDL_PRESSED : SDL_RELEASED, scancode);
+    }
+}
+
+static void updateModifiers(_THIS, const KbData *Keys)
 {
     SDL_Keymod modstate = SDL_GetModState();
 
-    /* Left Shift */
-    if (Keys->mkey._KbMkeyU._KbMkeyS.l_shift == 1 && !(modstate & KMOD_LSHIFT)) {
-        SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_LSHIFT);
-    } else if (Keys->mkey._KbMkeyU._KbMkeyS.l_shift == 0 && (modstate & KMOD_LSHIFT)) {
-        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LSHIFT);
-    }
-
-    /* Right Shift */
-    if (Keys->mkey._KbMkeyU._KbMkeyS.r_shift == 1 && !(modstate & KMOD_RSHIFT)) {
-        SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_RSHIFT);
-    } else if (Keys->mkey._KbMkeyU._KbMkeyS.r_shift == 0  && (modstate & KMOD_RSHIFT)) {
-        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_RSHIFT);
-    }
-
-    /* Left Control */
-    if (Keys->mkey._KbMkeyU._KbMkeyS.l_ctrl == 1 && !(modstate & KMOD_LCTRL)) {
-        SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_LCTRL);
-    } else if (Keys->mkey._KbMkeyU._KbMkeyS.l_ctrl == 0 && (modstate & KMOD_LCTRL)) {
-        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LCTRL);
-    }
-
-    /* Right Control */
-    if (Keys->mkey._KbMkeyU._KbMkeyS.r_ctrl == 1 && !(modstate & KMOD_RCTRL)) {
-        SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_RCTRL);
-    } else if (Keys->mkey._KbMkeyU._KbMkeyS.r_ctrl == 0  && (modstate & KMOD_RCTRL)) {
-        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_RCTRL);
-    }
+    updateModifierKey(modstate & KMOD_LSHIFT, Keys->mkey._KbMkeyU._KbMkeyS.l_shift, SDL_SCANCODE_LSHIFT);
+    updateModifierKey(modstate & KMOD_RSHIFT, Keys->mkey._KbMkeyU._KbMkeyS.r_shift, SDL_SCANCODE_RSHIFT);
+    updateModifierKey(modstate & KMOD_LCTRL, Keys->mkey._KbMkeyU._KbMkeyS.l_ctrl, SDL_SCANCODE_LCTRL);
+    updateModifierKey(modstate & KMOD_RCTRL, Keys->mkey._KbMkeyU._KbMkeyS.r_ctrl, SDL_SCANCODE_RCTRL);
+    updateModifierKey(modstate & KMOD_LALT, Keys->mkey._KbMkeyU._KbMkeyS.l_alt, SDL_SCANCODE_LALT);
+    updateModifierKey(modstate & KMOD_RALT, Keys->mkey._KbMkeyU._KbMkeyS.r_alt, SDL_SCANCODE_RALT);
+    updateModifierKey(modstate & KMOD_LGUI, Keys->mkey._KbMkeyU._KbMkeyS.l_win, SDL_SCANCODE_LGUI);
+    updateModifierKey(modstate & KMOD_RGUI, Keys->mkey._KbMkeyU._KbMkeyS.r_win, SDL_SCANCODE_RGUI);
 }
 
-void updateKeys(_THIS, const KbData *Keys)
+static void updateKeys(_THIS, const KbData *Keys)
 {
+    SDL_DeviceData *data =
+        (SDL_DeviceData *) _this->driverdata;
+
     int x = 0;
     int numKeys = 0;
     Uint8 newkeystate[SDL_NUM_SCANCODES];
     Uint8 * keystate = SDL_GetKeyboardState(&numKeys);
-
+    Uint16 unicode;
     SDL_Scancode scancode;
 
     for (scancode = 0; scancode < SDL_NUM_SCANCODES; ++scancode) {
@@ -138,7 +159,24 @@ void updateKeys(_THIS, const KbData *Keys)
     for (scancode = 0; scancode < SDL_NUM_SCANCODES; ++scancode) {
         if (newkeystate[scancode] != keystate[scancode]
                 && (scancode < SDL_SCANCODE_LCTRL || scancode > SDL_SCANCODE_RGUI)) {
+
+            // Send new key state
             SDL_SendKeyboardKey(newkeystate[scancode], scancode);
+
+            // Send the text corresponding to the keypress
+            if (newkeystate[scancode] == SDL_PRESSED) {
+                // Convert scancode
+                unicode = ioKbCnvRawCode(data->_keyboardMapping, Keys->mkey, Keys->led, scancode);
+
+                // Exclude raw keys
+                if (unicode != 0 && unicode < 0x8000) {
+                    char utf8[SDL_TEXTINPUTEVENT_TEXT_SIZE];
+
+                    // Convert from Unicode to UTF-8
+                    unicodeToUtf8(unicode, utf8);
+                    SDL_SendKeyboardText(utf8);
+                }
+            }
         }
     }
 }
@@ -154,6 +192,7 @@ PSL1GHT_PumpKeyboard(_THIS)
     if (data->_keyboardConnected) {
         KbData Keys;
 
+        // Read data from the keyboard buffer
         if (ioKbRead(0, &Keys) == 0 && Keys.nb_keycode > 0) {
             updateModifiers(_this, &Keys);
             updateKeys(_this, &Keys);
@@ -167,7 +206,7 @@ PSL1GHT_InitKeyboard(_THIS)
     SDL_DeviceData *data =
         (SDL_DeviceData *) _this->driverdata;
 
-    /*Init the PS3 Keyboard*/
+    // Init the PS3 Keyboard
     ioKbInit(1);
 
     data->_keyboardConnected = false;
