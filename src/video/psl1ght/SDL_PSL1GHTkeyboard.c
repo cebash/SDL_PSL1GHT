@@ -76,6 +76,8 @@ static void updateKeymap(_THIS)
         // Make sure this scancode is a valid character scancode
         scancode = linux_scancode_table[i];
         if (scancode == SDL_SCANCODE_UNKNOWN ||
+            scancode == SDL_SCANCODE_ESCAPE ||
+            scancode == SDL_SCANCODE_RETURN ||
             (keymap[scancode] & SDLK_SCANCODE_MASK)) {
             continue;
         }
@@ -157,7 +159,7 @@ static void updateKeys(_THIS, const KbData *Keys)
     }
 
     for (scancode = 0; scancode < SDL_NUM_SCANCODES; ++scancode) {
-        if (newkeystate[scancode] != keystate[scancode]
+        if ((newkeystate[scancode] != keystate[scancode] || keystate[scancode] == SDL_PRESSED)
                 && (scancode < SDL_SCANCODE_LCTRL || scancode > SDL_SCANCODE_RGUI)) {
 
             // Send new key state
