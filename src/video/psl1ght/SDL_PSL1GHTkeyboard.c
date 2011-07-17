@@ -104,7 +104,7 @@ static void checkKeyboardConnected(_THIS)
 
         // Set raw keyboard code types to get scan codes
         ioKbSetCodeType(0, KB_CODETYPE_RAW);
-        ioKbSetReadMode(0, KB_RMODE_PACKET);
+        ioKbSetReadMode(0, KB_RMODE_INPUTCHAR);
 
         updateKeymap(_this);
     }
