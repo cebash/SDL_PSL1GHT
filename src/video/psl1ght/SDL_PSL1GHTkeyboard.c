@@ -60,6 +60,7 @@ static void updateKeymap(_THIS)
     KbConfig kbConfig;
     KbMkey kbMkey;
     KbLed kbLed;
+    Uint16 unicode;
 
     SDL_GetDefaultKeymap(keymap);
 
@@ -68,7 +69,7 @@ static void updateKeymap(_THIS)
     data->_keyboardMapping = kbConfig.mapping;
 
     kbMkey._KbMkeyU.mkeys = 0;
-    kbLed._KbLedU.leds = 0;
+    kbLed._KbLedU.leds = 1; // Num lock
 
     // Update SDL keycodes according to the keymap
     for (i = 0; i < SDL_arraysize(linux_scancode_table); i++) {
@@ -82,7 +83,15 @@ static void updateKeymap(_THIS)
             continue;
         }
 
-        keymap[scancode] = ioKbCnvRawCode(kbConfig.mapping, kbMkey, kbLed, scancode);
+        unicode = ioKbCnvRawCode(data->_keyboardMapping, kbMkey, kbLed, scancode);
+
+        // Ignore Keypad flag
+        unicode &= ~KB_KEYPAD;
+
+        // Exclude raw keys
+        if (unicode != 0 && unicode < KB_RAWDAT) {
+            keymap[scancode] = unicode;
+        }
     }
     SDL_SetKeymap(0, keymap, SDL_NUM_SCANCODES);
 }
@@ -159,7 +168,7 @@ static void updateKeys(_THIS, const KbData *Keys)
     }
 
     for (scancode = 0; scancode < SDL_NUM_SCANCODES; ++scancode) {
-        if ((newkeystate[scancode] != keystate[scancode] || keystate[scancode] == SDL_PRESSED)
+        if ((newkeystate[scancode] != keystate[scancode])
                 && (scancode < SDL_SCANCODE_LCTRL || scancode > SDL_SCANCODE_RGUI)) {
 
             // Send new key state
@@ -170,8 +179,11 @@ static void updateKeys(_THIS, const KbData *Keys)
                 // Convert scancode
                 unicode = ioKbCnvRawCode(data->_keyboardMapping, Keys->mkey, Keys->led, scancode);
 
+                // Ignore Keypad flag
+                unicode &= ~KB_KEYPAD;
+
                 // Exclude raw keys
-                if (unicode != 0 && unicode < 0x8000) {
+                if (unicode != 0 && unicode < KB_RAWDAT) {
                     char utf8[SDL_TEXTINPUTEVENT_TEXT_SIZE];
 
                     // Convert from Unicode to UTF-8
