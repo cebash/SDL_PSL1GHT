@@ -22,7 +22,6 @@
 #include "SDL_config.h"
 #include "SDL_events.h"
 #include "../../events/SDL_keyboard_c.h"
-#include "../../events/scancodes_linux.h"
 
 #include <io/kb.h>
 
@@ -54,7 +53,6 @@ static void updateKeymap(_THIS)
     SDL_DeviceData *data =
         (SDL_DeviceData *) _this->driverdata;
 
-    int i;
     SDL_Scancode scancode;
     SDL_Keycode keymap[SDL_NUM_SCANCODES];
     KbConfig kbConfig;
@@ -72,10 +70,9 @@ static void updateKeymap(_THIS)
     kbLed._KbLedU.leds = 1; // Num lock
 
     // Update SDL keycodes according to the keymap
-    for (i = 0; i < SDL_arraysize(linux_scancode_table); i++) {
+    for (scancode = 0; scancode < SDL_NUM_SCANCODES; ++scancode) {
 
         // Make sure this scancode is a valid character scancode
-        scancode = linux_scancode_table[i];
         if (scancode == SDL_SCANCODE_UNKNOWN ||
             scancode == SDL_SCANCODE_ESCAPE ||
             scancode == SDL_SCANCODE_RETURN ||
@@ -127,7 +124,7 @@ static void checkKeyboardConnected(_THIS)
 
 static void updateModifierKey(bool oldState, bool newState, SDL_Scancode scancode)
 {
-    if (oldState ^ newState) {
+    if (!oldState ^ !newState) {
         SDL_SendKeyboardKey(newState ? SDL_PRESSED : SDL_RELEASED, scancode);
     }
 }
