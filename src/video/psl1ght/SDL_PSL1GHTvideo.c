@@ -146,7 +146,7 @@ void initializeGPU( SDL_DeviceData * devdata)
     assert(host_addr != NULL);
 
     // Initilise Reality, which sets up the command buffer and shared IO memory
-    devdata->_CommandBuffer = rsxInit(0x10000, 1024*1024, host_addr);
+    rsxInit(&devdata->_CommandBuffer, 0x10000, 1024*1024, host_addr);
     assert(devdata->_CommandBuffer != NULL);
 }
 
