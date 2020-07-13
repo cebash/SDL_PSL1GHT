@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="testwm"
 	ProjectGUID="{6AF0724B-BAC1-4C9D-AFBF-F63B4A2FB8FB}"
+	RootNamespace="testwm"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -48,7 +49,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Debug/testwm.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -102,6 +103,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy SDL"
+				CommandLine="copy &quot;$(SolutionDir)\SDL\$(ConfigurationName)\SDL.dll&quot; &quot;$(TargetDir)\SDL.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -192,6 +195,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy SDL"
+				CommandLine="copy &quot;$(SolutionDir)\SDL\$(ConfigurationName)\SDL.dll&quot; &quot;$(TargetDir)\SDL.dll&quot;"
 			/>
 		</Configuration>
 	</Configurations>

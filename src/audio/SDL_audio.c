@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 #include "SDL_config.h"
 
@@ -51,7 +50,6 @@ extern AudioBootStrap ALSA_bootstrap;
 extern AudioBootStrap PULSEAUDIO_bootstrap;
 extern AudioBootStrap QSAAUDIO_bootstrap;
 extern AudioBootStrap SUNAUDIO_bootstrap;
-extern AudioBootStrap DMEDIA_bootstrap;
 extern AudioBootStrap ARTS_bootstrap;
 extern AudioBootStrap ESD_bootstrap;
 extern AudioBootStrap NAS_bootstrap;
@@ -65,7 +63,6 @@ extern AudioBootStrap SNDMGR_bootstrap;
 extern AudioBootStrap DISKAUD_bootstrap;
 extern AudioBootStrap DUMMYAUD_bootstrap;
 extern AudioBootStrap DCAUD_bootstrap;
-extern AudioBootStrap MMEAUDIO_bootstrap;
 extern AudioBootStrap DART_bootstrap;
 extern AudioBootStrap NDSAUD_bootstrap;
 extern AudioBootStrap FUSIONSOUND_bootstrap;
@@ -93,9 +90,6 @@ static const AudioBootStrap *const bootstrap[] = {
 #endif
 #if SDL_AUDIO_DRIVER_SUNAUDIO
     &SUNAUDIO_bootstrap,
-#endif
-#if SDL_AUDIO_DRIVER_DMEDIA
-    &DMEDIA_bootstrap,
 #endif
 #if SDL_AUDIO_DRIVER_ARTS
     &ARTS_bootstrap,
@@ -129,9 +123,6 @@ static const AudioBootStrap *const bootstrap[] = {
 #endif
 #if SDL_AUDIO_DRIVER_DUMMY
     &DUMMYAUD_bootstrap,
-#endif
-#if SDL_AUDIO_DRIVER_MMEAUDIO
-    &MMEAUDIO_bootstrap,
 #endif
 #if SDL_AUDIO_DRIVER_NDS
     &NDSAUD_bootstrap,
@@ -340,10 +331,12 @@ SDL_RunAudio(void *devicep)
     void (SDLCALL * fill) (void *userdata, Uint8 * stream, int len);
     int silence;
     Uint32 delay;
-
     /* For streaming when the buffer sizes don't match up */
     Uint8 *istream;
     int istream_len = 0;
+
+    /* The audio mixing is always a high priority thread */
+    SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
 
     /* Perform any thread setup */
     device->threadid = SDL_ThreadID();
@@ -386,8 +379,7 @@ SDL_RunAudio(void *devicep)
         }
 #endif
 
-        /* stream_len = device->convert.len; */
-        stream_len = device->spec.size;
+        stream_len = device->convert.len;
     } else {
         silence = device->spec.silence;
         stream_len = device->spec.size;
@@ -943,7 +935,7 @@ open_audio_device(const char *devname, int iscapture,
             return 0;
         }
         if (device->convert.needed) {
-            device->convert.len = (int) (((double) obtained->size) /
+            device->convert.len = (int) (((double) device->spec.size) /
                                          device->convert.len_ratio);
 
             device->convert.buf =

@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -234,7 +245,7 @@ main(int argc, char *argv[])
         SDL_GL_SetSwapInterval(0);
     }
 
-    SDL_GetCurrentDisplayMode(&mode);
+    SDL_GetCurrentDisplayMode(0, &mode);
     printf("Screen BPP: %d\n", SDL_BITSPERPIXEL(mode.format));
     printf("\n");
     printf("Vendor     : %s\n", glGetString(GL_VENDOR));

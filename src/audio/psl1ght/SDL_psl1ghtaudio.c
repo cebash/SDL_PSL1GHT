@@ -61,8 +61,7 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
     while ((!valid_datatype) && (test_format)) {
         this->spec.format = test_format;
         switch (test_format) {
-        //case AUDIO_F32LSB: // FIXME maybe the float is MSB ?
-        case AUDIO_F32SYS: // FIXME maybe the float is MSB ?
+        case AUDIO_F32MSB:
             valid_datatype = 1;
             break;
         default:
@@ -79,7 +78,7 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 	//8 16 or 32 block buffer
 	_params.numBlocks = AUDIO_BLOCK_8;
 	//extended attributes
-	_params.attr = 0;
+	_params.attrib = 0;
 	//sound level (1 is default)
 	_params.level = 1;
 
@@ -105,13 +104,13 @@ PSL1GHT_AUD_OpenDevice(_THIS, const char *devname, int iscapture)
 	printf("audioSetNotifyEventQueue: %d\n",ret);
 
 	// clears the event queue
-	ret = sys_event_queue_drain(_snd_queue);
-	printf("sys_event_queue_drain: %d\n",ret);
+	ret = sysEventQueueDrain(_snd_queue);
+	printf("sysEentQueueDrain: %d\n",ret);
 
 	ret=audioPortStart(_portNum);
 	deprintf("audioPortStart: %d\n",ret);
 
-	_last_filled_buf = 1;
+	_last_filled_buf = _config.numBlocks - 1;
 
 	this->spec.format = test_format;
 	this->spec.size = sizeof(float) * AUDIO_BLOCK_SAMPLES * _config.channelCount;
@@ -153,8 +152,8 @@ PSL1GHT_AUD_CloseDevice(_THIS)
 	deprintf("audioRemoveNotifyEventQueue: %d\n",ret);
 	ret=audioPortClose(_portNum);
 	deprintf("audioPortClose: %d\n",ret);
-	ret=sys_event_queue_destroy(_snd_queue, 0);
-	deprintf("sys_event_queue_destroy: %d\n",ret);
+	ret=sysEventQueueDestroy(_snd_queue, 0);
+	deprintf("sysEventQueueDestroy: %d\n",ret);
 	ret=audioQuit();
 	deprintf("audioQuit: %d\n",ret);
 
@@ -169,7 +168,7 @@ PSL1GHT_AUD_GetDeviceBuf(_THIS)
 
     //int playing = _config.readIndex;
     int playing = *((u64*)(u64)_config.readIndex);
-    int filling = (playing + 1) % _config.numBlocks;
+    int filling = (_last_filled_buf + 1) % _config.numBlocks;
 	Uint8 * dma_buf = (Uint8 *)(u64)_config.audioDataStart;
 	//deprintf( "\tWriting to buffer %d \n", filling);
 	// deprintf( "\tbuffer address (%08X.%08X => %08X.%08X)\n", SHW64(_config.audioDataStart), SHW64(dma_buf));
@@ -186,8 +185,8 @@ ALSA_WaitDevice(_THIS)
 	//deprintf( "ALSA_WaitDevice(%08X.%08X)\n", SHW64(this));
 	
 	sys_event_t event;
-	s32 ret = sys_event_queue_receive( _snd_queue, &event, 20 * 1000);
-	//deprintf( "sys_event_queue_receive: %08X\n", ret);
+	s32 ret = sysEventQueueReceive( _snd_queue, &event, 20 * 1000);
+	//deprintf( "sysEventQueueReceive: %08X\n", ret);
 }
 
 

@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 #include "SDL_config.h"
 
@@ -117,8 +116,8 @@ GetDisplayMode(CFDictionaryRef moderef, SDL_DisplayMode *mode)
     mode->format = SDL_PIXELFORMAT_UNKNOWN;
     switch (bpp) {
     case 8:
-        mode->format = SDL_PIXELFORMAT_INDEX8;
-        break;
+        /* We don't support palettized modes now */
+        return SDL_FALSE;
     case 16:
         mode->format = SDL_PIXELFORMAT_ARGB1555;
         break;
@@ -258,14 +257,23 @@ Cocoa_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
         /* Restoring desktop mode */
         CGDisplaySwitchToMode(displaydata->display, data->moderef);
 
-        CGDisplayRelease(displaydata->display);
+        if (CGDisplayIsMain(displaydata->display)) {
+            CGReleaseAllDisplays();
+        } else {
+            CGDisplayRelease(displaydata->display);
+        }
 
         if (CGDisplayIsMain(displaydata->display)) {
             ShowMenuBar();
         }
     } else {
         /* Put up the blanking window (a window above all other windows) */
-        result = CGDisplayCapture(displaydata->display);
+        if (CGDisplayIsMain(displaydata->display)) {
+            /* If we don't capture all displays, Cocoa tries to rearrange windows... *sigh* */
+            result = CGCaptureAllDisplays();
+        } else {
+            result = CGDisplayCapture(displaydata->display);
+        }
         if (result != kCGErrorSuccess) {
             CG_SetError("CGDisplayCapture()", result);
             goto ERR_NO_CAPTURE;
@@ -289,19 +297,6 @@ Cocoa_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode)
         CGDisplayFade(fade_token, 0.5, kCGDisplayBlendSolidColor, kCGDisplayBlendNormal, 0.0, 0.0, 0.0, FALSE);
         CGReleaseDisplayFadeReservation(fade_token);
     }
-
-    [[NSApp mainWindow] makeKeyAndOrderFront: nil];
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-    /* 
-        There is a bug in Cocoa where NSScreen doesn't synchronize
-        with CGDirectDisplay, so the main screen's frame is wrong.
-        As a result, coordinate translation produces incorrect results.
-        We can hack around this bug by setting the screen rect
-        ourselves. This hack should be removed if/when the bug is fixed.
-    */
-    [[NSScreen mainScreen] setFrame:NSMakeRect(0,0,mode->w,mode->h)]; 
-#endif
 
     return 0;
 

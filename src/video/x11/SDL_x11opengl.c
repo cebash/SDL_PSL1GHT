@@ -1,23 +1,22 @@
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2010 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 #include "SDL_config.h"
 
@@ -64,6 +63,15 @@
 #define GLX_CONTEXT_FLAGS_ARB              0x2094
 #define GLX_CONTEXT_DEBUG_BIT_ARB          0x0001
 #define GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB 0x0002
+
+/* Typedef for the GL 3.0 context creation function */
+typedef GLXContext(*PFNGLXCREATECONTEXTATTRIBSARBPROC) (Display * dpy,
+                                                        GLXFBConfig config,
+                                                        GLXContext
+                                                        share_context,
+                                                        Bool direct,
+                                                        const int
+                                                        *attrib_list);
 #endif
 
 #define OPENGL_REQUIRS_DLOPEN
@@ -80,14 +88,6 @@
 
 static void X11_GL_InitExtensions(_THIS);
 
-/* Typedef for the GL 3.0 context creation function */
-typedef GLXContext(*PFNGLXCREATECONTEXTATTRIBSARBPROC) (Display * dpy,
-                                                        GLXFBConfig config,
-                                                        GLXContext
-                                                        share_context,
-                                                        Bool direct,
-                                                        const int
-                                                        *attrib_list);
 
 int
 X11_GL_LoadLibrary(_THIS, const char *path)
@@ -219,7 +219,7 @@ static void
 X11_GL_InitExtensions(_THIS)
 {
     Display *display = ((SDL_VideoData *) _this->driverdata)->display;
-    int screen = ((SDL_DisplayData *) SDL_CurrentDisplay->driverdata)->screen;
+    int screen = DefaultScreen(display);
     XVisualInfo *vinfo;
     XSetWindowAttributes xattr;
     Window w;
@@ -283,14 +283,13 @@ X11_GL_InitExtensions(_THIS)
     X11_PumpEvents(_this);
 }
 
-XVisualInfo *
-X11_GL_GetVisual(_THIS, Display * display, int screen)
+int 
+X11_GL_GetAttributes(_THIS, Display * display, int screen, int * attribs, int size)
 {
-    XVisualInfo *vinfo;
-
-    /* 64 seems nice. */
-    int attribs[64];
     int i = 0;
+
+    /* assert buffer is large enough to hold all SDL attributes. */ 
+    /* assert(size >= 32);*/
 
     /* Setup our GLX attributes according to the gl_config. */
     attribs[i++] = GLX_RGBA;
@@ -364,22 +363,21 @@ X11_GL_GetVisual(_THIS, Display * display, int screen)
                                                       GLX_SLOW_VISUAL_EXT;
     }
 
-#ifdef GLX_DIRECT_COLOR         /* Try for a DirectColor visual for gamma support */
-    if (X11_UseDirectColorVisuals()) {
-        attribs[i++] = GLX_X_VISUAL_TYPE;
-        attribs[i++] = GLX_DIRECT_COLOR;
-    }
-#endif
-
     attribs[i++] = None;
+ 
+    return i;
+}
+
+XVisualInfo *
+X11_GL_GetVisual(_THIS, Display * display, int screen)
+{
+    XVisualInfo *vinfo;
+
+    /* 64 seems nice. */
+    int attribs[64];
+    int i = X11_GL_GetAttributes(_this,display,screen,attribs,64);
 
     vinfo = _this->gl_data->glXChooseVisual(display, screen, attribs);
-#ifdef GLX_DIRECT_COLOR
-    if (!vinfo && X11_UseDirectColorVisuals()) {        /* No DirectColor visual?  Try again.. */
-        attribs[i - 3] = None;
-        vinfo = _this->gl_data->glXChooseVisual(display, screen, attribs);
-    }
-#endif
     if (!vinfo) {
         SDL_SetError("Couldn't find matching GLX visual");
     }
@@ -392,7 +390,7 @@ X11_GL_CreateContext(_THIS, SDL_Window * window)
     SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
     Display *display = data->videodata->display;
     int screen =
-        ((SDL_DisplayData *) window->display->driverdata)->screen;
+        ((SDL_DisplayData *) SDL_GetDisplayForWindow(window)->driverdata)->screen;
     XWindowAttributes xattr;
     XVisualInfo v, *vinfo;
     int n;
@@ -434,6 +432,8 @@ X11_GL_CreateContext(_THIS, SDL_Window * window)
                     SDL_SetError("GL 3.x is not supported");
                     context = temp_context;
                 } else {
+                    int glxAttribs[64];
+
                     /* Create a GL 3.x context */
                     GLXFBConfig *framebuffer_config = NULL;
                     int fbcount = 0;
@@ -448,10 +448,12 @@ X11_GL_CreateContext(_THIS, SDL_Window * window)
                              int *)) _this->gl_data->
                         glXGetProcAddress((GLubyte *) "glXChooseFBConfig");
 
+                    X11_GL_GetAttributes(_this,display,screen,glxAttribs,64);
+
                     if (!glXChooseFBConfig
                         || !(framebuffer_config =
                              glXChooseFBConfig(display,
-                                               DefaultScreen(display), NULL,
+                                               DefaultScreen(display), glxAttribs,
                                                &fbcount))) {
                         SDL_SetError
                             ("No good framebuffers found. GL 3.x disabled");

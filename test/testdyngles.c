@@ -1,4 +1,15 @@
 /*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
+/*
  * Small SDL example to demonstrate dynamically loading 
  * OpenGL lib and functions
  *
@@ -116,10 +127,6 @@ main(int argc, char *argv[])
     /* you may want to change these according to the platform */
     video_w = 320;
     video_h = 480;
-#ifdef __QNXNTO__
-    video_w = 480;
-    video_h = 640;
-#endif /* __QNXNTO__ */
 
     if (argv[1]) {
         gl_library = argv[1];
@@ -151,12 +158,7 @@ main(int argc, char *argv[])
         pixels[3 * i + 2] = rand() % 250 - 125;
     }
 
-#ifdef __QNXNTO__
-    f.glViewport(0, 0, video_h, video_w);
-#else
     f.glViewport(0, 0, video_w, video_h);
-#endif /* __QNXNTO__ */
-
     f.glMatrixMode(GL_PROJECTION);
     f.glLoadIdentity();
     f.glOrthof(-100, 100, -100, 100, -500, 500);

@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 
 /* Bring up a window and manipulate the gamma on it */
 
@@ -14,22 +25,6 @@ quit(int rc)
 {
     SDL_Quit();
     exit(rc);
-}
-
-/* Turn a normal gamma value into an appropriate gamma ramp */
-void
-CalculateGamma(double gamma, Uint16 * ramp)
-{
-    int i, value;
-
-    gamma = 1.0 / gamma;
-    for (i = 0; i < 256; ++i) {
-        value = (int) (pow((double) i / 256.0, gamma) * 65535.0 + 0.5);
-        if (value > 65535) {
-            value = 65535;
-        }
-        ramp[i] = (Uint16) value;
-    }
 }
 
 /* This can be used as a general routine for all of the test programs */
@@ -110,16 +105,6 @@ main(int argc, char *argv[])
         fprintf(stderr, "Unable to set gamma: %s\n", SDL_GetError());
         quit(1);
     }
-#if 0                           /* This isn't supported.  Integrating the gamma ramps isn't exact */
-    /* See what gamma was actually set */
-    float real[3];
-    if (SDL_GetGamma(&real[0], &real[1], &real[2]) < 0) {
-        printf("Couldn't get gamma: %s\n", SDL_GetError());
-    } else {
-        printf("Set gamma values: R=%2.2f, G=%2.2f, B=%2.2f\n",
-               real[0], real[1], real[2]);
-    }
-#endif
 
     /* Do all the drawing work */
     image = SDL_LoadBMP("sample.bmp");
@@ -173,8 +158,8 @@ main(int argc, char *argv[])
     while (gamma < 10.0) {
         /* Increase the red gamma and decrease everything else... */
         gamma += 0.1f;
-        CalculateGamma(gamma, red_ramp);
-        CalculateGamma(1.0 / gamma, ramp);
+        SDL_CalculateGammaRamp(gamma, red_ramp);
+        SDL_CalculateGammaRamp(1.0f / gamma, ramp);
         SDL_SetGammaRamp(red_ramp, ramp, ramp);
     }
     /* Finish completely red */

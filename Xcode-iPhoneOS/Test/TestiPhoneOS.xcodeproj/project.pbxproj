@@ -7,8 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		046CEF7713254F23007AD51D /* icon.bmp in Resources */ = {isa = PBXBuildFile; fileRef = FDA8AAD90E2D33B000EA573E /* icon.bmp */; };
+		046CEF7B13254F23007AD51D /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		046CEF7C13254F23007AD51D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */; };
+		046CEF7D13254F23007AD51D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8990E2D111A00EA573E /* QuartzCore.framework */; };
+		046CEF7E13254F23007AD51D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89A0E2D111A00EA573E /* OpenGLES.framework */; };
+		046CEF7F13254F23007AD51D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89B0E2D111A00EA573E /* CoreGraphics.framework */; };
+		046CEF8013254F23007AD51D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89C0E2D111A00EA573E /* UIKit.framework */; };
+		046CEF8113254F23007AD51D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89D0E2D111A00EA573E /* Foundation.framework */; };
+		046CEF8213254F23007AD51D /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89E0E2D111A00EA573E /* CoreAudio.framework */; };
+		046CEF8A13254F63007AD51D /* testgesture.c in Sources */ = {isa = PBXBuildFile; fileRef = 046CEF8913254F63007AD51D /* testgesture.c */; };
+		047A63E213285C3200CD7973 /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		047A63E313285C3200CD7973 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */; };
+		047A63E413285C3200CD7973 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8990E2D111A00EA573E /* QuartzCore.framework */; };
+		047A63E513285C3200CD7973 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89A0E2D111A00EA573E /* OpenGLES.framework */; };
+		047A63E613285C3200CD7973 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89B0E2D111A00EA573E /* CoreGraphics.framework */; };
+		047A63E713285C3200CD7973 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89C0E2D111A00EA573E /* UIKit.framework */; };
+		047A63E813285C3200CD7973 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89D0E2D111A00EA573E /* Foundation.framework */; };
+		047A63E913285C3200CD7973 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89E0E2D111A00EA573E /* CoreAudio.framework */; };
+		047A63F113285CD100CD7973 /* checkkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 047A63F013285CD100CD7973 /* checkkeys.c */; };
 		56ED04FE118A8FE400A56AA6 /* icon.bmp in Resources */ = {isa = PBXBuildFile; fileRef = FDA8AAD90E2D33B000EA573E /* icon.bmp */; };
-		56ED0502118A8FE400A56AA6 /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
+		56ED0502118A8FE400A56AA6 /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
 		56ED0503118A8FE400A56AA6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */; };
 		56ED0504118A8FE400A56AA6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8990E2D111A00EA573E /* QuartzCore.framework */; };
 		56ED0505118A8FE400A56AA6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89A0E2D111A00EA573E /* OpenGLES.framework */; };
@@ -119,33 +138,32 @@
 		FDAAC62A0E2D5960001DB1D8 /* testgles.c in Sources */ = {isa = PBXBuildFile; fileRef = FDAAC6290E2D5960001DB1D8 /* testgles.c */; };
 		FDAAC6390E2D59BE001DB1D8 /* icon.bmp in Resources */ = {isa = PBXBuildFile; fileRef = FDA8AAD90E2D33B000EA573E /* icon.bmp */; };
 		FDAAC7780E2D7024001DB1D8 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = FDA8A7840E2D0F1F00EA573E /* common.c */; };
-		FDBDE54B0E31338A006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE56B0E3133F5006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5780E313425006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE57C0E313445006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5810E313465006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5850E313495006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5890E3134B8006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE58C0E3134F3006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5920E313531006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE59B0E31356A006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE59F0E31358D006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5A10E313594006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5A90E3135C0006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5AE0E3135E6006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5B60E3135FE006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5BC0E31364D006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5C20E313663006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5C40E3136DA006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5C60E3136F1006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5C80E313702006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5CA0E313712006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5CC0E31372B006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5CE0E31373E006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5D00E31375B006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5D20E31376B006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDBDE5D40E313789006BAC0B /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
-		FDC42FF40F0D866D009C87E1 /* libSDLiPhoneOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */; };
+		FDBDE54B0E31338A006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE56B0E3133F5006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5780E313425006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE57C0E313445006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5810E313465006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5850E313495006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5890E3134B8006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE58C0E3134F3006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5920E313531006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE59B0E31356A006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE59F0E31358D006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5A10E313594006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5A90E3135C0006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5AE0E3135E6006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5B60E3135FE006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5BC0E31364D006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5C20E313663006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5C60E3136F1006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5C80E313702006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5CA0E313712006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5CC0E31372B006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5CE0E31373E006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5D00E31375B006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5D20E31376B006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDBDE5D40E313789006BAC0B /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
+		FDC42FF40F0D866D009C87E1 /* libSDL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1B48B80E3131CA007AB34E /* libSDL.a */; };
 		FDC42FF60F0D866D009C87E1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */; };
 		FDC42FF70F0D866D009C87E1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8990E2D111A00EA573E /* QuartzCore.framework */; };
 		FDC42FF80F0D866D009C87E1 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89A0E2D111A00EA573E /* OpenGLES.framework */; };
@@ -162,7 +180,7 @@
 		FDD2C1040E2E4F4B00B7A85F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89C0E2D111A00EA573E /* UIKit.framework */; };
 		FDD2C1050E2E4F4B00B7A85F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89D0E2D111A00EA573E /* Foundation.framework */; };
 		FDD2C1060E2E4F4B00B7A85F /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89E0E2D111A00EA573E /* CoreAudio.framework */; };
-		FDD2C10D0E2E4F6900B7A85F /* testhread.c in Sources */ = {isa = PBXBuildFile; fileRef = FDA8A74C0E2D0F1600EA573E /* testhread.c */; };
+		FDD2C10D0E2E4F6900B7A85F /* testthread.c in Sources */ = {isa = PBXBuildFile; fileRef = FDA8A74C0E2D0F1600EA573E /* testthread.c */; };
 		FDD2C1770E2E52C000B7A85F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */; };
 		FDD2C1780E2E52C000B7A85F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8990E2D111A00EA573E /* QuartzCore.framework */; };
 		FDD2C1790E2E52C000B7A85F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89A0E2D111A00EA573E /* OpenGLES.framework */; };
@@ -196,15 +214,6 @@
 		FDD2C4770E2E77D700B7A85F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89D0E2D111A00EA573E /* Foundation.framework */; };
 		FDD2C4780E2E77D700B7A85F /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89E0E2D111A00EA573E /* CoreAudio.framework */; };
 		FDD2C47F0E2E77E300B7A85F /* testlock.c in Sources */ = {isa = PBXBuildFile; fileRef = FDA8A7510E2D0F1600EA573E /* testlock.c */; };
-		FDD2C4AD0E2E79C300B7A85F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */; };
-		FDD2C4AE0E2E79C300B7A85F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8990E2D111A00EA573E /* QuartzCore.framework */; };
-		FDD2C4AF0E2E79C300B7A85F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89A0E2D111A00EA573E /* OpenGLES.framework */; };
-		FDD2C4B00E2E79C300B7A85F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89B0E2D111A00EA573E /* CoreGraphics.framework */; };
-		FDD2C4B10E2E79C300B7A85F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89C0E2D111A00EA573E /* UIKit.framework */; };
-		FDD2C4B20E2E79C300B7A85F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89D0E2D111A00EA573E /* Foundation.framework */; };
-		FDD2C4B30E2E79C300B7A85F /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89E0E2D111A00EA573E /* CoreAudio.framework */; };
-		FDD2C4BA0E2E79D500B7A85F /* testpalette.c in Sources */ = {isa = PBXBuildFile; fileRef = FDA8A7550E2D0F1600EA573E /* testpalette.c */; };
-		FDD2C4FB0E2E7F4800B7A85F /* sail.bmp in Resources */ = {isa = PBXBuildFile; fileRef = FDA8AADF0E2D33C100EA573E /* sail.bmp */; };
 		FDD2C5010E2E7F4800B7A85F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */; };
 		FDD2C5020E2E7F4800B7A85F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A8990E2D111A00EA573E /* QuartzCore.framework */; };
 		FDD2C5030E2E7F4800B7A85F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA8A89A0E2D111A00EA573E /* OpenGLES.framework */; };
@@ -291,7 +300,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = FD1B48AC0E3131CA007AB34E /* SDLiPhoneOS.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 006E982211955059001DE610 /* testsdl.app */;
+			remoteGlobalIDString = 006E982211955059001DE610;
 			remoteInfo = testsdl;
 		};
 		FD1B48B70E3131CA007AB34E /* PBXContainerItemProxy */ = {
@@ -304,6 +313,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		046CEF8613254F23007AD51D /* testgesture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testgesture.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		046CEF8913254F63007AD51D /* testgesture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testgesture.c; path = ../../test/testgesture.c; sourceTree = SOURCE_ROOT; };
+		047A63ED13285C3200CD7973 /* checkkeys.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = checkkeys.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		047A63F013285CD100CD7973 /* checkkeys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = checkkeys.c; path = ../../test/checkkeys.c; sourceTree = SOURCE_ROOT; };
 		1D6058910D05DD3D006BFB54 /* testwm2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testwm2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		56ED050D118A8FE400A56AA6 /* testpower.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testpower.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		56ED0510118A904200A56AA6 /* testpower.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testpower.c; path = ../../test/testpower.c; sourceTree = SOURCE_ROOT; };
@@ -316,7 +329,7 @@
 		FDA8A7470E2D0F1600EA573E /* testerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testerror.c; path = ../../test/testerror.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7480E2D0F1600EA573E /* testfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testfile.c; path = ../../test/testfile.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7490E2D0F1600EA573E /* testgamma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testgamma.c; path = ../../test/testgamma.c; sourceTree = SOURCE_ROOT; };
-		FDA8A74C0E2D0F1600EA573E /* testhread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testhread.c; path = ../../test/testhread.c; sourceTree = SOURCE_ROOT; };
+		FDA8A74C0E2D0F1600EA573E /* testthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testthread.c; path = ../../test/testthread.c; sourceTree = SOURCE_ROOT; };
 		FDA8A74D0E2D0F1600EA573E /* testiconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testiconv.c; path = ../../test/testiconv.c; sourceTree = SOURCE_ROOT; };
 		FDA8A74E0E2D0F1600EA573E /* testjoystick.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testjoystick.c; path = ../../test/testjoystick.c; sourceTree = SOURCE_ROOT; };
 		FDA8A74F0E2D0F1600EA573E /* testkeys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testkeys.c; path = ../../test/testkeys.c; sourceTree = SOURCE_ROOT; };
@@ -325,7 +338,6 @@
 		FDA8A7520E2D0F1600EA573E /* testmultiaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testmultiaudio.c; path = ../../test/testmultiaudio.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7530E2D0F1600EA573E /* testoverlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testoverlay.c; path = ../../test/testoverlay.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7540E2D0F1600EA573E /* testoverlay2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testoverlay2.c; path = ../../test/testoverlay2.c; sourceTree = SOURCE_ROOT; };
-		FDA8A7550E2D0F1600EA573E /* testpalette.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testpalette.c; path = ../../test/testpalette.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7560E2D0F1600EA573E /* testplatform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testplatform.c; path = ../../test/testplatform.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7570E2D0F1600EA573E /* testsem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testsem.c; path = ../../test/testsem.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7580E2D0F1600EA573E /* testsprite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testsprite.c; path = ../../test/testsprite.c; sourceTree = SOURCE_ROOT; };
@@ -341,7 +353,6 @@
 		FDA8A7840E2D0F1F00EA573E /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = common.c; path = ../../test/common.c; sourceTree = SOURCE_ROOT; };
 		FDA8A7850E2D0F1F00EA573E /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../../test/common.h; sourceTree = SOURCE_ROOT; };
 		FDA8A7870E2D0F2700EA573E /* graywin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = graywin.c; path = ../../test/graywin.c; sourceTree = SOURCE_ROOT; };
-		FDA8A7890E2D0F2E00EA573E /* checkkeys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = checkkeys.c; path = ../../test/checkkeys.c; sourceTree = SOURCE_ROOT; };
 		FDA8A78B0E2D0F3D00EA573E /* loopwave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = loopwave.c; path = ../../test/loopwave.c; sourceTree = SOURCE_ROOT; };
 		FDA8A8980E2D111A00EA573E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		FDA8A8990E2D111A00EA573E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -356,7 +367,6 @@
 		FDA8AADA0E2D33BA00EA573E /* moose.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = moose.dat; path = ../../test/moose.dat; sourceTree = SOURCE_ROOT; };
 		FDA8AADB0E2D33BA00EA573E /* picture.xbm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = picture.xbm; path = ../../test/picture.xbm; sourceTree = SOURCE_ROOT; };
 		FDA8AADE0E2D33C100EA573E /* sample.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = sample.bmp; path = ../../test/sample.bmp; sourceTree = SOURCE_ROOT; };
-		FDA8AADF0E2D33C100EA573E /* sail.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = sail.bmp; path = ../../test/sail.bmp; sourceTree = SOURCE_ROOT; };
 		FDA8AAE20E2D33C600EA573E /* sample.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = sample.wav; path = ../../test/sample.wav; sourceTree = SOURCE_ROOT; };
 		FDA8AB260E2D386600EA573E /* testalpha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testalpha.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDAAC3CD0E2D47E6001DB1D8 /* testaudioinfo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testaudioinfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -371,13 +381,12 @@
 		FDAAC6290E2D5960001DB1D8 /* testgles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testgles.c; path = ../../test/testgles.c; sourceTree = SOURCE_ROOT; };
 		FDC430000F0D866D009C87E1 /* torturethread.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = torturethread.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDC430090F0D86BF009C87E1 /* testdraw2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testdraw2.c; path = ../../test/testdraw2.c; sourceTree = SOURCE_ROOT; };
-		FDD2C10A0E2E4F4B00B7A85F /* testhread.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testhread.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDD2C10A0E2E4F4B00B7A85F /* testthread.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testthread.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD2C1810E2E52C000B7A85F /* testiconv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testiconv.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD2C18A0E2E52FE00B7A85F /* utf8.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = utf8.txt; path = ../../test/utf8.txt; sourceTree = SOURCE_ROOT; };
 		FDD2C1A50E2E534F00B7A85F /* testjoystick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testjoystick.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD2C45E0E2E773800B7A85F /* testkeys.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testkeys.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD2C47C0E2E77D700B7A85F /* testlock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testlock.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FDD2C4B70E2E79C300B7A85F /* testpalette.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testpalette.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD2C50B0E2E7F4800B7A85F /* testplatform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testplatform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD2C5290E2E807600B7A85F /* testsem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testsem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD2C54E0E2E80E400B7A85F /* testsprite2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testsprite2.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -390,11 +399,41 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		046CEF7A13254F23007AD51D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				046CEF7B13254F23007AD51D /* libSDL.a in Frameworks */,
+				046CEF7C13254F23007AD51D /* AudioToolbox.framework in Frameworks */,
+				046CEF7D13254F23007AD51D /* QuartzCore.framework in Frameworks */,
+				046CEF7E13254F23007AD51D /* OpenGLES.framework in Frameworks */,
+				046CEF7F13254F23007AD51D /* CoreGraphics.framework in Frameworks */,
+				046CEF8013254F23007AD51D /* UIKit.framework in Frameworks */,
+				046CEF8113254F23007AD51D /* Foundation.framework in Frameworks */,
+				046CEF8213254F23007AD51D /* CoreAudio.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		047A63E113285C3200CD7973 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				047A63E213285C3200CD7973 /* libSDL.a in Frameworks */,
+				047A63E313285C3200CD7973 /* AudioToolbox.framework in Frameworks */,
+				047A63E413285C3200CD7973 /* QuartzCore.framework in Frameworks */,
+				047A63E513285C3200CD7973 /* OpenGLES.framework in Frameworks */,
+				047A63E613285C3200CD7973 /* CoreGraphics.framework in Frameworks */,
+				047A63E713285C3200CD7973 /* UIKit.framework in Frameworks */,
+				047A63E813285C3200CD7973 /* Foundation.framework in Frameworks */,
+				047A63E913285C3200CD7973 /* CoreAudio.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5810E313465006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5810E313465006BAC0B /* libSDL.a in Frameworks */,
 				FDA8A89F0E2D111A00EA573E /* AudioToolbox.framework in Frameworks */,
 				FDA8A8A00E2D111A00EA573E /* QuartzCore.framework in Frameworks */,
 				FDA8A8A10E2D111A00EA573E /* OpenGLES.framework in Frameworks */,
@@ -409,7 +448,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56ED0502118A8FE400A56AA6 /* libSDLiPhoneOS.a in Frameworks */,
+				56ED0502118A8FE400A56AA6 /* libSDL.a in Frameworks */,
 				56ED0503118A8FE400A56AA6 /* AudioToolbox.framework in Frameworks */,
 				56ED0504118A8FE400A56AA6 /* QuartzCore.framework in Frameworks */,
 				56ED0505118A8FE400A56AA6 /* OpenGLES.framework in Frameworks */,
@@ -424,7 +463,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE54B0E31338A006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE54B0E31338A006BAC0B /* libSDL.a in Frameworks */,
 				FDA8A9250E2D1C0B00EA573E /* AudioToolbox.framework in Frameworks */,
 				FDA8A9260E2D1C0B00EA573E /* QuartzCore.framework in Frameworks */,
 				FDA8A9270E2D1C0B00EA573E /* OpenGLES.framework in Frameworks */,
@@ -439,7 +478,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5850E313495006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5850E313495006BAC0B /* libSDL.a in Frameworks */,
 				FDA8AAB10E2D330F00EA573E /* AudioToolbox.framework in Frameworks */,
 				FDA8AAB20E2D330F00EA573E /* QuartzCore.framework in Frameworks */,
 				FDA8AAB30E2D330F00EA573E /* OpenGLES.framework in Frameworks */,
@@ -454,7 +493,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5890E3134B8006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5890E3134B8006BAC0B /* libSDL.a in Frameworks */,
 				FDA8AB1C0E2D386600EA573E /* AudioToolbox.framework in Frameworks */,
 				FDA8AB1D0E2D386600EA573E /* QuartzCore.framework in Frameworks */,
 				FDA8AB1E0E2D386600EA573E /* OpenGLES.framework in Frameworks */,
@@ -469,7 +508,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE58C0E3134F3006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE58C0E3134F3006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC3C30E2D47E6001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC3C40E2D47E6001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC3C50E2D47E6001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -484,7 +523,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE56B0E3133F5006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE56B0E3133F5006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC4370E2D4961001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC4380E2D4961001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC4390E2D4961001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -499,7 +538,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5920E313531006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5920E313531006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC45B0E2D4C27001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC45C0E2D4C27001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC45D0E2D4C27001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -514,7 +553,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5780E313425006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5780E313425006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC50B0E2D4FEB001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC50C0E2D4FEB001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC50D0E2D4FEB001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -529,7 +568,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE59B0E31356A006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE59B0E31356A006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC5910E2D5429001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC5920E2D5429001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC5930E2D5429001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -544,7 +583,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE59F0E31358D006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE59F0E31358D006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC5BF0E2D55B5001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC5C00E2D55B5001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC5C10E2D55B5001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -559,7 +598,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5A10E313594006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5A10E313594006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC5F00E2D5843001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC5F10E2D5843001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC5F20E2D5843001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -574,7 +613,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE57C0E313445006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE57C0E313445006BAC0B /* libSDL.a in Frameworks */,
 				FDAAC61C0E2D5914001DB1D8 /* AudioToolbox.framework in Frameworks */,
 				FDAAC61D0E2D5914001DB1D8 /* QuartzCore.framework in Frameworks */,
 				FDAAC61E0E2D5914001DB1D8 /* OpenGLES.framework in Frameworks */,
@@ -589,7 +628,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDC42FF40F0D866D009C87E1 /* libSDLiPhoneOS.a in Frameworks */,
+				FDC42FF40F0D866D009C87E1 /* libSDL.a in Frameworks */,
 				FDC42FF60F0D866D009C87E1 /* AudioToolbox.framework in Frameworks */,
 				FDC42FF70F0D866D009C87E1 /* QuartzCore.framework in Frameworks */,
 				FDC42FF80F0D866D009C87E1 /* OpenGLES.framework in Frameworks */,
@@ -604,7 +643,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5A90E3135C0006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5A90E3135C0006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C1000E2E4F4B00B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C1010E2E4F4B00B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C1020E2E4F4B00B7A85F /* OpenGLES.framework in Frameworks */,
@@ -619,7 +658,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5AE0E3135E6006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5AE0E3135E6006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C1770E2E52C000B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C1780E2E52C000B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C1790E2E52C000B7A85F /* OpenGLES.framework in Frameworks */,
@@ -634,7 +673,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5B60E3135FE006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5B60E3135FE006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C19B0E2E534F00B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C19C0E2E534F00B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C19D0E2E534F00B7A85F /* OpenGLES.framework in Frameworks */,
@@ -649,7 +688,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5BC0E31364D006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5BC0E31364D006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C4540E2E773800B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C4550E2E773800B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C4560E2E773800B7A85F /* OpenGLES.framework in Frameworks */,
@@ -664,7 +703,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5C20E313663006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5C20E313663006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C4720E2E77D700B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C4730E2E77D700B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C4740E2E77D700B7A85F /* OpenGLES.framework in Frameworks */,
@@ -675,26 +714,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FDD2C4AA0E2E79C300B7A85F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FDBDE5C40E3136DA006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
-				FDD2C4AD0E2E79C300B7A85F /* AudioToolbox.framework in Frameworks */,
-				FDD2C4AE0E2E79C300B7A85F /* QuartzCore.framework in Frameworks */,
-				FDD2C4AF0E2E79C300B7A85F /* OpenGLES.framework in Frameworks */,
-				FDD2C4B00E2E79C300B7A85F /* CoreGraphics.framework in Frameworks */,
-				FDD2C4B10E2E79C300B7A85F /* UIKit.framework in Frameworks */,
-				FDD2C4B20E2E79C300B7A85F /* Foundation.framework in Frameworks */,
-				FDD2C4B30E2E79C300B7A85F /* CoreAudio.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FDD2C4FE0E2E7F4800B7A85F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5C60E3136F1006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5C60E3136F1006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C5010E2E7F4800B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C5020E2E7F4800B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C5030E2E7F4800B7A85F /* OpenGLES.framework in Frameworks */,
@@ -709,7 +733,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5C80E313702006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5C80E313702006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C51F0E2E807600B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C5200E2E807600B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C5210E2E807600B7A85F /* OpenGLES.framework in Frameworks */,
@@ -724,7 +748,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5CA0E313712006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5CA0E313712006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C5440E2E80E400B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C5450E2E80E400B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C5460E2E80E400B7A85F /* OpenGLES.framework in Frameworks */,
@@ -739,7 +763,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5CC0E31372B006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5CC0E31372B006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C57D0E2E8C7400B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C57E0E2E8C7400B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C57F0E2E8C7400B7A85F /* OpenGLES.framework in Frameworks */,
@@ -754,7 +778,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5CE0E31373E006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5CE0E31373E006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C5BB0E2E8CFC00B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C5BC0E2E8CFC00B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C5BD0E2E8CFC00B7A85F /* OpenGLES.framework in Frameworks */,
@@ -769,7 +793,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5D00E31375B006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5D00E31375B006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C5D70E2E8E0300B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C5D80E2E8E0300B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C5D90E2E8E0300B7A85F /* OpenGLES.framework in Frameworks */,
@@ -784,7 +808,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5D20E31376B006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5D20E31376B006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C61D0E2E8F0600B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C61E0E2E8F0600B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C61F0E2E8F0600B7A85F /* OpenGLES.framework in Frameworks */,
@@ -813,7 +837,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBDE5D40E313789006BAC0B /* libSDLiPhoneOS.a in Frameworks */,
+				FDBDE5D40E313789006BAC0B /* libSDL.a in Frameworks */,
 				FDD2C6EA0E2E959E00B7A85F /* AudioToolbox.framework in Frameworks */,
 				FDD2C6EB0E2E959E00B7A85F /* QuartzCore.framework in Frameworks */,
 				FDD2C6EC0E2E959E00B7A85F /* OpenGLES.framework in Frameworks */,
@@ -842,12 +866,11 @@
 				FDAAC5C90E2D55B5001DB1D8 /* testfile.app */,
 				FDAAC5FA0E2D5843001DB1D8 /* testgamma.app */,
 				FDAAC6260E2D5914001DB1D8 /* testgles.app */,
-				FDD2C10A0E2E4F4B00B7A85F /* testhread.app */,
+				FDD2C10A0E2E4F4B00B7A85F /* testthread.app */,
 				FDD2C1810E2E52C000B7A85F /* testiconv.app */,
 				FDD2C1A50E2E534F00B7A85F /* testjoystick.app */,
 				FDD2C45E0E2E773800B7A85F /* testkeys.app */,
 				FDD2C47C0E2E77D700B7A85F /* testlock.app */,
-				FDD2C4B70E2E79C300B7A85F /* testpalette.app */,
 				FDD2C50B0E2E7F4800B7A85F /* testplatform.app */,
 				FDD2C5290E2E807600B7A85F /* testsem.app */,
 				FDD2C54E0E2E80E400B7A85F /* testsprite2.app */,
@@ -859,6 +882,8 @@
 				FDD2C6F40E2E959E00B7A85F /* torturethread.app */,
 				FDC430000F0D866D009C87E1 /* torturethread.app */,
 				56ED050D118A8FE400A56AA6 /* testpower.app */,
+				046CEF8613254F23007AD51D /* testgesture.app */,
+				047A63ED13285C3200CD7973 /* checkkeys.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -878,7 +903,7 @@
 		FD1B48AD0E3131CA007AB34E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */,
+				FD1B48B80E3131CA007AB34E /* libSDL.a */,
 				0466EE7011E565E4000198A4 /* testsdl.app */,
 			);
 			name = Products;
@@ -889,9 +914,9 @@
 			children = (
 				FDA8A7840E2D0F1F00EA573E /* common.c */,
 				FDA8A7850E2D0F1F00EA573E /* common.h */,
+				047A63F013285CD100CD7973 /* checkkeys.c */,
 				FDA8A7870E2D0F2700EA573E /* graywin.c */,
 				FDA8A78B0E2D0F3D00EA573E /* loopwave.c */,
-				FDA8A7890E2D0F2E00EA573E /* checkkeys.c */,
 				FDA8A7400E2D0F1600EA573E /* testalpha.c */,
 				FDA8A7410E2D0F1600EA573E /* testaudioinfo.c */,
 				FDA8A7420E2D0F1600EA573E /* testbitmap.c */,
@@ -901,8 +926,9 @@
 				FDA8A7470E2D0F1600EA573E /* testerror.c */,
 				FDA8A7480E2D0F1600EA573E /* testfile.c */,
 				FDA8A7490E2D0F1600EA573E /* testgamma.c */,
+				046CEF8913254F63007AD51D /* testgesture.c */,
 				FDAAC6290E2D5960001DB1D8 /* testgles.c */,
-				FDA8A74C0E2D0F1600EA573E /* testhread.c */,
+				FDA8A74C0E2D0F1600EA573E /* testthread.c */,
 				FDA8A74D0E2D0F1600EA573E /* testiconv.c */,
 				FDA8A74E0E2D0F1600EA573E /* testjoystick.c */,
 				FDA8A74F0E2D0F1600EA573E /* testkeys.c */,
@@ -911,7 +937,6 @@
 				FDA8A7520E2D0F1600EA573E /* testmultiaudio.c */,
 				FDA8A7530E2D0F1600EA573E /* testoverlay.c */,
 				FDA8A7540E2D0F1600EA573E /* testoverlay2.c */,
-				FDA8A7550E2D0F1600EA573E /* testpalette.c */,
 				FDA8A7560E2D0F1600EA573E /* testplatform.c */,
 				56ED0510118A904200A56AA6 /* testpower.c */,
 				FDA8A7570E2D0F1600EA573E /* testsem.c */,
@@ -952,7 +977,6 @@
 				FDA8AADA0E2D33BA00EA573E /* moose.dat */,
 				FDA8AADB0E2D33BA00EA573E /* picture.xbm */,
 				FDA8AADE0E2D33C100EA573E /* sample.bmp */,
-				FDA8AADF0E2D33C100EA573E /* sail.bmp */,
 				FDA8AAE20E2D33C600EA573E /* sample.wav */,
 			);
 			name = Resources;
@@ -961,6 +985,40 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		046CEF7513254F23007AD51D /* testgesture */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 046CEF8313254F23007AD51D /* Build configuration list for PBXNativeTarget "testgesture" */;
+			buildPhases = (
+				046CEF7613254F23007AD51D /* Resources */,
+				046CEF7813254F23007AD51D /* Sources */,
+				046CEF7A13254F23007AD51D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = testgesture;
+			productName = TestiPhoneOS;
+			productReference = 046CEF8613254F23007AD51D /* testgesture.app */;
+			productType = "com.apple.product-type.application";
+		};
+		047A63DD13285C3200CD7973 /* checkkeys */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 047A63EA13285C3200CD7973 /* Build configuration list for PBXNativeTarget "checkkeys" */;
+			buildPhases = (
+				047A63DE13285C3200CD7973 /* Resources */,
+				047A63DF13285C3200CD7973 /* Sources */,
+				047A63E113285C3200CD7973 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = checkkeys;
+			productName = TestiPhoneOS;
+			productReference = 047A63ED13285C3200CD7973 /* checkkeys.app */;
+			productType = "com.apple.product-type.application";
+		};
 		1D6058900D05DD3D006BFB54 /* testwm2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "testwm2" */;
@@ -1199,9 +1257,9 @@
 			productReference = FDC430000F0D866D009C87E1 /* torturethread.app */;
 			productType = "com.apple.product-type.application";
 		};
-		FDD2C0F90E2E4F4B00B7A85F /* testhread */ = {
+		FDD2C0F90E2E4F4B00B7A85F /* testthread */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FDD2C1070E2E4F4B00B7A85F /* Build configuration list for PBXNativeTarget "testhread" */;
+			buildConfigurationList = FDD2C1070E2E4F4B00B7A85F /* Build configuration list for PBXNativeTarget "testthread" */;
 			buildPhases = (
 				FDD2C0FA0E2E4F4B00B7A85F /* Resources */,
 				FDD2C0FB0E2E4F4B00B7A85F /* Sources */,
@@ -1211,9 +1269,9 @@
 			);
 			dependencies = (
 			);
-			name = testhread;
+			name = testthread;
 			productName = TestiPhoneOS;
-			productReference = FDD2C10A0E2E4F4B00B7A85F /* testhread.app */;
+			productReference = FDD2C10A0E2E4F4B00B7A85F /* testthread.app */;
 			productType = "com.apple.product-type.application";
 		};
 		FDD2C1700E2E52C000B7A85F /* testiconv */ = {
@@ -1282,23 +1340,6 @@
 			name = testlock;
 			productName = TestiPhoneOS;
 			productReference = FDD2C47C0E2E77D700B7A85F /* testlock.app */;
-			productType = "com.apple.product-type.application";
-		};
-		FDD2C4A60E2E79C300B7A85F /* testpalette */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FDD2C4B40E2E79C300B7A85F /* Build configuration list for PBXNativeTarget "testpalette" */;
-			buildPhases = (
-				FDD2C4A70E2E79C300B7A85F /* Resources */,
-				FDD2C4A80E2E79C300B7A85F /* Sources */,
-				FDD2C4AA0E2E79C300B7A85F /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = testpalette;
-			productName = TestiPhoneOS;
-			productReference = FDD2C4B70E2E79C300B7A85F /* testpalette.app */;
 			productType = "com.apple.product-type.application";
 		};
 		FDD2C4F90E2E7F4800B7A85F /* testplatform */ = {
@@ -1461,7 +1502,14 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TestiPhoneOS" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
 			projectReferences = (
@@ -1472,6 +1520,7 @@
 			);
 			projectRoot = "";
 			targets = (
+				047A63DD13285C3200CD7973 /* checkkeys */,
 				FDA8A91D0E2D1C0B00EA573E /* graywin */,
 				FDAAC4300E2D4961001DB1D8 /* testbitmap */,
 				FDAAC5040E2D4FEB001DB1D8 /* testdyngles */,
@@ -1481,15 +1530,16 @@
 				FDA8AB140E2D386600EA573E /* testalpha */,
 				FDAAC3BB0E2D47E6001DB1D8 /* testaudioinfo */,
 				FDAAC4540E2D4C27001DB1D8 /* testblitspeed */,
+				FDC42FEF0F0D866D009C87E1 /* testdraw2 */,
 				FDAAC58A0E2D5429001DB1D8 /* testerror */,
 				FDAAC5B80E2D55B5001DB1D8 /* testfile */,
 				FDAAC5E90E2D5843001DB1D8 /* testgamma */,
-				FDD2C0F90E2E4F4B00B7A85F /* testhread */,
+				046CEF7513254F23007AD51D /* testgesture */,
+				FDD2C0F90E2E4F4B00B7A85F /* testthread */,
 				FDD2C1700E2E52C000B7A85F /* testiconv */,
 				FDD2C1930E2E534F00B7A85F /* testjoystick */,
 				FDD2C44D0E2E773800B7A85F /* testkeys */,
 				FDD2C46B0E2E77D700B7A85F /* testlock */,
-				FDD2C4A60E2E79C300B7A85F /* testpalette */,
 				FDD2C4F90E2E7F4800B7A85F /* testplatform */,
 				56ED04FC118A8FE400A56AA6 /* testpower */,
 				FDD2C5170E2E807600B7A85F /* testsem */,
@@ -1500,7 +1550,6 @@
 				FDD2C6150E2E8F0600B7A85F /* testwin */,
 				FDD2C6A10E2E92D200B7A85F /* threadwin */,
 				FDD2C6E20E2E959E00B7A85F /* torturethread */,
-				FDC42FEF0F0D866D009C87E1 /* testdraw2 */,
 			);
 		};
 /* End PBXProject section */
@@ -1513,16 +1562,31 @@
 			remoteRef = 0466EE6F11E565E4000198A4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		FD1B48B80E3131CA007AB34E /* libSDLiPhoneOS.a */ = {
+		FD1B48B80E3131CA007AB34E /* libSDL.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libSDLiPhoneOS.a;
+			path = libSDL.a;
 			remoteRef = FD1B48B70E3131CA007AB34E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		046CEF7613254F23007AD51D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				046CEF7713254F23007AD51D /* icon.bmp in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		047A63DE13285C3200CD7973 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1D60588D0D05DD3D006BFB54 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1662,18 +1726,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FDD2C4A70E2E79C300B7A85F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FDD2C4FA0E2E7F4800B7A85F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDD2C4FB0E2E7F4800B7A85F /* sail.bmp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1742,6 +1798,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		046CEF7813254F23007AD51D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				046CEF8A13254F63007AD51D /* testgesture.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		047A63DF13285C3200CD7973 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				047A63F113285CD100CD7973 /* checkkeys.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1861,7 +1933,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDD2C10D0E2E4F6900B7A85F /* testhread.c in Sources */,
+				FDD2C10D0E2E4F6900B7A85F /* testthread.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1894,14 +1966,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FDD2C47F0E2E77E300B7A85F /* testlock.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FDD2C4A80E2E79C300B7A85F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FDD2C4BA0E2E79D500B7A85F /* testpalette.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1981,6 +2045,58 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		046CEF8413254F23007AD51D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = testgesture;
+			};
+			name = Debug;
+		};
+		046CEF8513254F23007AD51D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = testgesture;
+			};
+			name = Release;
+		};
+		047A63EB13285C3200CD7973 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = checkkeys;
+			};
+			name = Debug;
+		};
+		047A63EC13285C3200CD7973 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = checkkeys;
+			};
+			name = Release;
+		};
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2016,7 +2132,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
-				INFOPLIST_FILE = "Info copy.plist";
+				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = testpower;
 			};
 			name = Debug;
@@ -2028,7 +2144,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
-				INFOPLIST_FILE = "Info copy.plist";
+				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = testpower;
 			};
 			name = Release;
@@ -2042,10 +2158,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../include;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -2058,9 +2177,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../include;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -2386,7 +2507,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = testhread;
+				PRODUCT_NAME = testthread;
 			};
 			name = Debug;
 		};
@@ -2398,7 +2519,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = testhread;
+				PRODUCT_NAME = testthread;
 			};
 			name = Release;
 		};
@@ -2503,32 +2624,6 @@
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = testlock;
-			};
-			name = Release;
-		};
-		FDD2C4B50E2E79C300B7A85F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = testpalette;
-			};
-			name = Debug;
-		};
-		FDD2C4B60E2E79C300B7A85F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = testpalette;
 			};
 			name = Release;
 		};
@@ -2769,6 +2864,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		046CEF8313254F23007AD51D /* Build configuration list for PBXNativeTarget "testgesture" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				046CEF8413254F23007AD51D /* Debug */,
+				046CEF8513254F23007AD51D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		047A63EA13285C3200CD7973 /* Build configuration list for PBXNativeTarget "checkkeys" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				047A63EB13285C3200CD7973 /* Debug */,
+				047A63EC13285C3200CD7973 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "testwm2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2904,7 +3017,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FDD2C1070E2E4F4B00B7A85F /* Build configuration list for PBXNativeTarget "testhread" */ = {
+		FDD2C1070E2E4F4B00B7A85F /* Build configuration list for PBXNativeTarget "testthread" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FDD2C1080E2E4F4B00B7A85F /* Debug */,
@@ -2945,15 +3058,6 @@
 			buildConfigurations = (
 				FDD2C47A0E2E77D700B7A85F /* Debug */,
 				FDD2C47B0E2E77D700B7A85F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		FDD2C4B40E2E79C300B7A85F /* Build configuration list for PBXNativeTarget "testpalette" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FDD2C4B50E2E79C300B7A85F /* Debug */,
-				FDD2C4B60E2E79C300B7A85F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

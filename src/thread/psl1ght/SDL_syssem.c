@@ -24,7 +24,7 @@
 /* Semaphores in the BeOS environment */
 
 //#include <be/kernel/OS.h>
-#include <sys/thread.h> 
+#include <sys/sem.h>
 #include <sys/errno.h> 
 
 #include "SDL_thread.h"
@@ -32,7 +32,7 @@
 
 struct SDL_semaphore
 {
-    sys_semaphore_t id;
+    sys_sem_t id;
 };
 
 /* Create a counting semaphore */
@@ -40,15 +40,15 @@ SDL_sem *
 SDL_CreateSemaphore(Uint32 initial_value)
 {
 	SDL_sem *sem;
-	sys_semaphore_attribute_t attr;
+	sys_sem_attr_t attr;
 
 	SDL_zero( attr);
-	attr.attr_protocol = SEMAPHORE_ATTR_PROTOCOL;
-	attr.attr_pshared = SEMAPHORE_ATTR_PSHARED;   
+	attr.attr_protocol = SYS_SEM_ATTR_PROTOCOL;
+	attr.attr_pshared = SYS_SEM_ATTR_PSHARED;
 
 	sem = (SDL_sem *) SDL_malloc(sizeof(*sem));
 	if (sem) {
-		sys_semaphore_create( &sem->id, &attr, initial_value, initial_value);
+		sysSemCreate( &sem->id, &attr, initial_value, 32 * 1024);
 	} else {
 		SDL_OutOfMemory();
 	}
@@ -60,7 +60,7 @@ void
 SDL_DestroySemaphore(SDL_sem * sem)
 {
     if (sem) {
-		sys_semaphore_destroy( sem->id);
+		sysSemDestroy( sem->id);
         SDL_free(sem);
     }
 }
@@ -81,14 +81,14 @@ SDL_SemWaitTimeout(SDL_sem * sem, Uint32 timeout)
 	{
 		// Do not wait
 		if( timeout == 0) {
-			val = sys_semaphore_trywait( sem->id);
+			val = sysSemTryWait( sem->id);
 		// Wait Forever
 		} else if (timeout == SDL_MUTEX_MAXWAIT) {
-			val = sys_semaphore_wait(sem->id, 0);
+			val = sysSemWait(sem->id, 0);
 		// Wait until timeout
 		} else {
 			timeout *= 1000;     /* PS 3uses a timeout in microseconds */
-			val = sys_semaphore_wait(sem->id, timeout);
+			val = sysSemWait(sem->id, timeout);
 		}
 		switch (val) {
 			case EINTR:
@@ -102,7 +102,7 @@ SDL_SemWaitTimeout(SDL_sem * sem, Uint32 timeout)
 				finished = 1;
 				break;
 			default:
-				SDL_SetError("sys_semaphore_[try]wait() failed");
+				SDL_SetError("sysSem[Try]Wait() failed");
 				retval = -1;
 				finished = 1;
 				break;
@@ -132,7 +132,7 @@ SDL_SemValue(SDL_sem * sem)
 
     value = 0;
     if (sem) {
-		sys_semaphore_get_value (sem->id, &count);
+		sysSemGetValue (sem->id, &count);
         if (count > 0) {
             value = (Uint32) count;
         }
@@ -149,7 +149,7 @@ SDL_SemPost(SDL_sem * sem)
         return -1;
     }
 
-    if (sys_semaphore_post(sem->id, 1) != 0) {
+    if (sysSemPost(sem->id, 1) != 0) {
         SDL_SetError("release_sem() failed");
         return -1;
     }

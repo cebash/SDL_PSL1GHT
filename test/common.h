@@ -1,11 +1,27 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 
 /* A simple test program framework */
 
 #define SDL_NO_COMPAT
 #include "SDL.h"
 
+#ifdef __NDS__
+#define DEFAULT_WINDOW_WIDTH  256
+#define DEFAULT_WINDOW_HEIGHT (2*192)
+#else
 #define DEFAULT_WINDOW_WIDTH  640
 #define DEFAULT_WINDOW_HEIGHT 480
+#endif
 
 #define VERBOSE_VIDEO   0x00000001
 #define VERBOSE_MODES   0x00000002
@@ -39,6 +55,7 @@ typedef struct
     const char *renderdriver;
     Uint32 render_flags;
     SDL_bool skip_renderer;
+    SDL_Renderer **renderers;
 
     /* Audio info */
     const char *audiodriver;

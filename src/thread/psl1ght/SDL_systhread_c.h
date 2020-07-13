@@ -22,7 +22,7 @@
 #include "SDL_config.h"
 
 #include <signal.h>
-#include <psl1ght/lv2/thread.h>
+#include <lv2/thread.h>
 
 typedef sys_ppu_thread_t SYS_ThreadHandle;
 

@@ -1,3 +1,14 @@
+/*
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -140,7 +151,7 @@ main(int argc, char *argv[])
     }
 
     /* Set OpenGL parameters */
-    state->window_flags |= SDL_WINDOW_OPENGL;
+    state->window_flags |= SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS;
     state->gl_red_size = 5;
     state->gl_green_size = 5;
     state->gl_blue_size = 5;
@@ -177,7 +188,7 @@ main(int argc, char *argv[])
         SDL_GL_SetSwapInterval(0);
     }
 
-    SDL_GetCurrentDisplayMode(&mode);
+    SDL_GetCurrentDisplayMode(0, &mode);
     printf("Screen bpp: %d\n", SDL_BITSPERPIXEL(mode.format));
     printf("\n");
     printf("Vendor     : %s\n", glGetString(GL_VENDOR));
@@ -243,6 +254,8 @@ main(int argc, char *argv[])
 
     /* Set rendering settings for each context */
     for (i = 0; i < state->num_windows; ++i) {
+        float aspectAdjust;
+
         status = SDL_GL_MakeCurrent(state->windows[i], context[i]);
         if (status) {
             printf("SDL_GL_MakeCurrent(): %s\n", SDL_GetError());
@@ -251,10 +264,11 @@ main(int argc, char *argv[])
             continue;
         }
 
+        aspectAdjust = (4.0f / 3.0f) / ((float)state->window_w / state->window_h);
         glViewport(0, 0, state->window_w, state->window_h);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrthof(-2.0, 2.0, -2.0, 2.0, -20.0, 20.0);
+        glOrthof(-2.0, 2.0, -2.0 * aspectAdjust, 2.0 * aspectAdjust, -20.0, 20.0);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glEnable(GL_DEPTH_TEST);
@@ -275,7 +289,7 @@ main(int argc, char *argv[])
                 switch (event.window.event) {
                     case SDL_WINDOWEVENT_RESIZED:
                         for (i = 0; i < state->num_windows; ++i) {
-                            if (event.window.windowID == state->windows[i]) {
+                            if (event.window.windowID == SDL_GetWindowID(state->windows[i])) {
                                 status = SDL_GL_MakeCurrent(state->windows[i], context[i]);
                                 if (status) {
                                     printf("SDL_GL_MakeCurrent(): %s\n", SDL_GetError());
@@ -327,3 +341,5 @@ main(int argc, char *argv[])
 }
 
 #endif /* HAVE_OPENGLES */
+
+/* vi: set ts=4 sw=4 expandtab: */

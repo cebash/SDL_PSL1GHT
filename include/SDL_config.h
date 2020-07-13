@@ -1,24 +1,23 @@
 /* include/SDL_config.h.  Generated from SDL_config.h.in by configure.  */
 /*
-    SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+  Simple DirectMedia Layer
+  Copyright (C) 1997-2011 Sam Lantinga <slouken@libsdl.org>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Sam Lantinga
-    slouken@libsdl.org
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 */
 
 #ifndef _SDL_config_h
@@ -35,7 +34,7 @@
 
 /* Make sure that this isn't included by Visual C++ */
 #ifdef _MSC_VER
-#error You should copy include/SDL_config.h.default to include/SDL_config.h
+#error You should run hg revert SDL_config.h 
 #endif
 
 /* C language features */
@@ -44,21 +43,9 @@
 /* #undef volatile */
 
 /* C datatypes */
-#if !defined(_STDINT_H_) && (!defined(HAVE_STDINT_H) || !_HAVE_STDINT_H)
-/* #undef size_t */
-/* #undef int8_t */
-/* #undef uint8_t */
-/* #undef int16_t */
-/* #undef uint16_t */
-/* #undef int32_t */
-/* #undef uint32_t */
-/* #undef int64_t */
-/* #undef uint64_t */
-/* #undef uintptr_t */
-#endif /* !_STDINT_H_ && !HAVE_STDINT_H */
-
 #define SIZEOF_VOIDP 8
-#define SDL_HAS_64BIT_TYPE 1
+#define HAVE_GCC_ATOMICS 1
+/* #undef HAVE_GCC_SYNC_LOCK_TEST_AND_SET */
 
 /* Comment this if you want to build without any C library requirements */
 #define HAVE_LIBC 1
@@ -89,7 +76,7 @@
 #define HAVE_REALLOC 1
 #define HAVE_FREE 1
 #define HAVE_ALLOCA 1
-#ifndef _WIN32 /* Don't use C runtime versions of these on Windows */
+#ifndef __WIN32__ /* Don't use C runtime versions of these on Windows */
 #define HAVE_GETENV 1
 #define HAVE_SETENV 1
 #define HAVE_PUTENV 1
@@ -161,6 +148,7 @@
 /* #undef HAVE_CLOCK_GETTIME */
 /* #undef HAVE_GETPAGESIZE */
 /* #undef HAVE_MPROTECT */
+/* #undef HAVE_ICONV */
 
 #else
 /* We may need some replacement for stdarg.h here */
@@ -171,6 +159,7 @@
 /* #undef SDL_DEFAULT_ASSERT_LEVEL */
 
 /* Allow disabling of core subsystems */
+/* #undef SDL_ATOMIC_DISABLED */
 /* #undef SDL_AUDIO_DISABLED */
 /* #undef SDL_CPUINFO_DISABLED */
 /* #undef SDL_EVENTS_DISABLED */
@@ -178,6 +167,7 @@
 /* #undef SDL_JOYSTICK_DISABLED */
 #define SDL_HAPTIC_DISABLED 1
 #define SDL_LOADSO_DISABLED 1
+/* #undef SDL_RENDER_DISABLED */
 /* #undef SDL_THREADS_DISABLED */
 /* #undef SDL_TIMERS_DISABLED */
 /* #undef SDL_VIDEO_DISABLED */
@@ -195,11 +185,9 @@
 /* #undef SDL_AUDIO_DRIVER_COREAUDIO */
 /* #undef SDL_AUDIO_DRIVER_DISK */
 /* #undef SDL_AUDIO_DRIVER_DUMMY */
-/* #undef SDL_AUDIO_DRIVER_DMEDIA */
 /* #undef SDL_AUDIO_DRIVER_DSOUND */
 /* #undef SDL_AUDIO_DRIVER_ESD */
 /* #undef SDL_AUDIO_DRIVER_ESD_DYNAMIC */
-/* #undef SDL_AUDIO_DRIVER_MMEAUDIO */
 /* #undef SDL_AUDIO_DRIVER_NAS */
 /* #undef SDL_AUDIO_DRIVER_NAS_DYNAMIC */
 /* #undef SDL_AUDIO_DRIVER_NDS */
@@ -222,7 +210,6 @@
 /* #undef SDL_JOYSTICK_IOKIT */
 /* #undef SDL_JOYSTICK_LINUX */
 /* #undef SDL_JOYSTICK_NDS */
-/* #undef SDL_JOYSTICK_RISCOS */
 /* #undef SDL_JOYSTICK_WINMM */
 /* #undef SDL_JOYSTICK_USBHID */
 /* #undef SDL_JOYSTICK_USBHID_MACHINE_JOYSTICK_H */
@@ -238,7 +225,7 @@
 /* #undef SDL_LOADSO_DLOPEN */
 /* #undef SDL_LOADSO_DUMMY */
 /* #undef SDL_LOADSO_LDG */
-/* #undef SDL_LOADSO_WIN32 */
+/* #undef SDL_LOADSO_WINDOWS */
 
 /* Enable various threading systems */
 /* #undef SDL_THREAD_BEOS */
@@ -248,16 +235,15 @@
 /* #undef SDL_THREAD_PTHREAD_RECURSIVE_MUTEX */
 /* #undef SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP */
 /* #undef SDL_THREAD_SPROC */
-/* #undef SDL_THREAD_WIN32 */
+/* #undef SDL_THREAD_WINDOWS */
 
 /* Enable various timer systems */
 /* #undef SDL_TIMER_BEOS */
 /* #undef SDL_TIMER_DUMMY */
 /* #undef SDL_TIMER_NDS */
 #define SDL_TIMER_PSL1GHT 1
-/* #undef SDL_TIMER_RISCOS */
 /* #undef SDL_TIMER_UNIX */
-/* #undef SDL_TIMER_WIN32 */
+/* #undef SDL_TIMER_WINDOWS */
 /* #undef SDL_TIMER_WINCE */
 
 /* Enable various video drivers */
@@ -266,42 +252,31 @@
 /* #undef SDL_VIDEO_DRIVER_DIRECTFB */
 /* #undef SDL_VIDEO_DRIVER_DIRECTFB_DYNAMIC */
 /* #undef SDL_VIDEO_DRIVER_DUMMY */
-/* #undef SDL_VIDEO_DRIVER_FBCON */
 /* #undef SDL_VIDEO_DRIVER_NDS */
-/* #undef SDL_VIDEO_DRIVER_PHOTON */
-/* #undef SDL_VIDEO_DRIVER_QNXGF */
-/* #undef SDL_VIDEO_DRIVER_PS3 */
 #define SDL_VIDEO_DRIVER_PSL1GHT 1
-/* #undef SDL_VIDEO_DRIVER_RISCOS */
-/* #undef SDL_VIDEO_DRIVER_SVGALIB */
-/* #undef SDL_VIDEO_DRIVER_WIN32 */
+/* #undef SDL_VIDEO_DRIVER_WINDOWS */
 /* #undef SDL_VIDEO_DRIVER_X11 */
 /* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC */
 /* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT */
-/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XRANDR */
-/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XRENDER */
+/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XCURSOR */
+/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XINERAMA */
 /* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XINPUT */
+/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XRANDR */
 /* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XSS */
-/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XDAMAGE */
-/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XFIXES */
-/* #undef SDL_VIDEO_DRIVER_X11_VIDMODE */
+/* #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XVIDMODE */
+/* #undef SDL_VIDEO_DRIVER_X11_XCURSOR */
 /* #undef SDL_VIDEO_DRIVER_X11_XINERAMA */
-/* #undef SDL_VIDEO_DRIVER_X11_XRANDR */
 /* #undef SDL_VIDEO_DRIVER_X11_XINPUT */
-/* #undef SDL_VIDEO_DRIVER_X11_SCRNSAVER */
-/* #undef SDL_VIDEO_DRIVER_X11_XV */
-/* #undef SDL_VIDEO_DRIVER_X11_XRENDER */
-/* #undef SDL_VIDEO_DRIVER_X11_XDAMAGE */
-/* #undef SDL_VIDEO_DRIVER_X11_XFIXES */
+/* #undef SDL_VIDEO_DRIVER_X11_XRANDR */
+/* #undef SDL_VIDEO_DRIVER_X11_XSCRNSAVER */
 /* #undef SDL_VIDEO_DRIVER_X11_XSHAPE */
+/* #undef SDL_VIDEO_DRIVER_X11_XVIDMODE */
 
 /* #undef SDL_VIDEO_RENDER_D3D */
-/* #undef SDL_VIDEO_RENDER_GDI */
 /* #undef SDL_VIDEO_RENDER_OGL */
 /* #undef SDL_VIDEO_RENDER_OGL_ES */
-/* #undef SDL_VIDEO_RENDER_X11 */
-/* #undef SDL_VIDEO_RENDER_GAPI */
-/* #undef SDL_VIDEO_RENDER_DDRAW */
+/* #undef SDL_VIDEO_RENDER_DIRECTFB */
+#define SDL_VIDEO_RENDER_PSL1GHT 1
 
 /* Enable OpenGL support */
 /* #undef SDL_VIDEO_OPENGL */

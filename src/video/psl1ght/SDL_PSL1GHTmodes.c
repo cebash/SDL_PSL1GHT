@@ -25,7 +25,6 @@
 #include "../SDL_sysvideo.h"
 #include "SDL_timer.h"
 
-#include <rsx/reality.h>
 #include <sysutil/video.h>
 
 #include <assert.h>
@@ -36,7 +35,7 @@ PSL1GHT_InitModes(_THIS)
     deprintf(1, "+PSL1GHT_InitModes()\n");
     SDL_DisplayMode mode;
     PSL1GHT_DisplayModeData *modedata;
-    VideoState state;
+    videoState state;
 
     modedata = (PSL1GHT_DisplayModeData *) SDL_malloc(sizeof(*modedata));
     if (!modedata) {
@@ -47,7 +46,7 @@ PSL1GHT_InitModes(_THIS)
     assert(state.state == 0); // Make sure display is enabled
 
     // Get the current resolution
-	VideoResolution res;
+	videoResolution res;
     assert(videoGetResolution(state.displayMode.resolution, &res) == 0);
 
     /* Setting up the DisplayMode based on current settings */
@@ -82,6 +81,7 @@ static SDL_DisplayMode ps3fb_modedb[] = {
     {SDL_PIXELFORMAT_ARGB8888, 1920, 1080, 0, NULL}, // 1080p
     {SDL_PIXELFORMAT_ARGB8888, 1280, 720, 0, NULL}, // 720p
     {SDL_PIXELFORMAT_ARGB8888, 720, 480, 0, NULL}, // 480p
+    {SDL_PIXELFORMAT_ARGB8888, 720, 576, 0, NULL}, // 576p
 };
 
 /* PS3 videomode number according to ps3fb_modedb */
@@ -103,6 +103,13 @@ static PSL1GHT_DisplayModeData ps3fb_data[] = {
 	}},
 	{{
 		VIDEO_RESOLUTION_480, 
+		VIDEO_BUFFER_FORMAT_XRGB,
+		VIDEO_ASPECT_16_9, 
+		{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		720 * 4
+	}},
+	{{
+		VIDEO_RESOLUTION_576, 
 		VIDEO_BUFFER_FORMAT_XRGB,
 		VIDEO_ASPECT_16_9, 
 		{0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -135,7 +142,7 @@ PSL1GHT_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode
 {
     deprintf(1, "+PSL1GHT_SetDisplayMode()\n");
     PSL1GHT_DisplayModeData *dispdata = (PSL1GHT_DisplayModeData *) mode->driverdata;
-	VideoState state;
+	videoState state;
 
     /* Set the new DisplayMode */
     deprintf(2, "Setting PS3_MODE to %u\n", dispdata->vconfig.resolution);
@@ -169,7 +176,7 @@ PSL1GHT_QuitModes(_THIS)
             display->display_modes[j].driverdata = NULL;
         }
     }
-
+    // TODO : Free data
     deprintf(1, "-PSL1GHT_QuitModes()\n");
 }
 

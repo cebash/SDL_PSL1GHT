@@ -26,7 +26,7 @@
 
 #include "../SDL_sysvideo.h"
 
-#include <rsx/gcm.h>
+#include <rsx/rsx.h>
 #include <sysutil/video.h>
 
 /* Debugging
@@ -35,7 +35,7 @@
  * 2: SPE debug messages
  * 3: Memory adresses
  */
-#define VIDEO_DEBUG_LEVEL 3
+//#define VIDEO_DEBUG_LEVEL 0
 
 #ifdef VIDEO_DEBUG_LEVEL
 #define deprintf( level, fmt, args... ) \
@@ -54,12 +54,19 @@
 /* Private RSX data */
 typedef struct SDL_DeviceData
 {
-	gcmContextData *_CommandBuffer; // Context to keep track of the RSX buffer.	
+    // Context to keep track of the RSX buffer.
+    gcmContextData *_CommandBuffer;
+
+    bool _keyboardConnected;
+    Uint32 _keyboardMapping;
+
+    bool _mouseConnected;
+    Uint8 _mouseButtons;
 } SDL_DeviceData;
 
 typedef struct SDL_DisplayModeData
 {
-    VideoConfiguration vconfig;
+    videoConfiguration vconfig;
 } PSL1GHT_DisplayModeData;
 #endif /* _SDL_PSL1GHTvideo_h */
 

@@ -36,15 +36,14 @@
 
 #include "SDL_PSL1GHTvideo.h"
 #include "SDL_PSL1GHTevents_c.h"
-#include "SDL_PSL1GHTrender_c.h"
 #include "SDL_PSL1GHTmodes_c.h"
 
 
 #include <malloc.h>
 #include <assert.h>
+#include <unistd.h>
 
-#include <rsx/reality.h>
-#include <rsx/gcm.h>
+#include <rsx/rsx.h>
 
 #define PSL1GHTVID_DRIVER_NAME "psl1ght"
 
@@ -66,7 +65,7 @@ PSL1GHT_Available(void)
 static void
 PSL1GHT_DeleteDevice(SDL_VideoDevice * device)
 {
-    printf( "PSL1GHT_DeleteDevice( %16X)\n", device);
+    deprintf (1, "PSL1GHT_DeleteDevice( %16X)\n", device);
     SDL_free(device);
 }
 
@@ -74,7 +73,7 @@ static SDL_VideoDevice *
 PSL1GHT_CreateDevice(int devindex)
 {
     SDL_VideoDevice *device;
-    printf( "PSL1GHT_CreateDevice( %16X)\n", devindex);
+    deprintf (1, "PSL1GHT_CreateDevice( %16X)\n", devindex);
 
     /* Initialize all variables that we clean on shutdown */
     device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
@@ -107,7 +106,6 @@ VideoBootStrap PSL1GHT_bootstrap = {
 int
 PSL1GHT_VideoInit(_THIS)
 {
-    SDL_DisplayMode mode;
     SDL_DeviceData *devdata = NULL;
 
     devdata = (SDL_DeviceData*) SDL_calloc(1, sizeof(SDL_DeviceData));
@@ -124,9 +122,6 @@ PSL1GHT_VideoInit(_THIS)
     initializeGPU(devdata);
     PSL1GHT_InitModes(_this);
 
-    SDL_AddRenderDriver(&_this->displays[0], &SDL_PSL1GHT_RenderDriver);
-
-
     gcmSetFlipMode(GCM_FLIP_VSYNC); // Wait for VSYNC to flip
 
     /* We're done! */
@@ -136,7 +131,7 @@ PSL1GHT_VideoInit(_THIS)
 void
 PSL1GHT_VideoQuit(_THIS)
 {
-    printf("PSL1GHT_VideoQuit()\n");
+    deprintf (1, "PSL1GHT_VideoQuit()\n");
     PSL1GHT_QuitModes(_this);
     PSL1GHT_QuitSysEvent(_this);
     SDL_free( _this->driverdata);
@@ -145,13 +140,13 @@ PSL1GHT_VideoQuit(_THIS)
 
 void initializeGPU( SDL_DeviceData * devdata)
 {
-    printf("initializeGPU()\n");
+    deprintf (1, "initializeGPU()\n");
    // Allocate a 1Mb buffer, alligned to a 1Mb boundary to be our shared IO memory with the RSX.
     void *host_addr = memalign(1024*1024, 1024*1024);
     assert(host_addr != NULL);
 
     // Initilise Reality, which sets up the command buffer and shared IO memory
-    devdata->_CommandBuffer = realityInit(0x10000, 1024*1024, host_addr);
+    rsxInit(&devdata->_CommandBuffer, 0x10000, 1024*1024, host_addr);
     assert(devdata->_CommandBuffer != NULL);
 }
 
